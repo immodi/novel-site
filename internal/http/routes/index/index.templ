@@ -1,0 +1,11 @@
+package index
+
+import "immodi/novel-site/internal/http/routes/components/novels_grid"
+
+const TOTAL_ITEMS = 8
+
+templ Index() {
+	<div class="w-screen h-fit min-h-screen flex justify-center p-8 bg-white">
+		@novelsgrid.NovelsGrid(TOTAL_ITEMS)
+	</div>
+}

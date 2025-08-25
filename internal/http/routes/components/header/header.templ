@@ -1,0 +1,19 @@
+package views
+
+import "strings"
+
+templ Header(navLinks []string) {
+	<header class="w-full flex justify-between pt-4">
+		<a href="/" class="text-3xl font-bold flex justify-center items-center ml-8">Novels</a>
+		<nav class="flex items-center justify-center space-x-8 px-6 py-4 text-lg mr-4">
+			for _, link := range navLinks {
+				<a href={ strings.ToLower(link) } class="relative pb-1 group">
+					{ link }
+					<span
+						class="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-blue-600 transition-all duration-200 group-hover:w-full"
+					></span>
+				</a>
+			}
+		</nav>
+	</header>
+}
