@@ -8,8 +8,10 @@ package routes
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "immodi/novel-site/internal/http/routes/components/header"
-import "immodi/novel-site/internal/http/routes/components/footer"
+import (
+	"immodi/novel-site/internal/http/components/footer"
+	"immodi/novel-site/internal/http/components/header"
+)
 
 func Layout(title string, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -39,7 +41,7 @@ func Layout(title string, content templ.Component) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/layout.templ`, Line: 13, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/layout.templ`, Line: 15, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -49,7 +51,7 @@ func Layout(title string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = views.Header(
+		templ_7745c5c3_Err = header.Header(
 			[]string{"Novels", "About"},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -71,7 +73,40 @@ func Layout(title string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = DarkModeScript().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</body></html>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func DarkModeScript() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<script>\n    function applyTheme(isLight) {\n        document.querySelectorAll(\"[class*='dark:'], [class*='off:']\").forEach(el => {\n            let classAttr = el.getAttribute(\"class\") || \"\";\n            const classes = classAttr.trim().split(/\\s+/);\n\n            const newClasses = classes.map(c => {\n                if (c.startsWith(\"dark:\")) {\n                    return isLight ? c : c.replace(\"dark:\", \"off:\");\n                }\n                if (c.startsWith(\"off:\")) {\n                    return isLight ? c.replace(\"off:\", \"dark:\") : c;\n                }\n                return c;\n            }).join(\" \");\n\n            el.setAttribute(\"class\", newClasses);\n        });\n\n        // Icon switching\n        const sun = document.getElementById(\"sun-icon\");\n        const moon = document.getElementById(\"moon-icon\");\n        if (isLight) {\n            sun.classList.remove(\"opacity-0\", \"scale-75\");\n            moon.classList.add(\"opacity-0\", \"scale-75\");\n        } else {\n            moon.classList.remove(\"opacity-0\", \"scale-75\");\n            sun.classList.add(\"opacity-0\", \"scale-75\");\n        }\n    }\n\n    // Load from localStorage\n    let isLight = localStorage.getItem(\"theme\") === \"light\";\n    applyTheme(isLight);\n    document.getElementById(\"toggleDark\").addEventListener(\"click\", () => {\n        isLight = !isLight;\n        localStorage.setItem(\"theme\", isLight ? \"light\" : \"dark\");\n        applyTheme(isLight);\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

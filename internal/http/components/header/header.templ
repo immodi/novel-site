@@ -1,0 +1,57 @@
+package header
+
+import "strings"
+
+templ Header(navLinks []string) {
+	<header class="w-full flex justify-between bg-black dark:bg-white text-white dark:text-black">
+		<a href="/" class="text-3xl font-bold flex justify-center items-center ml-8">Novels</a>
+		<nav class="flex items-center justify-center space-x-8 px-6 py-4 text-lg mr-4">
+			for _, link := range navLinks {
+				<a href={ strings.ToLower(link) } class="relative pb-1 group">
+					{ link }
+					<span
+						class="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-blue-600 transition-all duration-200 group-hover:w-full"
+					></span>
+				</a>
+			}
+			@ThemeToggle()
+		</nav>
+	</header>
+}
+
+templ ThemeToggle() {
+	<button
+		id="toggleDark"
+		class="relative w-8 h-8 cursor-pointer rounded-full 
+		       hover:bg-gray-800 dark:hover:bg-gray-100 
+		       transition-colors duration-200 focus:outline-none 
+		       focus:ring-2 focus:ring-gray-600 dark:focus:ring-gray-300"
+		aria-label="Toggle theme"
+	>
+		<!-- Sun Icon (Light Mode) -->
+		<svg
+			id="sun-icon"
+			class="absolute inset-0 w-5 h-5 m-auto text-white dark:text-black 
+			       transition-all duration-300 ease-in-out opacity-0 scale-75"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+			stroke-width="2"
+		>
+			<circle cx="12" cy="12" r="5"></circle>
+			<path d="M12 1v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8l1.4 1.4M1 12h2m18 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+		</svg>
+		<!-- Moon Icon (Dark Mode) -->
+		<svg
+			id="moon-icon"
+			class="absolute inset-0 w-5 h-5 m-auto text-white dark:text-black 
+			       transition-all duration-300 ease-in-out"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+			stroke-width="2"
+		>
+			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+		</svg>
+	</button>
+}

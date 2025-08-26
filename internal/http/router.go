@@ -7,6 +7,8 @@ import (
 	"immodi/novel-site/internal/http/routes/novels"
 	"immodi/novel-site/internal/http/routes/privacy"
 	"immodi/novel-site/internal/http/routes/terms"
+	"immodi/novel-site/pkg"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -20,6 +22,7 @@ type Router struct {
 func (router *Router) NewRouter() *chi.Mux {
 	router.r = chi.NewRouter()
 
+	log.Println("Application started at http://localhost:3000")
 	router.r.Use(middleware.Logger)
 	router.RegisterRoutes()
 
@@ -27,7 +30,7 @@ func (router *Router) NewRouter() *chi.Mux {
 }
 
 func (router *Router) RegisterRoutes() {
-	router.r.Get("/", Render("Home", index.Index()))
+	router.r.Get("/", pkg.Render("Home", index.Index()))
 
 	chapters := []novels.Chapter{}
 	for i := 1; i <= 100; i++ {
@@ -37,7 +40,7 @@ func (router *Router) RegisterRoutes() {
 		})
 	}
 
-	router.r.Get("/novel", Render("Test Novel", novels.NovelInfo(novels.Novel{
+	router.r.Get("/novel", pkg.Render("Test Novel", novels.NovelInfo(novels.Novel{
 		Name:        "Test Novel",
 		Description: "Test Novel Description",
 		Author:      "Test Author",
@@ -47,9 +50,9 @@ func (router *Router) RegisterRoutes() {
 		Chapters:    chapters,
 	})))
 
-	router.r.Get("/privacy", Render("Privacy", privacy.Privacy()))
-	router.r.Get("/terms", Render("Terms of Service", terms.Terms()))
-	router.r.Get("/about", Render("About", about.About()))
+	router.r.Get("/privacy", pkg.Render("Privacy", privacy.Privacy()))
+	router.r.Get("/terms", pkg.Render("Terms of Service", terms.Terms()))
+	router.r.Get("/about", pkg.Render("About", about.About()))
 
 	router.r.Get("/novels", router.redirectToHome())
 
