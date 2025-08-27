@@ -1,13 +1,11 @@
 package http
 
 import (
-	"fmt"
-	"immodi/novel-site/internal/http/routes/about"
-	"immodi/novel-site/internal/http/routes/index"
-	"immodi/novel-site/internal/http/routes/novels"
-	"immodi/novel-site/internal/http/routes/privacy"
-	"immodi/novel-site/internal/http/routes/terms"
-	"immodi/novel-site/pkg"
+	authservice "immodi/novel-site/internal/app/auth_service"
+	homeservice "immodi/novel-site/internal/app/home_service"
+	novelservice "immodi/novel-site/internal/app/novel_service"
+	privacyservice "immodi/novel-site/internal/app/privacy_service"
+	termsservice "immodi/novel-site/internal/app/terms_service"
 	"log"
 	"net/http"
 
@@ -30,30 +28,13 @@ func (router *Router) NewRouter() *chi.Mux {
 }
 
 func (router *Router) RegisterRoutes() {
-	router.r.Get("/", pkg.Render("Home", index.Index()))
+	router.r.Get("/", homeservice.HomeHandler)
 
-	chapters := []novels.Chapter{}
-	for i := 1; i <= 100; i++ {
-		chapters = append(chapters, novels.Chapter{
-			Title:  fmt.Sprintf("Chapter %d", i),
-			Number: i,
-		})
-	}
-
-	router.r.Get("/novel", pkg.Render("Test Novel", novels.NovelInfo(novels.Novel{
-		Name:        "Test Novel",
-		Description: "Test Novel Description",
-		Author:      "Test Author",
-		Genres:      []string{"Test Genre", "Test Genre 2"},
-		Status:      "Ongoing",
-		CoverImage:  "https://dummyimage.com/600x400/000/fff",
-		Chapters:    chapters,
-	})))
-
-	router.r.Get("/privacy", pkg.Render("Privacy", privacy.Privacy()))
-	router.r.Get("/terms", pkg.Render("Terms of Service", terms.Terms()))
-	router.r.Get("/about", pkg.Render("About", about.About()))
-
+	router.r.Get("/novel", novelservice.NovelHandler)
+	router.r.Get("/privacy", privacyservice.PrivacyHandler)
+	router.r.Get("/terms", termsservice.TermsHandler)
+	router.r.Get("/login", authservice.LoginHandler)
+	router.r.Get("/register", authservice.RegisterHandler)
 	router.r.Get("/novels", router.redirectToHome())
 
 	router.r.NotFound(router.redirectToHome())

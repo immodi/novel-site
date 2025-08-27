@@ -5,7 +5,7 @@ import "fmt"
 const TOTAL_ITEMS = 8
 
 templ Index() {
-	<div class="w-screen h-fit min-h-screen flex justify-center p-8 bg-black dark:bg-white">
+	<div class="w-screen h-fit min-h-screen flex justify-center pb-16 p-8 bg-gray-900 dark:bg-gray-100">
 		@NovelsGrid(TOTAL_ITEMS)
 	</div>
 }
@@ -19,9 +19,13 @@ templ NovelsGrid(totalItems int) {
 }
 
 templ novelsGridItem(i int) {
-	<a class="flex flex-col items-center" href="novel">
-		<img src="" alt={ fmt.Sprintf("Item %d", i+1) } class="w-48 h-64 object-cover rounded-md shadow-lg"/>
-		<span class="mt-3 text-base font-medium text-black text-center leading-snug max-w-[12rem]">
+	<a class="flex flex-col items-center hover:opacity-80 transition-opacity duration-200" href="novel">
+		<img
+			src="https://dummyimage.com/500x720/8a888a/ffffff"
+			alt={ fmt.Sprintf("Item %d", i+1) }
+			class="w-48 h-64 object-cover rounded-md shadow-lg dark:shadow-gray-300"
+		/>
+		<span class="mt-3 text-base font-medium text-white dark:text-black text-center leading-snug max-w-[12rem]">
 			Novel Title { i+1 }
 		</span>
 	</a>

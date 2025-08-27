@@ -33,7 +33,7 @@ func Index() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-screen h-fit min-h-screen flex justify-center p-8 bg-black dark:bg-white\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-screen h-fit min-h-screen flex justify-center pb-16 p-8 bg-gray-900 dark:bg-gray-100\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -109,27 +109,27 @@ func novelsGridItem(i int) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a class=\"flex flex-col items-center\" href=\"novel\"><img src=\"\" alt=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a class=\"flex flex-col items-center hover:opacity-80 transition-opacity duration-200\" href=\"novel\"><img src=\"https://dummyimage.com/500x720/8a888a/ffffff\" alt=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("Item %d", i+1))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/index/index.templ`, Line: 23, Col: 47}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/index/index.templ`, Line: 25, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"w-48 h-64 object-cover rounded-md shadow-lg\"> <span class=\"mt-3 text-base font-medium text-black text-center leading-snug max-w-[12rem]\">Novel Title ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"w-48 h-64 object-cover rounded-md shadow-lg dark:shadow-gray-300\"> <span class=\"mt-3 text-base font-medium text-white dark:text-black text-center leading-snug max-w-[12rem]\">Novel Title ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(i + 1)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/index/index.templ`, Line: 25, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/index/index.templ`, Line: 29, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

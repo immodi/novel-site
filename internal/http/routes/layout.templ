@@ -14,11 +14,11 @@ templ Layout(title string, content templ.Component) {
 			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 			<title>{ title }</title>
 		</head>
-		<body>
+		<body class="min-h-screen flex flex-col">
 			@header.Header(
-				[]string{"Novels", "About"},
+				[]string{"Novels", "Login"},
 			)
-			<main>
+			<main class="flex flex-grow">
 				@content
 			</main>
 			@footer.Footer()
@@ -62,7 +62,10 @@ templ DarkModeScript() {
     // Load from localStorage
     let isLight = localStorage.getItem("theme") === "light";
     applyTheme(isLight);
-    document.getElementById("toggleDark").addEventListener("click", () => {
+
+    document.querySelector("#toggleDark").addEventListener("click", () => {
+        console.log(isLight)
+
         isLight = !isLight;
         localStorage.setItem("theme", isLight ? "light" : "dark");
         applyTheme(isLight);

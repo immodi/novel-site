@@ -9,15 +9,19 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "fmt"
+import "immodi/novel-site/pkg"
 
 type Novel struct {
-	Name        string
-	Description string
-	Author      string
-	Genres      []string
-	Status      string
-	CoverImage  string
-	Chapters    []Chapter
+	Name                string
+	Description         string
+	Author              string
+	Genres              []string
+	Status              string
+	CoverImage          string
+	TotalChaptersNumber int
+	Chapters            []Chapter
+	CurrentPage         int
+	TotalPages          int
 }
 
 type Chapter struct {
@@ -46,14 +50,14 @@ func NovelInfo(novel Novel) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-6xl mx-auto p-4 lg:p-8\"><!-- Top/Left: Image and Start Reading button --><div class=\"flex flex-col items-center lg:flex-shrink-0\"><img src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex w-full flex-col lg:flex-row gap-6 lg:gap-8 mx-auto p-4 lg:p-8 bg-gray-900 dark:bg-gray-100\"><!-- Left: Cover and Start Reading --><div class=\"flex flex-col items-center lg:flex-shrink-0\"><img src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(novel.CoverImage)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 25, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 29, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -66,20 +70,20 @@ func NovelInfo(novel Novel) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 26, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 30, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"w-48 h-64 sm:w-56 sm:h-72 lg:w-64 lg:h-80 object-cover rounded-lg shadow-lg\"> <button class=\"cursor-pointer mt-4 lg:mt-6 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 lg:px-8 rounded-lg transition-colors duration-200\">Start Reading</button></div><!-- Bottom/Right: Novel information --><div class=\"flex flex-col flex-1\"><h1 class=\"text-2xl sm:text-3xl font-bold text-gray-900 mb-3 lg:mb-2 text-center lg:text-left\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"w-48 h-64 sm:w-56 sm:h-72 lg:w-64 lg:h-80 object-cover rounded-lg shadow-lg\"> <button class=\"cursor-pointer mt-4 lg:mt-6 w-full sm:w-auto bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 px-6 lg:px-8 rounded-lg transition-colors duration-200\">Start Reading</button></div><!-- Right: Info --><div class=\"flex flex-col flex-1\"><h1 class=\"text-2xl sm:text-3xl font-bold text-gray-100 dark:text-gray-900 mb-3 lg:mb-2 text-center lg:text-left\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 38, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 44, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -90,14 +94,14 @@ func NovelInfo(novel Novel) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		for _, genre := range novel.Genres {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span class=\"bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span class=\"bg-gray-700 dark:bg-gray-200 text-gray-100 dark:text-gray-800 px-3 py-1 rounded text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(genre)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 42, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 49, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -108,27 +112,27 @@ func NovelInfo(novel Novel) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><p class=\"text-gray-700 leading-relaxed mb-4 lg:mb-6 text-sm sm:text-base\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><p class=\"text-gray-300 dark:text-gray-700 leading-relaxed mb-4 lg:mb-6 text-sm sm:text-base\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 46, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 54, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p><div class=\"text-gray-600 text-sm mb-6 space-y-1\"><p>Author: ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p><div class=\"text-gray-400 dark:text-gray-600 text-sm mb-6 space-y-1\"><p>Author: ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Author)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 49, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 57, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -141,81 +145,176 @@ func NovelInfo(novel Novel) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Status)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 50, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 58, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p></div><!-- Chapter List --><div class=\"border border-gray-300 rounded-lg\"><div class=\"bg-gray-100 px-3 sm:px-4 py-3 border-b border-gray-300\"><h2 class=\"text-base sm:text-lg font-semibold text-gray-900\">Chapters (")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p></div><!-- Chapters --><div class=\"border border-gray-600 dark:border-gray-300 rounded-lg\"><div class=\"bg-gray-800 dark:bg-gray-100 px-3 sm:px-4 py-3 border-b border-gray-600 dark:border-gray-300\"><h2 class=\"text-base sm:text-lg font-semibold text-gray-100 dark:text-gray-900\">Chapters (")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(novel.Chapters)))
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", novel.TotalChaptersNumber))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 56, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 64, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, ")</h2></div><div class=\"max-h-60 sm:max-h-80 overflow-y-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, ")</h2></div><!-- List --><div class=\"max-h-60 sm:max-h-80 overflow-y-auto bg-gray-900 dark:bg-gray-100\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for i, chapter := range novel.Chapters {
-			var templ_7745c5c3_Var10 = []any{"flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer transition-colors",
-				templ.KV("border-b border-gray-200", i < len(novel.Chapters)-1)}
-			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
+		for _, chapter := range novel.Chapters {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex border-b border-gray-700 dark:border-gray-200 items-center justify-between p-3 hover:bg-gray-800 dark:hover:bg-gray-50 cursor-pointer transition-colors\"><span class=\"text-gray-100 dark:text-gray-900 text-sm sm:text-base pr-2\">Chapter ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"")
+			var templ_7745c5c3_Var10 string
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", chapter.Number))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 74, Col: 51}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, ": ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var10).String())
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(chapter.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 1, Col: 0}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 74, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\"><span class=\"text-gray-900 text-sm sm:text-base pr-2\">Chapter ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</span> <svg class=\"w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", chapter.Number))
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div><!-- Pagination -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		isPreviousPage := novel.CurrentPage > 1
+		isNextPage := novel.CurrentPage < novel.TotalPages
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"flex justify-center items-center gap-2 py-3 bg-gray-800 dark:bg-gray-100 border-t border-gray-600 dark:border-gray-300\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if isPreviousPage {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<a href=\"")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 66, Col: 51}
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var12 templ.SafeURL
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel?page=%d", novel.CurrentPage-1))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 95, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, ": ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(chapter.Title)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 66, Col: 70}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</span> <svg class=\"w-4 h-4 text-gray-400 flex-shrink-0\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\" class=\"px-3 py-1 rounded bg-gray-700 dark:bg-gray-200 cursor-pointer text-gray-100 dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-300\">&lt;</a> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div></div></div></div>")
+		for _, i := range pkg.MakePages(novel.TotalPages) {
+			if i == novel.CurrentPage {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var13 templ.SafeURL
+				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel?page=%d", i))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 104, Col: 47}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\" class=\"px-3 py-1 rounded bg-blue-500 text-white font-semibold cursor-pointer\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d",
+					i))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 108, Col: 22}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</a> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 templ.SafeURL
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel?page=%d", i))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 112, Col: 47}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\" class=\"px-3 py-1 rounded text-white bg-gray-700 dark:bg-gray-400 hover:bg-gray-600 cursor-pointer dark:hover:bg-gray-300\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", i))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 115, Col: 30}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</a> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		}
+		if isNextPage {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var17 templ.SafeURL
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel?page=%d", novel.CurrentPage+1))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/routes/novels/novel_info.templ`, Line: 121, Col: 64}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" class=\"px-3 py-1 rounded bg-gray-700 dark:bg-gray-200 text-gray-100 cursor-pointer dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-300\">&gt;</a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
