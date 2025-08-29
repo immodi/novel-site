@@ -1,17 +1,23 @@
 package app
 
 import (
-	"immodi/novel-site/internal/http/routes"
+	"immodi/novel-site/internal/http/templates"
+	"immodi/novel-site/internal/http/templates/components"
 	"net/http"
 
 	"github.com/a-h/templ"
 )
 
-func GenericServiceHandler(w http.ResponseWriter, r *http.Request, title string, cmp templ.Component) {
-	Render(title, cmp).ServeHTTP(w, r)
+func GenericServiceHandler(
+	w http.ResponseWriter,
+	r *http.Request,
+	data *components.MetaDataStruct,
+	cmp templ.Component,
+) {
+	Render(data, cmp).ServeHTTP(w, r)
 }
 
-func Render(title string, cmp templ.Component) http.HandlerFunc {
-	layout := routes.Layout(title, cmp)
+func Render(data *components.MetaDataStruct, cmp templ.Component) http.HandlerFunc {
+	layout := templates.Layout(data, cmp)
 	return templ.Handler(layout).ServeHTTP
 }
