@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - schema: "schema/schema.sql"
+    queries: "sql"
+    engine: "sqlite"
+    gen:
+      go:
+        package: "repositories"
+        out: "repositories"  
+        output_models_file_name: "models.go"
+        output_db_file_name: "db.go"

@@ -10,16 +10,15 @@ type Novel struct {
 	Genres              []string
 	Status              string
 	CoverImage          string
-	TotalChaptersNumber int
-	Chapters            []Chapter
 	CurrentPage         int
 	TotalPages          int
+	TotalChaptersNumber int
+	Chapters            []Chapter
 	LastChapterName     string
 }
 
 type Chapter struct {
-	Title  string
-	Number int
+	Title string
 }
 
 templ NovelInfo(novel Novel) {
@@ -72,7 +71,7 @@ templ NovelInfo(novel Novel) {
 							class="flex border-b border-gray-700 dark:border-gray-200 items-center justify-between p-3 hover:bg-gray-800 dark:hover:bg-gray-50 cursor-pointer transition-colors"
 						>
 							<span class="text-gray-100 dark:text-gray-900 text-sm sm:text-base pr-2">
-								Chapter { fmt.Sprintf("%d", chapter.Number) }: { chapter.Title }
+								{ chapter.Title }
 							</span>
 							<svg
 								class="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0"
@@ -93,7 +92,7 @@ templ NovelInfo(novel Novel) {
 				>
 					if isPreviousPage {
 						<a
-							href={ fmt.Sprintf("/novel?page=%d", novel.CurrentPage-1) }
+							href={ fmt.Sprintf("/novel/%s?page=%d", pkg.TitleToSlug(novel.Name), novel.CurrentPage-1) }
 							class="px-3 py-1 rounded bg-gray-700 dark:bg-gray-200 cursor-pointer text-gray-100 dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-300"
 						>
 							&lt;
@@ -102,7 +101,7 @@ templ NovelInfo(novel Novel) {
 					for _, i := range pkg.MakePages(novel.TotalPages) {
 						if i == novel.CurrentPage {
 							<a
-								href={ fmt.Sprintf("/novel?page=%d", i) }
+								href={ fmt.Sprintf("/novel/%s?page=%d", pkg.TitleToSlug(novel.Name), i) }
 								class="px-3 py-1 rounded bg-blue-500 text-white font-semibold cursor-pointer"
 							>
 								{ fmt.Sprintf("%d",
@@ -110,7 +109,7 @@ templ NovelInfo(novel Novel) {
 							</a>
 						} else {
 							<a
-								href={ fmt.Sprintf("/novel?page=%d", i) }
+								href={ fmt.Sprintf("/novel/%s?page=%d", pkg.TitleToSlug(novel.Name), i) }
 								class="px-3 py-1 rounded text-white bg-gray-700 dark:bg-gray-400 hover:bg-gray-600 cursor-pointer dark:hover:bg-gray-300"
 							>
 								{ fmt.Sprintf("%d", i) }
@@ -119,7 +118,7 @@ templ NovelInfo(novel Novel) {
 					}
 					if isNextPage {
 						<a
-							href={ fmt.Sprintf("/novel?page=%d", novel.CurrentPage+1) }
+							href={ fmt.Sprintf("/novel/%s?page=%d", pkg.TitleToSlug(novel.Name), novel.CurrentPage+1) }
 							class="px-3 py-1 rounded bg-gray-700 dark:bg-gray-200 text-gray-100 cursor-pointer dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-300"
 						>
 							&gt;

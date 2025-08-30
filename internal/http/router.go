@@ -1,11 +1,9 @@
 package http
 
 import (
-	authservice "immodi/novel-site/internal/app/auth_service"
-	homeservice "immodi/novel-site/internal/app/home_service"
-	novelservice "immodi/novel-site/internal/app/novel_service"
-	privacyservice "immodi/novel-site/internal/app/privacy_service"
-	termsservice "immodi/novel-site/internal/app/terms_service"
+	handlers "immodi/novel-site/internal/app/handlers"
+	pathhandlers "immodi/novel-site/internal/app/handlers/paths"
+	"immodi/novel-site/internal/app/services"
 	"log"
 	"net/http"
 
@@ -14,7 +12,9 @@ import (
 )
 
 type Router struct {
-	r *chi.Mux
+	r        *chi.Mux
+	handlers *handlers.Handlers
+	services *services.Services
 }
 
 func (router *Router) NewRouter() *chi.Mux {
@@ -22,22 +22,37 @@ func (router *Router) NewRouter() *chi.Mux {
 
 	log.Println("Application started at http://localhost:3000")
 	router.r.Use(middleware.Logger)
+
+	router.RegisterServices()
+	router.RegisterHandlers()
 	router.RegisterRoutes()
 
 	return router.r
 }
 
 func (router *Router) RegisterRoutes() {
-	router.r.Get("/", homeservice.HomeHandler)
+	router.r.Get("/", router.handlers.Home.Index)
 
-	router.r.Get("/novel", novelservice.NovelHandler)
-	router.r.Get("/privacy", privacyservice.PrivacyHandler)
-	router.r.Get("/terms", termsservice.TermsHandler)
-	router.r.Get("/login", authservice.LoginHandler)
-	router.r.Get("/register", authservice.RegisterHandler)
+	router.r.Get("/novel/{novelName}", router.handlers.Novel.GetNovel)
+	router.r.Get("/privacy", pathhandlers.PrivacyHandler)
+	router.r.Get("/terms", pathhandlers.TermsHandler)
+	router.r.Get("/login", pathhandlers.LoginHandler)
+	router.r.Get("/register", pathhandlers.RegisterHandler)
 	router.r.Get("/novels", router.redirectToHome())
 
+	// testing routes, should be disabled in production
+	router.r.Get("/create-novel", router.handlers.Novel.CreateNovel)
+	router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
+
 	router.r.NotFound(router.redirectToHome())
+}
+
+func (router *Router) RegisterServices() {
+	router.services = services.RegisterServices()
+}
+
+func (router *Router) RegisterHandlers() {
+	router.handlers = handlers.RegisterHandlers(router.services)
 }
 
 func (router *Router) redirectToHome() http.HandlerFunc {
