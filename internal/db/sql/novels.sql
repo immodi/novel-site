@@ -1,9 +1,8 @@
 -- name: CreateNovel :one
 INSERT INTO novels (
-    title, description, cover_image, author, status, update_time,
-    latest_chapter_name, total_chapters_number
+    title, description, cover_image, author, status, update_time
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?
 )
 RETURNING *;
 
@@ -23,9 +22,7 @@ SET
     cover_image = ?,
     author = ?,
     status = ?,
-    update_time = ?,
-    latest_chapter_name = ?,
-    total_chapters_number = ?
+    update_time = ?
 WHERE id = ?
 RETURNING *;
 
@@ -36,3 +33,9 @@ DELETE FROM novels WHERE id = ?;
 SELECT * FROM novels
 WHERE LOWER(title) LIKE LOWER(?)
 LIMIT 1;
+
+-- name: ListNewestHomeNovels :many
+SELECT * FROM novels
+ORDER BY update_time DESC
+LIMIT 8;
+

@@ -32,7 +32,7 @@ func NewHomeHandler(dbService *services.DBService) *HomeHandler {
 
 func (h *HomeHandler) Index(w http.ResponseWriter, r *http.Request) {
 	dbNovels, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
-		return q.ListNovels(ctx)
+		return q.ListNewestHomeNovels(ctx)
 	})
 
 	if err != nil {

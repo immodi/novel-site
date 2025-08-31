@@ -65,6 +65,13 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	lastChapter, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) (repositories.Chapter, error) {
+		return q.GetChapterByNumber(ctx, repositories.GetChapterByNumberParams{
+			NovelID:       dbNovel.ID,
+			ChapterNumber: totalChaptersInt64,
+		})
+	})
+
 	totalChapters := int(totalChaptersInt64)
 	chapters := castDbChaptersToInfoChapters(dbChapters)
 
@@ -98,7 +105,8 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		CurrentPage:         pkg.AdjustPageNumber(currentPage, totalChapters),
 		TotalPages:          pkg.CalculateTotalPages(totalChapters),
 		Chapters:            chapters,
-		LastChapterName:     dbNovel.LatestChapterName,
+		LastChapterName:     lastChapter.Title,
+		LastUpdated:         dbNovel.UpdateTime,
 	}
 
 	metaData := &components.MetaDataStruct{
@@ -123,18 +131,16 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 	GenericServiceHandler(w, r, metaData, novels.NovelInfo(novel))
 }
 
-func (h *NovelHandler) CreateNovel(w http.ResponseWriter, r *http.Request) {
-	// Create a novel with default values
+func (h *NovelHandler) CreateNovelWithDefaults(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Creating novel with defaults...")
 	dbNovel, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) (repositories.Novel, error) {
 		return q.CreateNovel(ctx, repositories.CreateNovelParams{
-			Title:               "Test Novel",
-			Description:         "This is a default novel description. An exciting story awaits!",
-			CoverImage:          "https://dummyimage.com/500x720/8a818a/2fffff",
-			Author:              "Default Author 2",
-			Status:              "Ongoing",
-			UpdateTime:          "2025-08-30",
-			LatestChapterName:   "Chapter 1",
-			TotalChaptersNumber: 1,
+			Title:       "Test Novel",
+			Description: "This is a default novel description.",
+			CoverImage:  "https://dummyimage.com/500x720/8a818a/ffffff",
+			Author:      "Default Author 1",
+			Status:      "Ongoing",
+			UpdateTime:  "2025-08-30",
 		})
 	})
 
@@ -146,7 +152,7 @@ func (h *NovelHandler) CreateNovel(w http.ResponseWriter, r *http.Request) {
 	// Add default genres
 	defaultGenres := []string{"Adventure", "Drama", "Fantasy"}
 	for _, genre := range defaultGenres {
-		_, err = services.ExecuteWithResult[any](h.dbService, func(ctx context.Context, q *repositories.Queries) (any, error) {
+		_, err = services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) (any, error) {
 			return nil, q.AddGenreToNovel(ctx, repositories.AddGenreToNovelParams{
 				NovelID: dbNovel.ID,
 				Genre:   genre,
@@ -158,6 +164,8 @@ func (h *NovelHandler) CreateNovel(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	fmt.Println(dbNovel.Author)
+
 	http.Redirect(w, r, "/novel", http.StatusSeeOther)
 }
 
@@ -165,7 +173,8 @@ func castDbChaptersToInfoChapters(dbChapters []repositories.Chapter) []novels.Ch
 	var chapters []novels.Chapter
 	for _, dbChapter := range dbChapters {
 		chapters = append(chapters, novels.Chapter{
-			Title: dbChapter.Title,
+			Title:  dbChapter.Title,
+			Number: int(dbChapter.ChapterNumber),
 		})
 	}
 	return chapters

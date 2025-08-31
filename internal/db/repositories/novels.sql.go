@@ -11,23 +11,20 @@ import (
 
 const createNovel = `-- name: CreateNovel :one
 INSERT INTO novels (
-    title, description, cover_image, author, status, update_time,
-    latest_chapter_name, total_chapters_number
+    title, description, cover_image, author, status, update_time
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?
 )
-RETURNING id, title, description, cover_image, author, status, update_time, latest_chapter_name, total_chapters_number
+RETURNING id, title, description, cover_image, author, status, update_time
 `
 
 type CreateNovelParams struct {
-	Title               string
-	Description         string
-	CoverImage          string
-	Author              string
-	Status              string
-	UpdateTime          string
-	LatestChapterName   string
-	TotalChaptersNumber int64
+	Title       string
+	Description string
+	CoverImage  string
+	Author      string
+	Status      string
+	UpdateTime  string
 }
 
 func (q *Queries) CreateNovel(ctx context.Context, arg CreateNovelParams) (Novel, error) {
@@ -38,8 +35,6 @@ func (q *Queries) CreateNovel(ctx context.Context, arg CreateNovelParams) (Novel
 		arg.Author,
 		arg.Status,
 		arg.UpdateTime,
-		arg.LatestChapterName,
-		arg.TotalChaptersNumber,
 	)
 	var i Novel
 	err := row.Scan(
@@ -50,8 +45,6 @@ func (q *Queries) CreateNovel(ctx context.Context, arg CreateNovelParams) (Novel
 		&i.Author,
 		&i.Status,
 		&i.UpdateTime,
-		&i.LatestChapterName,
-		&i.TotalChaptersNumber,
 	)
 	return i, err
 }
@@ -66,7 +59,7 @@ func (q *Queries) DeleteNovel(ctx context.Context, id int64) error {
 }
 
 const getNovelByID = `-- name: GetNovelByID :one
-SELECT id, title, description, cover_image, author, status, update_time, latest_chapter_name, total_chapters_number FROM novels
+SELECT id, title, description, cover_image, author, status, update_time FROM novels
 WHERE id = ? LIMIT 1
 `
 
@@ -81,14 +74,12 @@ func (q *Queries) GetNovelByID(ctx context.Context, id int64) (Novel, error) {
 		&i.Author,
 		&i.Status,
 		&i.UpdateTime,
-		&i.LatestChapterName,
-		&i.TotalChaptersNumber,
 	)
 	return i, err
 }
 
 const getNovelByNameLike = `-- name: GetNovelByNameLike :one
-SELECT id, title, description, cover_image, author, status, update_time, latest_chapter_name, total_chapters_number FROM novels
+SELECT id, title, description, cover_image, author, status, update_time FROM novels
 WHERE LOWER(title) LIKE LOWER(?)
 LIMIT 1
 `
@@ -104,14 +95,49 @@ func (q *Queries) GetNovelByNameLike(ctx context.Context, lower string) (Novel, 
 		&i.Author,
 		&i.Status,
 		&i.UpdateTime,
-		&i.LatestChapterName,
-		&i.TotalChaptersNumber,
 	)
 	return i, err
 }
 
+const listNewestHomeNovels = `-- name: ListNewestHomeNovels :many
+SELECT id, title, description, cover_image, author, status, update_time FROM novels
+ORDER BY update_time DESC
+LIMIT 8
+`
+
+func (q *Queries) ListNewestHomeNovels(ctx context.Context) ([]Novel, error) {
+	rows, err := q.db.QueryContext(ctx, listNewestHomeNovels)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Novel
+	for rows.Next() {
+		var i Novel
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.CoverImage,
+			&i.Author,
+			&i.Status,
+			&i.UpdateTime,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listNovels = `-- name: ListNovels :many
-SELECT id, title, description, cover_image, author, status, update_time, latest_chapter_name, total_chapters_number FROM novels
+SELECT id, title, description, cover_image, author, status, update_time FROM novels
 ORDER BY update_time DESC
 `
 
@@ -132,8 +158,6 @@ func (q *Queries) ListNovels(ctx context.Context) ([]Novel, error) {
 			&i.Author,
 			&i.Status,
 			&i.UpdateTime,
-			&i.LatestChapterName,
-			&i.TotalChaptersNumber,
 		); err != nil {
 			return nil, err
 		}
@@ -156,23 +180,19 @@ SET
     cover_image = ?,
     author = ?,
     status = ?,
-    update_time = ?,
-    latest_chapter_name = ?,
-    total_chapters_number = ?
+    update_time = ?
 WHERE id = ?
-RETURNING id, title, description, cover_image, author, status, update_time, latest_chapter_name, total_chapters_number
+RETURNING id, title, description, cover_image, author, status, update_time
 `
 
 type UpdateNovelParams struct {
-	Title               string
-	Description         string
-	CoverImage          string
-	Author              string
-	Status              string
-	UpdateTime          string
-	LatestChapterName   string
-	TotalChaptersNumber int64
-	ID                  int64
+	Title       string
+	Description string
+	CoverImage  string
+	Author      string
+	Status      string
+	UpdateTime  string
+	ID          int64
 }
 
 func (q *Queries) UpdateNovel(ctx context.Context, arg UpdateNovelParams) (Novel, error) {
@@ -183,8 +203,6 @@ func (q *Queries) UpdateNovel(ctx context.Context, arg UpdateNovelParams) (Novel
 		arg.Author,
 		arg.Status,
 		arg.UpdateTime,
-		arg.LatestChapterName,
-		arg.TotalChaptersNumber,
 		arg.ID,
 	)
 	var i Novel
@@ -196,8 +214,6 @@ func (q *Queries) UpdateNovel(ctx context.Context, arg UpdateNovelParams) (Novel
 		&i.Author,
 		&i.Status,
 		&i.UpdateTime,
-		&i.LatestChapterName,
-		&i.TotalChaptersNumber,
 	)
 	return i, err
 }

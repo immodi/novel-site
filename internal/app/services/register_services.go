@@ -15,6 +15,7 @@ func RegisterServices() *Services {
 	dbService, err := NewDBService(DB_PATH)
 	if err != nil {
 		log.Fatal(err)
+
 	}
 
 	return &Services{

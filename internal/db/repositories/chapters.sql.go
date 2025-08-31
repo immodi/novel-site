@@ -23,25 +23,32 @@ func (q *Queries) CountChaptersByNovel(ctx context.Context, novelID int64) (int6
 
 const createChapter = `-- name: CreateChapter :one
 INSERT INTO chapters (
-    novel_id, title, content
+    novel_id, chapter_number, title, content
 ) VALUES (
-    ?, ?, ?
+    ?, ?, ?, ?
 )
-RETURNING id, novel_id, title, content
+RETURNING id, novel_id, chapter_number, title, content
 `
 
 type CreateChapterParams struct {
-	NovelID int64
-	Title   string
-	Content string
+	NovelID       int64
+	ChapterNumber int64
+	Title         string
+	Content       string
 }
 
 func (q *Queries) CreateChapter(ctx context.Context, arg CreateChapterParams) (Chapter, error) {
-	row := q.db.QueryRowContext(ctx, createChapter, arg.NovelID, arg.Title, arg.Content)
+	row := q.db.QueryRowContext(ctx, createChapter,
+		arg.NovelID,
+		arg.ChapterNumber,
+		arg.Title,
+		arg.Content,
+	)
 	var i Chapter
 	err := row.Scan(
 		&i.ID,
 		&i.NovelID,
+		&i.ChapterNumber,
 		&i.Title,
 		&i.Content,
 	)
@@ -58,7 +65,7 @@ func (q *Queries) DeleteChapter(ctx context.Context, id int64) error {
 }
 
 const getChapterByID = `-- name: GetChapterByID :one
-SELECT id, novel_id, title, content FROM chapters
+SELECT id, novel_id, chapter_number, title, content FROM chapters
 WHERE id = ? LIMIT 1
 `
 
@@ -68,16 +75,54 @@ func (q *Queries) GetChapterByID(ctx context.Context, id int64) (Chapter, error)
 	err := row.Scan(
 		&i.ID,
 		&i.NovelID,
+		&i.ChapterNumber,
 		&i.Title,
 		&i.Content,
 	)
 	return i, err
 }
 
-const listChaptersByNovel = `-- name: ListChaptersByNovel :many
-SELECT id, novel_id, title, content FROM chapters
+const getChapterByNumber = `-- name: GetChapterByNumber :one
+SELECT id, novel_id, chapter_number, title, content FROM chapters
+WHERE novel_id = ? AND chapter_number = ?
+LIMIT 1
+`
+
+type GetChapterByNumberParams struct {
+	NovelID       int64
+	ChapterNumber int64
+}
+
+func (q *Queries) GetChapterByNumber(ctx context.Context, arg GetChapterByNumberParams) (Chapter, error) {
+	row := q.db.QueryRowContext(ctx, getChapterByNumber, arg.NovelID, arg.ChapterNumber)
+	var i Chapter
+	err := row.Scan(
+		&i.ID,
+		&i.NovelID,
+		&i.ChapterNumber,
+		&i.Title,
+		&i.Content,
+	)
+	return i, err
+}
+
+const getNextChapterNumber = `-- name: GetNextChapterNumber :one
+SELECT COALESCE(MAX(chapter_number), 0) + 1 as next_number
+FROM chapters
 WHERE novel_id = ?
-ORDER BY id ASC
+`
+
+func (q *Queries) GetNextChapterNumber(ctx context.Context, novelID int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getNextChapterNumber, novelID)
+	var next_number int64
+	err := row.Scan(&next_number)
+	return next_number, err
+}
+
+const listChaptersByNovel = `-- name: ListChaptersByNovel :many
+SELECT id, novel_id, chapter_number, title, content FROM chapters
+WHERE novel_id = ?
+ORDER BY chapter_number ASC
 `
 
 func (q *Queries) ListChaptersByNovel(ctx context.Context, novelID int64) ([]Chapter, error) {
@@ -92,6 +137,7 @@ func (q *Queries) ListChaptersByNovel(ctx context.Context, novelID int64) ([]Cha
 		if err := rows.Scan(
 			&i.ID,
 			&i.NovelID,
+			&i.ChapterNumber,
 			&i.Title,
 			&i.Content,
 		); err != nil {
@@ -109,9 +155,9 @@ func (q *Queries) ListChaptersByNovel(ctx context.Context, novelID int64) ([]Cha
 }
 
 const listChaptersByNovelPaginated = `-- name: ListChaptersByNovelPaginated :many
-SELECT id, novel_id, title, content FROM chapters
+SELECT id, novel_id, chapter_number, title, content FROM chapters
 WHERE novel_id = ?
-ORDER BY id ASC
+ORDER BY chapter_number ASC
 LIMIT ? OFFSET ?
 `
 
@@ -133,6 +179,7 @@ func (q *Queries) ListChaptersByNovelPaginated(ctx context.Context, arg ListChap
 		if err := rows.Scan(
 			&i.ID,
 			&i.NovelID,
+			&i.ChapterNumber,
 			&i.Title,
 			&i.Content,
 		); err != nil {
@@ -147,4 +194,29 @@ func (q *Queries) ListChaptersByNovelPaginated(ctx context.Context, arg ListChap
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateChapterNumber = `-- name: UpdateChapterNumber :one
+UPDATE chapters
+SET chapter_number = ?
+WHERE id = ?
+RETURNING id, novel_id, chapter_number, title, content
+`
+
+type UpdateChapterNumberParams struct {
+	ChapterNumber int64
+	ID            int64
+}
+
+func (q *Queries) UpdateChapterNumber(ctx context.Context, arg UpdateChapterNumberParams) (Chapter, error) {
+	row := q.db.QueryRowContext(ctx, updateChapterNumber, arg.ChapterNumber, arg.ID)
+	var i Chapter
+	err := row.Scan(
+		&i.ID,
+		&i.NovelID,
+		&i.ChapterNumber,
+		&i.Title,
+		&i.Content,
+	)
+	return i, err
 }

@@ -34,6 +34,9 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/", router.handlers.Home.Index)
 
 	router.r.Get("/novel/{novelName}", router.handlers.Novel.GetNovel)
+	router.r.Get("/novel/{novelName}/chapters", router.handlers.Chapter.GetChaptersDropDown)
+	router.r.Get("/novel/{novelName}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
+
 	router.r.Get("/privacy", pathhandlers.PrivacyHandler)
 	router.r.Get("/terms", pathhandlers.TermsHandler)
 	router.r.Get("/login", pathhandlers.LoginHandler)
@@ -41,7 +44,7 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/novels", router.redirectToHome())
 
 	// testing routes, should be disabled in production
-	router.r.Get("/create-novel", router.handlers.Novel.CreateNovel)
+	router.r.Get("/create", router.handlers.Novel.CreateNovelWithDefaults)
 	router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
 
 	router.r.NotFound(router.redirectToHome())

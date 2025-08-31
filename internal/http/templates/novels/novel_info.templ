@@ -15,10 +15,12 @@ type Novel struct {
 	TotalChaptersNumber int
 	Chapters            []Chapter
 	LastChapterName     string
+	LastUpdated         string
 }
 
 type Chapter struct {
-	Title string
+	Title  string
+	Number int
 }
 
 templ NovelInfo(novel Novel) {
@@ -30,11 +32,21 @@ templ NovelInfo(novel Novel) {
 				alt={ novel.Name }
 				class="w-48 h-64 sm:w-56 sm:h-72 lg:w-64 lg:h-80 object-cover rounded-lg shadow-lg"
 			/>
-			<button
-				class="cursor-pointer mt-4 lg:mt-6 w-full sm:w-auto bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 px-6 lg:px-8 rounded-lg transition-colors duration-200"
+			<a
+				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), 1) }
+				class="cursor-pointer mt-4 lg:mt-6 w-fit sm:w-auto bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 px-6 lg:px-8 rounded-lg transition-colors duration-200"
 			>
 				Start Reading
-			</button>
+			</a>
+			<a
+				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), novel.TotalChaptersNumber) }
+				class="cursor-pointer mt-2 w-fit sm:w-auto bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold py-3 px-6 lg:px-8 rounded-lg transition-colors duration-200"
+			>
+				Latest: { novel.LastChapterName }
+			</a>
+			<p class="mt-2 text-sm text-gray-400 dark:text-gray-600">
+				Last updated: { novel.LastUpdated }
+			</p>
 		</div>
 		<!-- Right: Info -->
 		<div class="flex flex-col flex-1">
@@ -67,10 +79,11 @@ templ NovelInfo(novel Novel) {
 				<!-- List -->
 				<div class="max-h-60 sm:max-h-80 overflow-y-auto bg-gray-900 dark:bg-gray-100">
 					for _, chapter := range novel.Chapters {
-						<div
+						<a
+							href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), chapter.Number) }
 							class="flex border-b border-gray-700 dark:border-gray-200 items-center justify-between p-3 hover:bg-gray-800 dark:hover:bg-gray-50 cursor-pointer transition-colors"
 						>
-							<span class="text-gray-100 dark:text-gray-900 text-sm sm:text-base pr-2">
+							<span class="dark:text-gray-900 text-gray-100 text-sm sm:text-base pr-2">
 								{ chapter.Title }
 							</span>
 							<svg
@@ -81,7 +94,7 @@ templ NovelInfo(novel Novel) {
 							>
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
 							</svg>
-						</div>
+						</a>
 					}
 				</div>
 				<!-- Pagination -->

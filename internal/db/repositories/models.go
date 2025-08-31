@@ -5,22 +5,21 @@
 package repositories
 
 type Chapter struct {
-	ID      int64
-	NovelID int64
-	Title   string
-	Content string
+	ID            int64
+	NovelID       int64
+	ChapterNumber int64
+	Title         string
+	Content       string
 }
 
 type Novel struct {
-	ID                  int64
-	Title               string
-	Description         string
-	CoverImage          string
-	Author              string
-	Status              string
-	UpdateTime          string
-	LatestChapterName   string
-	TotalChaptersNumber int64
+	ID          int64
+	Title       string
+	Description string
+	CoverImage  string
+	Author      string
+	Status      string
+	UpdateTime  string
 }
 
 type NovelGenre struct {

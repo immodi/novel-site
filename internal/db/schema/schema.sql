@@ -8,22 +8,25 @@ CREATE TABLE IF NOT EXISTS novels (
     cover_image TEXT NOT NULL DEFAULT '',
     author TEXT NOT NULL DEFAULT '',
     status TEXT NOT NULL DEFAULT '',
-    update_time TEXT NOT NULL DEFAULT '',
-    latest_chapter_name TEXT NOT NULL DEFAULT '',
-    total_chapters_number INTEGER NOT NULL DEFAULT 0
+    update_time TEXT NOT NULL DEFAULT ''
 );
 
--- Table: chapters
+-- Table: chapters (enhanced with chapter_number)
 CREATE TABLE IF NOT EXISTS chapters (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     novel_id INTEGER NOT NULL,
+    chapter_number INTEGER NOT NULL,
     title TEXT NOT NULL,
     content TEXT NOT NULL DEFAULT '',
-    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE
+    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE,
+    UNIQUE(novel_id, chapter_number) -- Ensure unique chapter numbers per novel
 );
 
 -- Index for faster lookups of chapters by novel
 CREATE INDEX IF NOT EXISTS idx_chapters_novel_id ON chapters(novel_id);
+
+-- Index for faster lookups of chapters by novel and chapter number
+CREATE INDEX IF NOT EXISTS idx_chapters_novel_chapter ON chapters(novel_id, chapter_number);
 
 -- Table: novel_genres (many-to-many since genres are a slice)
 CREATE TABLE IF NOT EXISTS novel_genres (
