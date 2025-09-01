@@ -81,6 +81,15 @@ func ExecuteWithResult[T any](s *DBService, fn func(context.Context, *repositori
 	return fn(ctx, queries)
 }
 
+func Execute(s *DBService, fn func(context.Context, *repositories.Queries) error) error {
+	s.mu.RLock()
+	ctx := s.ctx
+	queries := s.queries
+	s.mu.RUnlock()
+
+	return fn(ctx, queries)
+}
+
 // Helper functions for creating sql.Null types
 // NewNullString creates a sql.NullString
 func NewNullString(s string) sql.NullString {

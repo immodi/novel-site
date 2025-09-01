@@ -20,9 +20,15 @@ type Novel struct {
 	Author      string
 	Status      string
 	UpdateTime  string
+	ViewCount   int64
 }
 
 type NovelGenre struct {
 	NovelID int64
 	Genre   string
+}
+
+type NovelTag struct {
+	NovelID int64
+	Tag     string
 }

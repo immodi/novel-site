@@ -6,7 +6,8 @@ import (
 	"immodi/novel-site/internal/app/services"
 	repositories "immodi/novel-site/internal/db/repositories"
 	"immodi/novel-site/internal/http/templates/components"
-	"immodi/novel-site/internal/http/templates/novels"
+	novelscomponents "immodi/novel-site/internal/http/templates/novels"
+	novels "immodi/novel-site/internal/http/templates/novels/components"
 	"immodi/novel-site/pkg"
 	"net/http"
 	"strconv"
@@ -76,7 +77,7 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 	chapters := castDbChaptersToInfoChapters(dbChapters)
 
 	genres, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
-		genreRows, err := q.ListGenresByNovel(ctx, 1) // novel ID
+		genreRows, err := q.ListGenresByNovel(ctx, dbNovel.ID) // novel ID
 		if err != nil {
 			return nil, err
 		}
@@ -94,11 +95,28 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tags, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
+		tagRows, err := q.ListTagsByNovel(ctx, dbNovel.ID) // novel ID
+		if err != nil {
+			return nil, err
+		}
+
+		// Extract just the tag strings from the rows
+		var tags []string
+		for _, row := range tagRows {
+			tags = append(tags, row)
+		}
+		return tags, nil
+	})
+
+	go incrementNovelViews(dbNovel.ID, h.dbService)
+
 	novel := novels.Novel{
 		Name:                dbNovel.Title,
 		Description:         dbNovel.Description,
 		Author:              dbNovel.Author,
 		Genres:              genres,
+		Tags:                tags,
 		Status:              dbNovel.Status,
 		CoverImage:          dbNovel.CoverImage,
 		TotalChaptersNumber: totalChapters,
@@ -128,19 +146,29 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		LatestChapterURL:  fmt.Sprintf("%s/novel/%s/chapter-%d", components.DOMAIN, novel.Name, novel.TotalChaptersNumber),
 	}
 
-	GenericServiceHandler(w, r, metaData, novels.NovelInfo(novel))
+	GenericServiceHandler(w, r, metaData, novelscomponents.NovelInfo(novel))
+}
+
+func incrementNovelViews(novelId int64, dbService *services.DBService) {
+	err := services.Execute(dbService, func(ctx context.Context, q *repositories.Queries) error {
+		return q.IncrementNovelViewCount(ctx, novelId)
+	})
+	if err != nil {
+		fmt.Printf("Failed to increment novel views: %v\n", err)
+	}
 }
 
 func (h *NovelHandler) CreateNovelWithDefaults(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Creating novel with defaults...")
+	novelName := chi.URLParam(r, "novelName")
+
 	dbNovel, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) (repositories.Novel, error) {
 		return q.CreateNovel(ctx, repositories.CreateNovelParams{
-			Title:       "Test Novel",
+			Title:       novelName,
 			Description: "This is a default novel description.",
 			CoverImage:  "https://dummyimage.com/500x720/8a818a/ffffff",
 			Author:      "Default Author 1",
 			Status:      "Ongoing",
-			UpdateTime:  "2025-08-30",
+			UpdateTime:  pkg.GetCurrentTimeRFC3339(),
 		})
 	})
 
@@ -164,7 +192,21 @@ func (h *NovelHandler) CreateNovelWithDefaults(w http.ResponseWriter, r *http.Re
 		}
 	}
 
-	fmt.Println(dbNovel.Author)
+	defaultTags := []string{"Harem", "Male Protagonist", "Magic", "Dragons"}
+
+	for _, tag := range defaultTags {
+		_, err = services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) (any, error) {
+			return nil, q.AddTagToNovel(ctx, repositories.AddTagToNovelParams{
+				NovelID: dbNovel.ID,
+				Tag:     tag,
+			})
+		})
+
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to add tag %s: %v", tag, err), http.StatusInternalServerError)
+			return
+		}
+	}
 
 	http.Redirect(w, r, "/novel", http.StatusSeeOther)
 }

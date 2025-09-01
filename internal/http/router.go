@@ -44,7 +44,7 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/novels", router.redirectToHome())
 
 	// testing routes, should be disabled in production
-	router.r.Get("/create", router.handlers.Novel.CreateNovelWithDefaults)
+	router.r.Get("/create-novel/{novelName}", router.handlers.Novel.CreateNovelWithDefaults)
 	router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
 
 	router.r.NotFound(router.redirectToHome())

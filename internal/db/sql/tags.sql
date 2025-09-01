@@ -1,0 +1,26 @@
+-- name: AddTagToNovel :exec
+INSERT INTO novel_tags (novel_id, tag)
+VALUES (?, ?)
+ON CONFLICT(novel_id, tag) DO NOTHING;
+
+-- name: RemoveTagFromNovel :exec
+DELETE FROM novel_tags
+WHERE novel_id = ? AND tag = ?;
+
+-- name: ListTagsByNovel :many
+SELECT tag
+FROM novel_tags
+WHERE novel_id = ?
+ORDER BY tag ASC;
+
+-- name: ListNovelsByTag :many
+SELECT n.*
+FROM novels n
+JOIN novel_tags t ON n.id = t.novel_id
+WHERE t.tag = ?
+ORDER BY n.update_time DESC;
+
+-- name: DeleteAllTagsByNovel :exec
+DELETE FROM novel_tags
+WHERE novel_id = ?;
+

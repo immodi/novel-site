@@ -7,7 +7,7 @@ import (
 	repositories "immodi/novel-site/internal/db/repositories"
 	novels "immodi/novel-site/internal/http/templates/chapters"
 	"immodi/novel-site/internal/http/templates/components"
-	cnovels "immodi/novel-site/internal/http/templates/novels"
+	cnovels "immodi/novel-site/internal/http/templates/novels/components"
 	"immodi/novel-site/pkg"
 	"net/http"
 	"strconv"

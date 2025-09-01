@@ -1,144 +1,94 @@
 package novels
 
-import "fmt"
-import "immodi/novel-site/pkg"
+import "immodi/novel-site/internal/http/templates/novels/components"
 
-type Novel struct {
-	Name                string
-	Description         string
-	Author              string
-	Genres              []string
-	Status              string
-	CoverImage          string
-	CurrentPage         int
-	TotalPages          int
-	TotalChaptersNumber int
-	Chapters            []Chapter
-	LastChapterName     string
-	LastUpdated         string
-}
-
-type Chapter struct {
-	Title  string
-	Number int
-}
-
-templ NovelInfo(novel Novel) {
-	<div class="flex w-full flex-col lg:flex-row gap-6 lg:gap-8 mx-auto p-4 lg:p-8 bg-gray-900 dark:bg-gray-100">
-		<!-- Left: Cover and Start Reading -->
-		<div class="flex flex-col items-center lg:flex-shrink-0">
-			<img
-				src={ novel.CoverImage }
-				alt={ novel.Name }
-				class="w-48 h-64 sm:w-56 sm:h-72 lg:w-64 lg:h-80 object-cover rounded-lg shadow-lg"
-			/>
-			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), 1) }
-				class="cursor-pointer mt-4 lg:mt-6 w-fit sm:w-auto bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 px-6 lg:px-8 rounded-lg transition-colors duration-200"
-			>
-				Start Reading
-			</a>
-			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), novel.TotalChaptersNumber) }
-				class="cursor-pointer mt-2 w-fit sm:w-auto bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold py-3 px-6 lg:px-8 rounded-lg transition-colors duration-200"
-			>
-				Latest: { novel.LastChapterName }
-			</a>
-			<p class="mt-2 text-sm text-gray-400 dark:text-gray-600">
-				Last updated: { novel.LastUpdated }
-			</p>
+templ NovelInfo(novel components.Novel) {
+	<div class="w-full px-4 py-8 bg-[#121212] dark:bg-white text-gray-100 dark:text-gray-900">
+		<!-- Header section with novel info -->
+		<div class="flex flex-col md:flex-row gap-8 mb-8">
+			<!-- Cover image and actions -->
+			@components.CoverImageComponent(&novel)
+			<!-- Novel details -->
+			@components.NovelDetailsComponent(&novel)
 		</div>
-		<!-- Right: Info -->
-		<div class="flex flex-col flex-1">
-			<h1
-				class="text-2xl sm:text-3xl font-bold text-gray-100 dark:text-gray-900 mb-3 lg:mb-2 text-center lg:text-left"
-			>
-				{ novel.Name }
-			</h1>
-			<div class="flex flex-wrap gap-2 mb-4 justify-center lg:justify-start">
-				for _, genre := range novel.Genres {
-					<span class="bg-gray-700 dark:bg-gray-200 text-gray-100 dark:text-gray-800 px-3 py-1 rounded text-sm">
-						{ genre }
-					</span>
-				}
-			</div>
-			<p class="text-gray-300 dark:text-gray-700 leading-relaxed mb-4 lg:mb-6 text-sm sm:text-base">
-				{ novel.Description }
-			</p>
-			<div class="text-gray-400 dark:text-gray-600 text-sm mb-6 space-y-1">
-				<p>Author: { novel.Author }</p>
-				<p>Status: { novel.Status }</p>
-			</div>
-			<!-- Chapters -->
-			<div class="border border-gray-600 dark:border-gray-300 rounded-lg">
-				<div class="bg-gray-800 dark:bg-gray-100 px-3 sm:px-4 py-3 border-b border-gray-600 dark:border-gray-300">
-					<h2 class="text-base sm:text-lg font-semibold text-gray-100 dark:text-gray-900">
-						Chapters ({ fmt.Sprintf("%d", novel.TotalChaptersNumber) })
-					</h2>
-				</div>
-				<!-- List -->
-				<div class="max-h-60 sm:max-h-80 overflow-y-auto bg-gray-900 dark:bg-gray-100">
-					for _, chapter := range novel.Chapters {
-						<a
-							href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), chapter.Number) }
-							class="flex border-b border-gray-700 dark:border-gray-200 items-center justify-between p-3 hover:bg-gray-800 dark:hover:bg-gray-50 cursor-pointer transition-colors"
-						>
-							<span class="dark:text-gray-900 text-gray-100 text-sm sm:text-base pr-2">
-								{ chapter.Title }
-							</span>
-							<svg
-								class="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-							</svg>
-						</a>
-					}
-				</div>
-				<!-- Pagination -->
-				{{ isPreviousPage := novel.CurrentPage > 1 }}
-				{{ isNextPage := novel.CurrentPage < novel.TotalPages }}
-				<div
-					class="flex justify-center items-center gap-2 py-3 bg-gray-800 dark:bg-gray-100 border-t border-gray-600 dark:border-gray-300"
-				>
-					if isPreviousPage {
-						<a
-							href={ fmt.Sprintf("/novel/%s?page=%d", pkg.TitleToSlug(novel.Name), novel.CurrentPage-1) }
-							class="px-3 py-1 rounded bg-gray-700 dark:bg-gray-200 cursor-pointer text-gray-100 dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-300"
-						>
-							&lt;
-						</a>
-					}
-					for _, i := range pkg.MakePages(novel.TotalPages) {
-						if i == novel.CurrentPage {
-							<a
-								href={ fmt.Sprintf("/novel/%s?page=%d", pkg.TitleToSlug(novel.Name), i) }
-								class="px-3 py-1 rounded bg-blue-500 text-white font-semibold cursor-pointer"
-							>
-								{ fmt.Sprintf("%d",
-                    i) }
-							</a>
-						} else {
-							<a
-								href={ fmt.Sprintf("/novel/%s?page=%d", pkg.TitleToSlug(novel.Name), i) }
-								class="px-3 py-1 rounded text-white bg-gray-700 dark:bg-gray-400 hover:bg-gray-600 cursor-pointer dark:hover:bg-gray-300"
-							>
-								{ fmt.Sprintf("%d", i) }
-							</a>
-						}
-					}
-					if isNextPage {
-						<a
-							href={ fmt.Sprintf("/novel/%s?page=%d", pkg.TitleToSlug(novel.Name), novel.CurrentPage+1) }
-							class="px-3 py-1 rounded bg-gray-700 dark:bg-gray-200 text-gray-100 cursor-pointer dark:text-gray-800 hover:bg-gray-600 dark:hover:bg-gray-300"
-						>
-							&gt;
-						</a>
-					}
-				</div>
-			</div>
-		</div>
+		<!-- Tabs navigation -->
+		@components.NavigationComponent()
+		<!-- Description section -->
+		@components.DescriptionComponent(&novel)
+		<!-- Chapters section -->
+		@components.ChapterListComponent(&novel)
+		<!-- Comments section -->
+		@components.CommentsComponent()
+		<!-- Tab Navigation JavaScript -->
+		@NovelInfoStyles()
+		@TabSwitchScript()
 	</div>
+}
+
+templ NovelInfoStyles() {
+	<style>
+    .prose-invert {
+        color: #e5e5e5;
+    }
+
+    .prose-invert p {
+        margin-bottom: 1rem;
+    }
+
+    .prose-dark {
+        color: #374151;
+    }
+</style>
+}
+
+templ TabSwitchScript() {
+	<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get all tab links and tab content
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Function to switch tabs
+        function switchTab(tabName) {
+            // Hide all tab contents
+            tabContents.forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            // Show the selected tab content
+            document.getElementById(tabName).classList.remove('hidden');
+
+            // Update active tab style
+            tabLinks.forEach(link => {
+                if (link.getAttribute('data-tab') === tabName) {
+                    link.classList.add('text-blue-400', 'dark:text-blue-600', 'border-blue-400', 'dark:border-blue-600');
+                    link.classList.remove('text-gray-400', 'dark:text-gray-600', 'border-transparent');
+                } else {
+                    link.classList.remove('text-blue-400', 'dark:text-blue-600', 'border-blue-400', 'dark:border-blue-600');
+                    link.classList.add('text-gray-400', 'dark:text-gray-600', 'border-transparent');
+                }
+            });
+
+            // Update URL hash
+            window.location.hash = tabName;
+        }
+
+        // Add click event listeners to tab links
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const tabName = this.getAttribute('data-tab');
+                switchTab(tabName);
+            });
+        });
+
+        // Check if there's a hash in the URL and switch to that tab
+        if (window.location.hash) {
+            const tabName = window.location.hash.substring(1);
+            if (['description', 'chapters', 'comments'].includes(tabName)) {
+                switchTab(tabName);
+            }
+        }
+    });
+</script>
 }

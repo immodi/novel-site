@@ -44,3 +44,9 @@ SET chapter_number = ?
 WHERE id = ?
 RETURNING *;
 
+-- name: GetLatestChapterByNovel :one
+SELECT *
+FROM chapters
+WHERE novel_id = ?
+ORDER BY chapter_number DESC
+LIMIT 1;

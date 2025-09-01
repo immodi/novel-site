@@ -31,7 +31,7 @@ func Header(navLinks []string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"w-full flex justify-between items-center bg-gray-900 dark:bg-gray-100 text-white dark:text-black px-6 py-4\"><!-- Logo --><a href=\"/\" class=\"text-3xl font-bold flex justify-center items-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"w-full flex justify-between items-center bg-[#121212] dark:bg-white border-[#252525] dark:border-[#ededed] border-b-1 text-white dark:text-black px-6 py-4\"><!-- Logo --><a href=\"/\" class=\"text-3xl font-bold flex justify-center items-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

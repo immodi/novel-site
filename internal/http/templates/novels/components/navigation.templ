@@ -1,0 +1,35 @@
+package components
+
+templ NavigationComponent() {
+	<div class="border-b border-[#252525] dark:border-[#ededed] mb-6">
+		<ul class="flex flex-wrap -mb-px" id="novel-tabs">
+			<li class="mr-2">
+				<a
+					href="#description"
+					data-tab="description"
+					class="tab-link inline-block py-4 px-4 text-sm font-medium text-center text-blue-400 dark:text-blue-600 border-b-2 border-blue-400 dark:border-blue-600"
+				>
+					Description
+				</a>
+			</li>
+			<li class="mr-2">
+				<a
+					href="#chapters"
+					data-tab="chapters"
+					class="tab-link inline-block py-4 px-4 text-sm font-medium text-center text-gray-400 dark:text-gray-600 hover:text-gray-300 dark:hover:text-gray-800 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+				>
+					Chapter List
+				</a>
+			</li>
+			<li class="mr-2">
+				<a
+					href="#comments"
+					data-tab="comments"
+					class="tab-link inline-block py-4 px-4 text-sm font-medium text-center text-gray-400 dark:text-gray-600 hover:text-gray-300 dark:hover:text-gray-800 border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+				>
+					Comments
+				</a>
+			</li>
+		</ul>
+	</div>
+}

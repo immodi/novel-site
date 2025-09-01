@@ -7,7 +7,7 @@ import (
 	repositories "immodi/novel-site/internal/db/repositories"
 	"immodi/novel-site/internal/http/templates/components"
 	"immodi/novel-site/internal/http/templates/index"
-	"immodi/novel-site/internal/http/templates/novels"
+	homenovelsdto "immodi/novel-site/internal/http/templates/index/components"
 	"net/http"
 )
 
@@ -31,7 +31,7 @@ func NewHomeHandler(dbService *services.DBService) *HomeHandler {
 }
 
 func (h *HomeHandler) Index(w http.ResponseWriter, r *http.Request) {
-	dbNovels, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
+	dbNewestNovels, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
 		return q.ListNewestHomeNovels(ctx)
 	})
 
@@ -39,18 +39,76 @@ func (h *HomeHandler) Index(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	novels := make([]novels.Novel, len(dbNovels))
 
-	for i, dbNovel := range dbNovels {
-		novels[i] = *dbNovelToHomeNovelMapper(dbNovel)
+	dbHotNovels, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
+		return q.ListHotNovels(ctx)
+	})
+
+	newestNovels, err := dbNovelToHomeNovelMapper(dbNewestNovels, h)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	GenericServiceHandler(w, r, IndexMetaData, index.Index(novels))
+	hotNovels, err := dbNovelToHomeNovelMapper(dbHotNovels, h)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	GenericServiceHandler(w, r, IndexMetaData, index.Index(hotNovels, newestNovels, newestNovels))
 }
 
-func dbNovelToHomeNovelMapper(dbNovel repositories.Novel) *novels.Novel {
-	return &novels.Novel{
-		Name:       dbNovel.Title,
-		CoverImage: dbNovel.CoverImage,
+func dbNovelToHomeNovelMapper(dbNovels []repositories.Novel, h *HomeHandler) ([]homenovelsdto.HomeNovelDto, error) {
+	novels := make([]homenovelsdto.HomeNovelDto, 0, len(dbNovels))
+
+	for _, dbNovel := range dbNovels {
+
+		var dbLatestChapter repositories.Chapter
+
+		dbLatestChapter, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) (repositories.Chapter, error) {
+			return q.GetLatestChapterByNovel(ctx, dbNovel.ID)
+		})
+
+		if err != nil {
+			if err.Error() == "sql: no rows in result set" {
+				dbLatestChapter = repositories.Chapter{
+					Title: "Chapter doesn't exist",
+				}
+			} else {
+				return nil, err
+			}
+		}
+
+		dbNovelGenres, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
+			return q.ListGenresByNovel(ctx, dbNovel.ID)
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		dbChaptersCount, err := services.ExecuteWithResult(h.dbService, func(ctx context.Context, q *repositories.Queries) (int64, error) {
+			return q.CountChaptersByNovel(ctx, dbNovel.ID)
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		novels = append(novels, homenovelsdto.HomeNovelDto{
+			Name:                 dbNovel.Title,
+			CoverImage:           dbNovel.CoverImage,
+			LastestChapterNumber: int(dbLatestChapter.ChapterNumber),
+			LastestChapterName:   dbLatestChapter.Title,
+			Status:               dbNovel.Status,
+			Genres:               dbNovelGenres,
+			LastUpdated:          dbNovel.UpdateTime,
+			ChaptersCount:        int(dbChaptersCount),
+		})
 	}
+
+	return novels, nil
 }

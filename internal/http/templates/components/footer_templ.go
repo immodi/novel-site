@@ -31,14 +31,14 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"w-full flex flex-col sm:flex-row justify-between items-center \n\t\t       border-t border-gray-700 dark:border-gray-300 \n\t\t       py-6 px-8 \n\t\t       bg-gray-900 text-gray-100 \n\t\t       dark:bg-gray-100 dark:text-gray-900 text-sm\"><p class=\"mb-4 sm:mb-0\">© ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"w-full flex flex-col sm:flex-row justify-between items-center \n               py-6 px-8 text-white dark:text-black\n               border-t-1 bg-[#121212] dark:bg-white border-[#252525] dark:border-[#ededed] text-sm\"><p class=\"mb-4 sm:mb-0\">© ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(Year())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/components/footer.templ`, Line: 13, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/components/footer.templ`, Line: 11, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

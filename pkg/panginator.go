@@ -1,6 +1,6 @@
 package pkg
 
-const PAGE_LIMIT = 20
+const PAGE_LIMIT = 21
 
 func MakePages(total int) []int {
 	pages := make([]int, total)

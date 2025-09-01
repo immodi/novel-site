@@ -106,6 +106,27 @@ func (q *Queries) GetChapterByNumber(ctx context.Context, arg GetChapterByNumber
 	return i, err
 }
 
+const getLatestChapterByNovel = `-- name: GetLatestChapterByNovel :one
+SELECT id, novel_id, chapter_number, title, content
+FROM chapters
+WHERE novel_id = ?
+ORDER BY chapter_number DESC
+LIMIT 1
+`
+
+func (q *Queries) GetLatestChapterByNovel(ctx context.Context, novelID int64) (Chapter, error) {
+	row := q.db.QueryRowContext(ctx, getLatestChapterByNovel, novelID)
+	var i Chapter
+	err := row.Scan(
+		&i.ID,
+		&i.NovelID,
+		&i.ChapterNumber,
+		&i.Title,
+		&i.Content,
+	)
+	return i, err
+}
+
 const getNextChapterNumber = `-- name: GetNextChapterNumber :one
 SELECT COALESCE(MAX(chapter_number), 0) + 1 as next_number
 FROM chapters

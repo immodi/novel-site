@@ -2,40 +2,251 @@ package index
 
 import (
 	"fmt"
-	"immodi/novel-site/internal/http/templates/novels"
+	"immodi/novel-site/internal/http/templates/index/components"
 	"immodi/novel-site/pkg"
 )
 
-const TOTAL_ITEMS = 8
-
-templ Index(novels []novels.Novel) {
-	<div class="w-screen h-fit min-h-screen flex justify-center pb-16 p-8 bg-gray-900 dark:bg-gray-100">
-		@NovelsGrid(novels)
+templ Index(
+	hotNovels []components.HomeNovelDto,
+	latestNovels []components.HomeNovelDto,
+	completedNovels []components.HomeNovelDto,
+) {
+	<div class="w-full bg-[#121212] dark:bg-white text-gray-100 dark:text-gray-900">
+		<!-- Breadcrumb section -->
+		<div class="w-full bg-gray-900 dark:bg-gray-100 py-4">
+			<div class="container max-w-7xl mx-auto px-4">
+				<h2 class="text-center text-gray-300 dark:text-gray-700 text-sm md:text-base">
+					Read daily updated english translated novel, light novel, web novel, korean novel, chinese novel, read
+					novel full online free. Read free light novels online.
+				</h2>
+			</div>
+		</div>
+		<!-- Hot Novels Section -->
+		<div class="container max-w-7xl mx-auto px-4 py-8">
+			<div class="flex flex-col md:flex-row justify-between items-center mb-6">
+				<h2 class="text-2xl font-bold mb-4 md:mb-0">
+					<a href="/sort/hot" class="hover:underline">Hot Novel</a>
+				</h2>
+				<div class="flex items-center">
+					<a
+						href="/sort/hot"
+						class="mr-3 text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-700"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-6 w-6"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"
+							></path>
+						</svg>
+					</a>
+					<select
+						class="bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+					>
+						<option value="all">All</option>
+						<option value="ACTION">ACTION</option>
+						<option value="ADVENTURE">ADVENTURE</option>
+						<option value="FANTASY">FANTASY</option>
+						<option value="ROMANCE">ROMANCE</option>
+						<option value="MYSTERY">MYSTERY</option>
+						<option value="SUPERNATURAL">SUPERNATURAL</option>
+						<!-- More genres would go here -->
+					</select>
+				</div>
+			</div>
+			<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+				for _, novel := range hotNovels {
+					<div class="relative order-first">
+						<a href={ fmt.Sprintf("/novel/%s", pkg.TitleToSlug(novel.Name)) } class="block group">
+							<div class="relative overflow-hidden rounded-lg shadow-lg">
+								<img
+									src={ novel.CoverImage }
+									alt={ novel.Name }
+									class="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
+								/>
+								if novel.Status == "Completed" {
+									<span class="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full">
+										Completed
+									</span>
+								}
+							</div>
+							<div class="mt-3">
+								<h3
+									class="font-semibold text-sm line-clamp-2 group-hover:text-blue-400 dark:group-hover:text-blue-600 transition-colors"
+								>
+									{ novel.Name }
+								</h3>
+							</div>
+						</a>
+					</div>
+				}
+			</div>
+		</div>
+		<!-- Latest Release Section -->
+		<div class="container max-w-7xl mx-auto px-4 py-8">
+			<div class="flex flex-col md:flex-row justify-between items-center mb-6">
+				<h2 class="text-2xl font-bold mb-4 md:mb-0">
+					<a href="/sort/latest" class="hover:underline">Latest Release</a>
+				</h2>
+				<div class="flex items-center">
+					<a
+						href="/sort/latest"
+						class="mr-3 text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-700"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-6 w-6"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+						</svg>
+					</a>
+					<select
+						class="bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+					>
+						<option value="all">All</option>
+						<option value="ACTION">ACTION</option>
+						<option value="ADVENTURE">ADVENTURE</option>
+						<option value="FANTASY">FANTASY</option>
+						<option value="ROMANCE">ROMANCE</option>
+						<option value="MYSTERY">MYSTERY</option>
+						<option value="SUPERNATURAL">SUPERNATURAL</option>
+						<!-- More genres would go here -->
+					</select>
+				</div>
+			</div>
+			<div
+				class="bg-[#1a1a1a] dark:bg-gray-100 rounded-lg overflow-hidden border border-[#252525] dark:border-gray-300"
+			>
+				<div
+					class="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-[#252525] dark:border-gray-300 text-sm font-semibold"
+				>
+					<div class="col-span-5">Title</div>
+					<div class="col-span-3">Genre</div>
+					<div class="col-span-2">Latest Chapter</div>
+					<div class="col-span-2 text-right">Updated</div>
+				</div>
+				for _, novel := range latestNovels {
+					<div
+						class="p-4 border-b border-[#252525] dark:border-gray-300 hover:bg-[#252525] dark:hover:bg-gray-200 transition-colors"
+					>
+						<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+							<div class="md:col-span-5 flex items-center">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4 mr-2 text-blue-400 dark:text-blue-600 flex-shrink-0"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+								</svg>
+								<a
+									href={ fmt.Sprintf("/novel/%s", pkg.TitleToSlug(novel.Name)) }
+									class="font-medium hover:text-blue-400 dark:hover:text-blue-600 transition-colors line-clamp-1"
+								>
+									{ novel.Name }
+								</a>
+							</div>
+							<div class="md:col-span-3 text-sm text-gray-400 dark:text-gray-600">
+								<div class="flex flex-wrap gap-1">
+									for _, genre := range novel.Genres {
+										<a href="" class="hover:text-blue-400 dark:hover:text-blue-600 transition-colors">
+											{ genre }
+										</a>
+									}
+								</div>
+							</div>
+							<div class="md:col-span-2">
+								<a
+									href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name),
+                            novel.LastestChapterNumber) }
+									class="text-blue-400 dark:text-blue-600 hover:underline text-sm"
+								>
+									{ novel.LastestChapterName }
+								</a>
+							</div>
+							<div class="md:col-span-2 text-sm text-gray-400 dark:text-gray-600 text-right">
+								{ pkg.TimeAgo(novel.LastUpdated) }
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+		<!-- Completed Novels Section -->
+		<div class="container max-w-7xl mx-auto px-4 py-8">
+			<div class="flex justify-between items-center mb-6">
+				<h2 class="text-2xl font-bold">
+					<a href="/sort/completed" class="hover:underline">Novel Completed</a>
+				</h2>
+				<a
+					href="/sort/completed"
+					class="text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-700"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+					</svg>
+				</a>
+			</div>
+			<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+				for _, novel := range completedNovels {
+					<div>
+						<a href={ fmt.Sprintf("/novel/%s", pkg.TitleToSlug(novel.Name)) } class="block group">
+							<div class="relative overflow-hidden rounded-lg shadow-lg">
+								<img
+									src={ novel.CoverImage }
+									alt={ novel.Name }
+									class="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
+								/>
+								<span class="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full">
+									Completed
+								</span>
+							</div>
+							<div class="mt-3">
+								<h3
+									class="font-semibold text-sm line-clamp-2 group-hover:text-blue-400 dark:group-hover:text-blue-600 transition-colors"
+								>
+									{ novel.Name }
+								</h3>
+								<p class="text-xs text-gray-400 dark:text-gray-600 mt-1">
+									{ fmt.Sprintf("%d chapters", novel.ChaptersCount) }
+								</p>
+							</div>
+						</a>
+					</div>
+				}
+			</div>
+		</div>
 	</div>
-}
+	<style>
+    .line-clamp-1 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+    }
 
-templ NovelsGrid(novels []novels.Novel) {
-	<div class="grid mt-8 grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-12 w-full max-w-7xl">
-		for _, novel := range novels {
-			@novelsGridItem(&novel)
-		}
-	</div>
-}
-
-templ novelsGridItem(novel *novels.Novel) {
-	<a
-		class="flex flex-col items-center hover:opacity-80 transition-opacity duration-200"
-		href={ fmt.Sprintf("/novel/%s",
-    pkg.TitleToSlug(novel.Name)) }
-	>
-		<img
-			src={ novel.CoverImage }
-			alt={ novel.Name }
-			loading="lazy"
-			class="w-48 h-64 object-cover rounded-md shadow-lg dark:shadow-gray-300"
-		/>
-		<span class="mt-3 text-base font-medium text-white dark:text-black text-center leading-snug max-w-[12rem]">
-			{ novel.Name }
-		</span>
-	</a>
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+</style>
 }

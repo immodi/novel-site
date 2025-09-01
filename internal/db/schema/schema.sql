@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS novels (
     cover_image TEXT NOT NULL DEFAULT '',
     author TEXT NOT NULL DEFAULT '',
     status TEXT NOT NULL DEFAULT '',
-    update_time TEXT NOT NULL DEFAULT ''
+    update_time TEXT NOT NULL DEFAULT '',
+    view_count INTEGER NOT NULL DEFAULT 0
 );
 
 -- Table: chapters (enhanced with chapter_number)
@@ -35,3 +36,19 @@ CREATE TABLE IF NOT EXISTS novel_genres (
     PRIMARY KEY (novel_id, genre),
     FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE
 );
+
+
+-- Table: novel_tags (many-to-many for tags)
+CREATE TABLE IF NOT EXISTS novel_tags (
+    novel_id INTEGER NOT NULL,
+    tag TEXT NOT NULL,
+    PRIMARY KEY (novel_id, tag),
+    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE
+);
+
+-- Optional: index for faster lookups by novel
+CREATE INDEX IF NOT EXISTS idx_novel_tags_novel_id ON novel_tags(novel_id);
+
+-- Optional: index for faster lookups by tag (if you want to query novels by tag)
+CREATE INDEX IF NOT EXISTS idx_novel_tags_tag ON novel_tags(tag);
+
