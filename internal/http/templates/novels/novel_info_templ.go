@@ -8,9 +8,12 @@ package novels
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "immodi/novel-site/internal/http/templates/novels/components"
+import (
+	components "immodi/novel-site/internal/http/components/novels"
+	"immodi/novel-site/internal/http/structs/novels"
+)
 
-func NovelInfo(novel components.Novel) templ.Component {
+func NovelInfo(novel novelsdtostructs.Novel) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

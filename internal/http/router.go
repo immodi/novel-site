@@ -1,9 +1,7 @@
 package http
 
 import (
-	handlers "immodi/novel-site/internal/app/handlers"
-	pathhandlers "immodi/novel-site/internal/app/handlers/paths"
-	"immodi/novel-site/internal/app/services"
+	"immodi/novel-site/internal/http/utils"
 	"log"
 	"net/http"
 
@@ -13,8 +11,8 @@ import (
 
 type Router struct {
 	r        *chi.Mux
-	handlers *handlers.Handlers
-	services *services.Services
+	handlers *utils.Handlers
+	services *utils.Services
 }
 
 func (router *Router) NewRouter() *chi.Mux {
@@ -37,25 +35,25 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/novel/{novelName}/chapters", router.handlers.Chapter.GetChaptersDropDown)
 	router.r.Get("/novel/{novelName}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
 
-	router.r.Get("/privacy", pathhandlers.PrivacyHandler)
-	router.r.Get("/terms", pathhandlers.TermsHandler)
-	router.r.Get("/login", pathhandlers.LoginHandler)
-	router.r.Get("/register", pathhandlers.RegisterHandler)
+	router.r.Get("/privacy", router.handlers.Privacy.Privacy)
+	router.r.Get("/terms", router.handlers.Terms.Terms)
+	router.r.Get("/login", router.handlers.Auth.LoginHandler)
+	router.r.Get("/register", router.handlers.Auth.RegisterHandler)
 	router.r.Get("/novels", router.redirectToHome())
 
 	// testing routes, should be disabled in production
-	router.r.Get("/create-novel/{novelName}", router.handlers.Novel.CreateNovelWithDefaults)
+	router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)
 	router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
 
 	router.r.NotFound(router.redirectToHome())
 }
 
 func (router *Router) RegisterServices() {
-	router.services = services.RegisterServices()
+	router.services = utils.RegisterServices()
 }
 
 func (router *Router) RegisterHandlers() {
-	router.handlers = handlers.RegisterHandlers(router.services)
+	router.handlers = utils.RegisterHandlers(router.services)
 }
 
 func (router *Router) redirectToHome() http.HandlerFunc {

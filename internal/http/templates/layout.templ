@@ -1,8 +1,11 @@
 package templates
 
-import "immodi/novel-site/internal/http/templates/components"
+import (
+	components "immodi/novel-site/internal/http/components/index"
+	"immodi/novel-site/internal/http/structs/index"
+)
 
-templ Layout(data *components.MetaDataStruct, content templ.Component) {
+templ Layout(data *indexdtostructs.MetaDataStruct, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>

@@ -2,12 +2,20 @@ package pkg
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 )
 
 // GetCurrentTimeRFC3339 returns the current UTC time as an RFC3339 string
 func GetCurrentTimeRFC3339() string {
 	return time.Now().UTC().Format(time.RFC3339)
+}
+
+// GetRandomYear returns a random year between min and current year
+func GetRandomYear(min int) int {
+	rand.New(rand.NewSource(time.Now().UnixNano()))
+	currentYear := time.Now().Year()
+	return rand.Intn(currentYear-min+1) + min
 }
 
 // HumanReadableDate converts an RFC3339 datetime string to a human-readable date

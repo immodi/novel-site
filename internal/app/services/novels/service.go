@@ -1,0 +1,19 @@
+package novels
+
+import (
+	"immodi/novel-site/internal/db/repositories"
+)
+
+type NovelService interface {
+	GetNovelByName(name string) (repositories.Novel, error)
+	GetChapters(novelID, page int) ([]repositories.Chapter, error)
+	GetGenres(novelID int64) ([]string, error)
+	GetTags(novelID int64) ([]string, error)
+	CountChapters(novelID int64) (int, error)
+	GetLastChapter(novelID int64) (repositories.Chapter, error)
+	CreateNovel(params repositories.CreateNovelParams) (repositories.Novel, error)
+	CreateNovelWithDefaults(title string, isCompleted bool) (repositories.Novel, error)
+	AddGenreToNovel(novelID int64, genre string) error
+	AddTagToNovel(novelID int64, tag string) error
+	IncrementNovelViewCount(novelID int64) error
+}

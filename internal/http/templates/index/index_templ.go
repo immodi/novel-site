@@ -10,14 +10,14 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-	"immodi/novel-site/internal/http/templates/index/components"
+	"immodi/novel-site/internal/http/structs/index"
 	"immodi/novel-site/pkg"
 )
 
 func Index(
-	hotNovels []components.HomeNovelDto,
-	latestNovels []components.HomeNovelDto,
-	completedNovels []components.HomeNovelDto,
+	hotNovels []indexdtostructs.HomeNovelDto,
+	latestNovels []indexdtostructs.HomeNovelDto,
+	completedNovels []indexdtostructs.HomeNovelDto,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

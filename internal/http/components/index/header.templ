@@ -1,0 +1,117 @@
+package components
+
+import "strings"
+import "immodi/novel-site/internal/http/structs/index"
+
+templ Header(navLinks []string) {
+	<header
+		class="w-full flex justify-between items-center bg-[#121212] dark:bg-white border-[#252525] dark:border-[#ededed] border-b-1 text-white dark:text-black px-6 py-4"
+	>
+		<!-- Logo -->
+		<a href="/" class="text-3xl font-bold flex justify-center items-center">{ indexdtostructs.SITE_NAME }</a>
+		<!-- Navigation Links -->
+		<div class="flex items-center justify-between w-fit h-full">
+			<nav class="hidden md:flex items-center justify-center space-x-8 text-lg mt-1 mx-4">
+				for _, link := range navLinks {
+					<a href={ "/" + strings.ToLower(link) } class="relative pb-1 group">
+						{ link }
+						<span
+							class="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-blue-600 transition-all duration-200 group-hover:w-full"
+						></span>
+					</a>
+				}
+			</nav>
+			<!-- Right Side Controls -->
+			<div class="flex items-center ml-4">
+				@ThemeToggle()
+				<!-- Mobile Hamburger -->
+				<button
+					id="menuToggle"
+					class="md:hidden ml-4 cursor-pointer w-6 h-5 flex flex-col justify-between items-center"
+				>
+					<span class="block w-6 h-0.5 bg-white dark:bg-black rounded"></span>
+					<span class="block w-6 h-0.5 bg-white dark:bg-black rounded"></span>
+					<span class="block w-6 h-0.5 bg-white dark:bg-black rounded"></span>
+				</button>
+			</div>
+		</div>
+	</header>
+	<!-- Mobile Menu Overlay -->
+	<div
+		id="mobileMenu"
+		class="fixed top-0 right-0 w-screen h-screen bg-[#121212] dark:bg-white text-white dark:text-black z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col"
+	>
+		<!-- Close Button -->
+		<button id="closeMenu" class="absolute top-6 right-6 text-3xl cursor-pointer">✕</button>
+		<!-- Links -->
+		<div class="flex flex-col items-center justify-center h-full space-y-8 text-2xl">
+			for _, link := range navLinks {
+				<a href={ strings.ToLower(link) } class="relative pb-1 group">
+					{ link }
+					<span
+						class="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-blue-600 transition-all duration-200 group-hover:w-full"
+					></span>
+				</a>
+			}
+		</div>
+	</div>
+	<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const menu = document.getElementById("mobileMenu");
+        const toggle = document.getElementById("menuToggle");
+        const close = document.getElementById("closeMenu");
+
+        function openMenu() {
+            menu.classList.remove("translate-x-full");
+            menu.classList.add("translate-x-0");
+            document.body.classList.add("overflow-hidden");
+        }
+
+        function closeMenuFunc() {
+            menu.classList.add("translate-x-full");
+            menu.classList.remove("translate-x-0");
+            document.body.classList.remove("overflow-hidden");
+        }
+
+        toggle.addEventListener("click", openMenu);
+        close.addEventListener("click", closeMenuFunc);
+    });
+</script>
+}
+
+templ ThemeToggle() {
+	<button
+		id="toggleDark"
+		class="relative w-8 h-8 cursor-pointer rounded-full 
+		       hover:bg-gray-800 dark:hover:bg-gray-100 
+		       transition-colors duration-200 focus:outline-none 
+		       focus:ring-2 focus:ring-gray-600 dark:focus:ring-gray-300"
+		aria-label="Toggle theme"
+	>
+		<!-- Sun Icon (Light Mode) -->
+		<svg
+			id="sun-icon"
+			class="absolute inset-0 w-5 h-5 m-auto text-white dark:text-black 
+			       transition-all duration-300 ease-in-out opacity-0 scale-75"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+			stroke-width="2"
+		>
+			<circle cx="12" cy="12" r="5"></circle>
+			<path d="M12 1v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8l1.4 1.4M1 12h2m18 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+		</svg>
+		<!-- Moon Icon (Dark Mode) -->
+		<svg
+			id="moon-icon"
+			class="absolute inset-0 w-5 h-5 m-auto text-white dark:text-black 
+			       transition-all duration-300 ease-in-out"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+			stroke-width="2"
+		>
+			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+		</svg>
+	</button>
+}

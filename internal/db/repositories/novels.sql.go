@@ -11,11 +11,11 @@ import (
 
 const createNovel = `-- name: CreateNovel :one
 INSERT INTO novels (
-    title, description, cover_image, author, status, update_time, view_count
+    title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, 0
+    ?, ?, ?, ?, ?, ?, ?, ?, 0
 )
-RETURNING id, title, description, cover_image, author, status, update_time, view_count
+RETURNING id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
 `
 
 type CreateNovelParams struct {
@@ -23,7 +23,9 @@ type CreateNovelParams struct {
 	Description string
 	CoverImage  string
 	Author      string
-	Status      string
+	Publisher   string
+	ReleaseYear int64
+	IsCompleted int64
 	UpdateTime  string
 }
 
@@ -33,7 +35,9 @@ func (q *Queries) CreateNovel(ctx context.Context, arg CreateNovelParams) (Novel
 		arg.Description,
 		arg.CoverImage,
 		arg.Author,
-		arg.Status,
+		arg.Publisher,
+		arg.ReleaseYear,
+		arg.IsCompleted,
 		arg.UpdateTime,
 	)
 	var i Novel
@@ -43,7 +47,9 @@ func (q *Queries) CreateNovel(ctx context.Context, arg CreateNovelParams) (Novel
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
-		&i.Status,
+		&i.Publisher,
+		&i.ReleaseYear,
+		&i.IsCompleted,
 		&i.UpdateTime,
 		&i.ViewCount,
 	)
@@ -60,7 +66,7 @@ func (q *Queries) DeleteNovel(ctx context.Context, id int64) error {
 }
 
 const getNovelByID = `-- name: GetNovelByID :one
-SELECT id, title, description, cover_image, author, status, update_time, view_count FROM novels
+SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
 WHERE id = ? LIMIT 1
 `
 
@@ -73,7 +79,9 @@ func (q *Queries) GetNovelByID(ctx context.Context, id int64) (Novel, error) {
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
-		&i.Status,
+		&i.Publisher,
+		&i.ReleaseYear,
+		&i.IsCompleted,
 		&i.UpdateTime,
 		&i.ViewCount,
 	)
@@ -81,7 +89,7 @@ func (q *Queries) GetNovelByID(ctx context.Context, id int64) (Novel, error) {
 }
 
 const getNovelByNameLike = `-- name: GetNovelByNameLike :one
-SELECT id, title, description, cover_image, author, status, update_time, view_count FROM novels
+SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
 WHERE LOWER(title) LIKE LOWER(?)
 LIMIT 1
 `
@@ -95,7 +103,9 @@ func (q *Queries) GetNovelByNameLike(ctx context.Context, lower string) (Novel, 
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
-		&i.Status,
+		&i.Publisher,
+		&i.ReleaseYear,
+		&i.IsCompleted,
 		&i.UpdateTime,
 		&i.ViewCount,
 	)
@@ -143,8 +153,49 @@ func (q *Queries) IncrementNovelViewCount(ctx context.Context, id int64) error {
 	return err
 }
 
+const listCompletedNovels = `-- name: ListCompletedNovels :many
+SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+FROM novels
+WHERE is_completed = 1
+ORDER BY update_time DESC
+`
+
+func (q *Queries) ListCompletedNovels(ctx context.Context) ([]Novel, error) {
+	rows, err := q.db.QueryContext(ctx, listCompletedNovels)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Novel
+	for rows.Next() {
+		var i Novel
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.CoverImage,
+			&i.Author,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
+			&i.UpdateTime,
+			&i.ViewCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listHotNovels = `-- name: ListHotNovels :many
-SELECT id, title, description, cover_image, author, status, update_time, view_count FROM novels
+SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
 ORDER BY view_count DESC, update_time DESC
 LIMIT 6
 `
@@ -164,7 +215,9 @@ func (q *Queries) ListHotNovels(ctx context.Context) ([]Novel, error) {
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
-			&i.Status,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
 			&i.UpdateTime,
 			&i.ViewCount,
 		); err != nil {
@@ -182,7 +235,7 @@ func (q *Queries) ListHotNovels(ctx context.Context) ([]Novel, error) {
 }
 
 const listNewestHomeNovels = `-- name: ListNewestHomeNovels :many
-SELECT id, title, description, cover_image, author, status, update_time, view_count FROM novels
+SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
 ORDER BY update_time DESC
 LIMIT 6
 `
@@ -202,7 +255,9 @@ func (q *Queries) ListNewestHomeNovels(ctx context.Context) ([]Novel, error) {
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
-			&i.Status,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
 			&i.UpdateTime,
 			&i.ViewCount,
 		); err != nil {
@@ -220,7 +275,7 @@ func (q *Queries) ListNewestHomeNovels(ctx context.Context) ([]Novel, error) {
 }
 
 const listNovels = `-- name: ListNovels :many
-SELECT id, title, description, cover_image, author, status, update_time, view_count FROM novels
+SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
 ORDER BY update_time DESC
 `
 
@@ -239,7 +294,9 @@ func (q *Queries) ListNovels(ctx context.Context) ([]Novel, error) {
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
-			&i.Status,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
 			&i.UpdateTime,
 			&i.ViewCount,
 		); err != nil {
@@ -263,11 +320,13 @@ SET
     description = ?,
     cover_image = ?,
     author = ?,
-    status = ?,
+    publisher = ?,
+    release_year = ?,
+    is_completed = ?,
     update_time = ?,
     view_count = ?
 WHERE id = ?
-RETURNING id, title, description, cover_image, author, status, update_time, view_count
+RETURNING id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
 `
 
 type UpdateNovelParams struct {
@@ -275,7 +334,9 @@ type UpdateNovelParams struct {
 	Description string
 	CoverImage  string
 	Author      string
-	Status      string
+	Publisher   string
+	ReleaseYear int64
+	IsCompleted int64
 	UpdateTime  string
 	ViewCount   int64
 	ID          int64
@@ -287,7 +348,9 @@ func (q *Queries) UpdateNovel(ctx context.Context, arg UpdateNovelParams) (Novel
 		arg.Description,
 		arg.CoverImage,
 		arg.Author,
-		arg.Status,
+		arg.Publisher,
+		arg.ReleaseYear,
+		arg.IsCompleted,
 		arg.UpdateTime,
 		arg.ViewCount,
 		arg.ID,
@@ -299,7 +362,67 @@ func (q *Queries) UpdateNovel(ctx context.Context, arg UpdateNovelParams) (Novel
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
-		&i.Status,
+		&i.Publisher,
+		&i.ReleaseYear,
+		&i.IsCompleted,
+		&i.UpdateTime,
+		&i.ViewCount,
+	)
+	return i, err
+}
+
+const updateNovelPartial = `-- name: UpdateNovelPartial :one
+UPDATE novels
+SET
+    title = CASE WHEN ?1 IS NOT NULL THEN ?1 ELSE title END,
+    description = CASE WHEN ?2 IS NOT NULL THEN ?2 ELSE description END,
+    cover_image = CASE WHEN ?3 IS NOT NULL THEN ?3 ELSE cover_image END,
+    author = CASE WHEN ?4 IS NOT NULL THEN ?4 ELSE author END,
+    publisher = CASE WHEN ?5 IS NOT NULL THEN ?5 ELSE publisher END,
+    release_year = CASE WHEN ?6 IS NOT NULL THEN ?6 ELSE release_year END,
+    is_completed = CASE WHEN ?7 IS NOT NULL THEN ?7 ELSE is_completed END,
+    update_time = CASE WHEN ?8 IS NOT NULL THEN ?8 ELSE update_time END,
+    view_count = CASE WHEN ?9 IS NOT NULL THEN ?9 ELSE view_count END
+WHERE id = ?10
+RETURNING id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+`
+
+type UpdateNovelPartialParams struct {
+	Title       interface{}
+	Description interface{}
+	CoverImage  interface{}
+	Author      interface{}
+	Publisher   interface{}
+	ReleaseYear interface{}
+	IsCompleted interface{}
+	UpdateTime  interface{}
+	ViewCount   interface{}
+	ID          int64
+}
+
+func (q *Queries) UpdateNovelPartial(ctx context.Context, arg UpdateNovelPartialParams) (Novel, error) {
+	row := q.db.QueryRowContext(ctx, updateNovelPartial,
+		arg.Title,
+		arg.Description,
+		arg.CoverImage,
+		arg.Author,
+		arg.Publisher,
+		arg.ReleaseYear,
+		arg.IsCompleted,
+		arg.UpdateTime,
+		arg.ViewCount,
+		arg.ID,
+	)
+	var i Novel
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.CoverImage,
+		&i.Author,
+		&i.Publisher,
+		&i.ReleaseYear,
+		&i.IsCompleted,
 		&i.UpdateTime,
 		&i.ViewCount,
 	)

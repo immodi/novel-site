@@ -1,0 +1,74 @@
+package components
+
+import (
+	"fmt"
+	"immodi/novel-site/internal/http/structs/index"
+	"strings"
+	"time"
+)
+
+templ MetaHead(s *indexdtostructs.MetaDataStruct) {
+	if s.IsRendering {
+		if s.Title != "" {
+			<meta property="og:title" content={ s.Title }/>
+			<meta itemprop="name" content={ s.Title }/>
+		}
+		if s.Description != "" {
+			<meta name="description" itemprop="description" content={ s.Description }/>
+			<meta property="og:description" content={ s.Description }/>
+			<meta itemprop="description" content={ s.Description }/>
+		}
+		if s.Keywords != "" {
+			<meta name="keywords" content={ s.Keywords }/>
+			<meta property="og:keywords" content={ s.Keywords }/>
+		}
+		if s.OgURL != "" {
+			<meta property="og:url" content={ s.OgURL }/>
+		}
+		if s.Canonical != "" {
+			<link rel="canonical" href={ s.Canonical }/>
+		}
+		<meta property="og:type" content="website"/>
+		<meta name="referrer" content="origin-when-cross-origin"/>
+		<meta charset="UTF-8"/>
+		<link rel="shortcut icon" href="/img/favicon.ico?v=1.68" type="image/x-icon"/>
+		<link rel="icon" type="image/png" href="/img/favicon.ico?v=1.68"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta http-equiv="x-dns-prefetch-control" content="on"/>
+		<meta http-equiv="Content-Language" content="en"/>
+		<meta name="copyright" content={ fmt.Sprintf("Copyright © %d %s", time.Now().Year(), indexdtostructs.SITE_NAME) }/>
+		<meta name=" Author" content={ indexdtostructs.SITE_NAME }/>
+		if s.CoverImage != "" {
+			<meta property="og:image" content={ s.CoverImage }/>
+		}
+		if len(s.Genres) > 0 {
+			<meta property="og:novel:genre" content={ strings.Join(s.Genres, ",") }/>
+		}
+		if s.Author != "" {
+			<meta property="og:novel:author" content={ s.Author }/>
+		}
+		if s.AuthorLink != "" {
+			<meta property="og:novel:author_link" content={ s.AuthorLink }/>
+		}
+		if s.NovelName != "" {
+			<meta property="og:novel:novel_name" content={ s.NovelName }/>
+		}
+		if s.ReadURL != "" {
+			<meta property="og:novel:read_url" content={ s.ReadURL }/>
+		}
+		if s.Status != "" {
+			<meta property="og:novel:status" content={ s.Status }/>
+		}
+		if s.UpdateTime != "" {
+			<meta property="og:novel:update_time" content={ s.UpdateTime }/>
+		}
+		if s.LatestChapterName != "" {
+			<meta property="og:novel:lastest_chapter_name" content={ s.LatestChapterName }/>
+		}
+		if s.LatestChapterURL != "" {
+			<meta property="og:novel:lastest_chapter_url" content={ s.LatestChapterURL }/>
+		}
+		<link rel="sitemap" type="application/xml" title="Sitemap" href={ indexdtostructs.DOMAIN + "/sitemap.xml" }/>
+	}
+}

@@ -18,7 +18,9 @@ type Novel struct {
 	Description string
 	CoverImage  string
 	Author      string
-	Status      string
+	Publisher   string
+	ReleaseYear int64
+	IsCompleted int64
 	UpdateTime  string
 	ViewCount   int64
 }

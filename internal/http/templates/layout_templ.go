@@ -8,9 +8,12 @@ package templates
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "immodi/novel-site/internal/http/templates/components"
+import (
+	components "immodi/novel-site/internal/http/components/index"
+	"immodi/novel-site/internal/http/structs/index"
+)
 
-func Layout(data *components.MetaDataStruct, content templ.Component) templ.Component {
+func Layout(data *indexdtostructs.MetaDataStruct, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -38,7 +41,7 @@ func Layout(data *components.MetaDataStruct, content templ.Component) templ.Comp
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 13, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 16, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

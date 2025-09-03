@@ -2,14 +2,14 @@ package index
 
 import (
 	"fmt"
-	"immodi/novel-site/internal/http/templates/index/components"
+	"immodi/novel-site/internal/http/structs/index"
 	"immodi/novel-site/pkg"
 )
 
 templ Index(
-	hotNovels []components.HomeNovelDto,
-	latestNovels []components.HomeNovelDto,
-	completedNovels []components.HomeNovelDto,
+	hotNovels []indexdtostructs.HomeNovelDto,
+	latestNovels []indexdtostructs.HomeNovelDto,
+	completedNovels []indexdtostructs.HomeNovelDto,
 ) {
 	<div class="w-full bg-[#121212] dark:bg-white text-gray-100 dark:text-gray-900">
 		<!-- Breadcrumb section -->

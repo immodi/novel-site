@@ -1,0 +1,26 @@
+package components
+
+import (
+	"fmt"
+	"immodi/novel-site/internal/http/structs/novels"
+	"immodi/novel-site/pkg"
+)
+
+templ CoverImageComponent(novel *novelsdtostructs.Novel) {
+	<div class="w-full md:w-1/3 lg:w-1/4">
+		<div class="w-full flex justify-center items-center relative mb-4">
+			<img src={ novel.CoverImage } alt={ novel.Name } class="lg:w-full md:w-full w-1/2 rounded-lg shadow-lg"/>
+		</div>
+		<div class="flex flex-col gap-2">
+			<a
+				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), 1) }
+				class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded text-center transition-colors"
+			>
+				READ NOW
+			</a>
+			<!-- <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors"> -->
+			<!-- 	SUBSCRIBE -->
+			<!-- </button> -->
+		</div>
+	</div>
+}

@@ -36,7 +36,7 @@ func (q *Queries) DeleteAllTagsByNovel(ctx context.Context, novelID int64) error
 }
 
 const listNovelsByTag = `-- name: ListNovelsByTag :many
-SELECT n.id, n.title, n.description, n.cover_image, n.author, n.status, n.update_time, n.view_count
+SELECT n.id, n.title, n.description, n.cover_image, n.author, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
 FROM novels n
 JOIN novel_tags t ON n.id = t.novel_id
 WHERE t.tag = ?
@@ -58,7 +58,9 @@ func (q *Queries) ListNovelsByTag(ctx context.Context, tag string) ([]Novel, err
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
-			&i.Status,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
 			&i.UpdateTime,
 			&i.ViewCount,
 		); err != nil {

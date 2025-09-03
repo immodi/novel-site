@@ -1,18 +1,9 @@
-package novels
+package chapters
 
-import "fmt"
-import "immodi/novel-site/pkg"
-import "immodi/novel-site/internal/http/templates/novels/components"
+import "immodi/novel-site/internal/http/structs/chapters"
+import "immodi/novel-site/internal/http/components/chapters"
 
-type ChapterPage struct {
-	NovelName      string
-	ChapterTitle   string
-	ChapterContent string
-	PrevChapter    *int
-	NextChapter    *int
-}
-
-templ ChapterReader(ch ChapterPage) {
+templ ChapterReader(ch chaptersdtostructs.ChapterPage) {
 	<div class="w-full flex justify-center bg-[#121212] dark:bg-white min-h-screen">
 		<div class="w-full px-4 sm:px-6 lg:px-8 py-8">
 			<!-- Title -->
@@ -23,7 +14,7 @@ templ ChapterReader(ch ChapterPage) {
 				{ ch.NovelName }
 			</p>
 			<!-- Navigation (top) -->
-			@NavigationButtons(&ch)
+			@chapters.NavigationButtons(&ch)
 			<!-- Content -->
 			<div
 				id="chapter-content"
@@ -32,7 +23,7 @@ templ ChapterReader(ch ChapterPage) {
 				{ ch.ChapterContent }
 			</div>
 			<!-- Navigation (bottom) -->
-			@NavigationButtons(&ch)
+			@chapters.NavigationButtons(&ch)
 		</div>
 		<!-- Back to Top Button -->
 		<button
@@ -61,194 +52,35 @@ templ ChapterReader(ch ChapterPage) {
 	</div>
 }
 
-templ NavigationButtons(ch *ChapterPage) {
-	<div class="flex w-full items-center justify-center gap-3 mb-8 flex-wrap">
-		<!-- Prev Button -->
-		if ch.PrevChapter != nil {
-			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(ch.NovelName), *ch.PrevChapter) }
-				class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300"
-			>
-				<span class="sm:hidden">←</span>
-				<span class="hidden sm:inline">Previous</span>
-			</a>
-		} else {
-			<span
-				class="px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 flex items-center gap-2 border border-[#353535] dark:border-gray-300"
-			>
-				<span class="sm:hidden">←</span>
-				<span class="hidden sm:inline">Previous</span>
-			</span>
-		}
-		<!-- Home Button -->
-		<a
-			href={ fmt.Sprintf("/novel/%s", pkg.TitleToSlug(ch.NovelName)) }
-			class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300"
-		>
-			<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-				></path>
-			</svg>
-			<span class="hidden sm:inline">Home</span>
-		</a>
-		<!-- Chapter Dropdown -->
-		<div
-			class="relative flex items-center bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 rounded-lg hover:bg-[#2a2a2a] dark:hover:bg-gray-250 transition-colors duration-200"
-		>
-			<select
-				id="chapter-select"
-				name="chapter"
-				class="w-full px-4 py-2 bg-transparent text-gray-100 dark:text-gray-800 font-medium appearance-none cursor-pointer focus:outline-none pr-8"
-				hx-get={ fmt.Sprintf("/novel/%s/chapters", pkg.TitleToSlug(ch.NovelName)) }
-				hx-target="#chapters-list"
-				hx-trigger="focus once"
-				hx-swap="innerHTML"
-				onchange="if (this.value) window.location.href = this.value"
-			>
-				<option disabled selected>Jump To Chapter</option>
-				<optgroup id="chapters-list" label="Chapters"></optgroup>
-			</select>
-			<div
-				class="absolute pointer-events-none inset-y-0 right-0 flex items-center px-2 text-gray-100 dark:text-gray-800"
-			>
-				<svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-					<path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path>
-				</svg>
-			</div>
-		</div>
-		<!-- Settings Dropdown -->
-		<div class="relative">
-			<button
-				class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium cursor-pointer flex hover:bg-[#353535] dark:hover:bg-gray-300 transition items-center gap-2 border border-[#353535] dark:border-gray-300"
-				onclick="toggleSettingsDropdown()"
-				type="button"
-			>
-				<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-					></path>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-					></path>
-				</svg>
-				<span class="hidden sm:inline">Settings</span>
-			</button>
-			<div
-				id="settings-dropdown"
-				class="hidden absolute right-0 mt-2 w-56 bg-[#252525] dark:bg-gray-200 rounded-lg shadow-lg p-4 space-y-4 border border-[#353535] dark:border-gray-300 z-10"
-			>
-				<div>
-					<label class="block text-sm font-medium mb-2 text-gray-100 dark:text-gray-800">Font Size</label>
-					<select
-						id="font-size"
-						class="w-full rounded border border-[#353535] dark:border-gray-300 bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 px-3 py-2 cursor-pointer"
-					>
-						<option value="text-base">Default</option>
-						<option value="text-lg">Large</option>
-						<option value="text-xl">Extra Large</option>
-					</select>
-				</div>
-				<div>
-					<label for="line-height" class="block text-sm font-medium mb-2 text-gray-100 dark:text-gray-800">
-						Line Height
-					</label>
-					<input
-						type="range"
-						id="line-height"
-						min="100"
-						max="200"
-						value="150"
-						step="10"
-						class="w-full cursor-pointer accent-gray-400 dark:accent-gray-600"
-					/>
-					<span id="line-height-value" class="text-sm ml-1 text-gray-100 dark:text-gray-800">150%</span>
-				</div>
-			</div>
-		</div>
-		<!-- Next Button -->
-		if ch.NextChapter != nil {
-			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(ch.NovelName), *ch.NextChapter) }
-				class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300"
-			>
-				<span class="hidden sm:inline">Next</span>
-				<span class="sm:hidden">→</span>
-			</a>
-		} else {
-			<span
-				class="px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 flex items-center gap-2 border border-[#353535] dark:border-gray-300"
-			>
-				<span class="hidden sm:inline">Next</span>
-				<span class="sm:hidden">→</span>
-			</span>
-		}
-	</div>
-	<script>
-    function toggleSettingsDropdown() {
-        const dropdown = document.getElementById("settings-dropdown");
-        dropdown.classList.toggle("hidden");
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function (event) {
-        const dropdown = document.getElementById("settings-dropdown");
-        const settingsButton = event.target.closest('button[onclick="toggleSettingsDropdown()"]');
-
-        if (!dropdown.classList.contains('hidden') && !dropdown.contains(event.target) && !settingsButton) {
-            dropdown.classList.add('hidden');
-        }
-    });
-
-    // Truncate chapter dropdown text to 20 chars
-    document.addEventListener("DOMContentLoaded", () => {
-        const select = document.getElementById("chapter-select");
-        const maxChapterNameChars = 20;
-
-        // This will run after HTMX loads the chapters
-        setTimeout(() => {
-            for (let i = 0; i < select.options.length; i++) {
-                const opt = select.options[i];
-                if (opt.text.length > maxChapterNameChars) {
-                    opt.text = opt.text.substring(0, maxChapterNameChars) + "...";
-                }
-            }
-        }, 500);
-    });
-</script>
-}
-
 templ ContentSettingsScript() {
 	<script>
     document.addEventListener("DOMContentLoaded", () => {
         const content = document.querySelector("#chapter-content");
 
         // Font size
-        document.getElementById("font-size").addEventListener("change", (e) => {
-            content.classList.remove("text-base", "text-lg", "text-xl");
-            content.classList.add(e.target.value);
-            localStorage.setItem("font-size", e.target.value);
-        });
+        document.querySelectorAll(".font-size").forEach(btn => {
+            btn.addEventListener("change", (e) => {
+                content.classList.remove("text-base", "text-lg", "text-xl");
+                content.classList.add(e.target.value);
+                localStorage.setItem("font-size", e.target.value);
+                reload()
+            });
+        })
 
         // Line height slider
-        const lineHeightSlider = document.getElementById("line-height");
-        const lineHeightValue = document.getElementById("line-height-value");
+        const lineHeightSlider = document.querySelectorAll(".line-height");
+        const lineHeightValue = document.querySelectorAll(".line-height-value");
 
-        lineHeightSlider.addEventListener("input", (e) => {
-            const value = e.target.value;
-            lineHeightValue.textContent = value + "%";
-            content.style.lineHeight = value + "%";
-            localStorage.setItem("line-height", value);
-        });
+
+        for (let i = 0; i < lineHeightSlider.length; i++) {
+            lineHeightSlider[i].addEventListener("input", (e) => {
+                const value = e.target.value;
+                lineHeightValue[i].textContent = value + "%";
+                content.style.lineHeight = value + "%";
+                localStorage.setItem("line-height", value);
+                reload()
+            });
+        }
 
         // Load settings from localStorage
         const savedFont = localStorage.getItem("font-size");
@@ -256,26 +88,21 @@ templ ContentSettingsScript() {
         if (savedFont) {
             content.classList.remove("text-base", "text-lg", "text-xl");
             content.classList.add(savedFont);
-            document.getElementById("font-size").value = savedFont;
+            document.querySelectorAll(".font-size").forEach(d => d.value = savedFont);
         }
         if (savedLineHeight) {
             content.style.lineHeight = savedLineHeight + "%";
-            lineHeightSlider.value = savedLineHeight;
-            lineHeightValue.textContent = savedLineHeight + "%";
+            lineHeightSlider.forEach(d => d.value = savedLineHeight);
+            lineHeightValue.forEach(d => d.textContent = savedLineHeight + "%");
+        }
+
+        function reload() {
+            let font = localStorage.getItem("font-size");
+            let lineHeight = localStorage.getItem("line-height");
+            document.querySelectorAll(".font-size").forEach(d => d.value = font);
+            lineHeightSlider.forEach(d => d.value = lineHeight);
+            lineHeightValue.forEach(d => d.textContent = lineHeight + "%");
         }
     });
 </script>
-}
-
-templ ChapterDropdown(novelSlug string, chapters []components.Chapter) {
-	for _, ch := range chapters {
-		{{ isExceeded := len(ch.Title) > 20 }}
-		<option value={ fmt.Sprintf("/novel/%s/chapter-%d", novelSlug, ch.Number) }>
-			if isExceeded {
-				{ ch.Title[:20] }...
-			} else {
-				{ ch.Title }
-			}
-		</option>
-	}
 }

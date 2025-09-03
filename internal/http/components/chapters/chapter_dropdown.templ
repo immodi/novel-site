@@ -1,0 +1,17 @@
+package chapters
+
+import "fmt"
+import "immodi/novel-site/internal/http/structs/novels"
+
+templ ChapterDropdown(novelSlug string, chapters []novelsdtostructs.Chapter) {
+	for _, ch := range chapters {
+		{{ isExceeded := len(ch.Title) > 20 }}
+		<option value={ fmt.Sprintf("/novel/%s/chapter-%d", novelSlug, ch.Number) }>
+			if isExceeded {
+				{ ch.Title[:20] }...
+			} else {
+				{ ch.Title }
+			}
+		</option>
+	}
+}
