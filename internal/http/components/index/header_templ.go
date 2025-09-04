@@ -8,8 +8,11 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "strings"
-import "immodi/novel-site/internal/http/structs/index"
+import (
+	"fmt"
+	index "immodi/novel-site/internal/http/structs/index"
+	"strings"
+)
 
 func Header(navLinks []string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -32,20 +35,20 @@ func Header(navLinks []string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"w-full flex justify-between items-center bg-[#121212] dark:bg-white border-[#252525] dark:border-[#ededed] border-b-1 text-white dark:text-black px-6 py-4\"><!-- Logo --><a href=\"/\" class=\"text-3xl font-bold flex justify-center items-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"w-full flex justify-between items-center bg-[#121212] dark:bg-white border-b border-[#252525] dark:border-[#ededed] text-white dark:text-black px-6 py-4\"><!-- Logo --><a href=\"/\" class=\"text-3xl font-bold flex justify-center items-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(indexdtostructs.SITE_NAME)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(index.SITE_NAME)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 11, Col: 101}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 14, Col: 91}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</a><!-- Navigation Links --><div class=\"flex items-center justify-between w-fit h-full\"><nav class=\"hidden md:flex items-center justify-center space-x-8 text-lg mt-1 mx-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</a><!-- Navigation Links and Right Side Controls --><div class=\"flex w-auto gap-6 h-full\"><!-- Desktop Search Bar - Moved to left after logo --><form method=\"GET\" action=\"/search\" class=\"hidden md:flex relative ml-6\" onsubmit=\"return handleSearch(event, this)\"><input type=\"text\" name=\"q\" placeholder=\"Search novels...\" class=\"w-48 px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-white dark:text-black border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-300 focus:w-64\"> <button type=\"submit\" class=\"absolute right-2 top-2 p-1 text-gray-400 dark:text-gray-600 hover:text-blue-500 dark:hover:text-blue-600 cursor-pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></form><div class=\"flex items-center justify-end w-fit h-full\"><nav class=\"hidden md:flex items-center justify-center space-x-8 text-lg mt-2 mr-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -57,7 +60,7 @@ func Header(navLinks []string) templ.Component {
 			var templ_7745c5c3_Var3 templ.SafeURL
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/" + strings.ToLower(link))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 16, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 53, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -70,7 +73,7 @@ func Header(navLinks []string) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(link)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 17, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 54, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -81,7 +84,7 @@ func Header(navLinks []string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</nav><!-- Right Side Controls --><div class=\"flex items-center ml-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</nav><!-- Right Side Controls --><div class=\"flex items-center space-x-4\"><!-- Search Icon (Mobile) - Now opens the side menu --><button id=\"mobileSearchToggle\" class=\"md:hidden text-white dark:text-black cursor-pointer\" onclick=\"openMenu()\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -89,7 +92,7 @@ func Header(navLinks []string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Mobile Hamburger --><button id=\"menuToggle\" class=\"md:hidden ml-4 cursor-pointer w-6 h-5 flex flex-col justify-between items-center\"><span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded\"></span> <span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded\"></span> <span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded\"></span></button></div></div></header><!-- Mobile Menu Overlay --><div id=\"mobileMenu\" class=\"fixed top-0 right-0 w-screen h-screen bg-[#121212] dark:bg-white text-white dark:text-black z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col\"><!-- Close Button --><button id=\"closeMenu\" class=\"absolute top-6 right-6 text-3xl cursor-pointer\">✕</button><!-- Links --><div class=\"flex flex-col items-center justify-center h-full space-y-8 text-2xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Mobile Hamburger --><button id=\"menuToggle\" class=\"md:hidden cursor-pointer w-6 h-5 flex flex-col justify-between items-center\" onclick=\"openMenu()\"><span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded\"></span> <span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded\"></span> <span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded\"></span></button></div></div></div></header><!-- Mobile Menu Overlay --><div id=\"mobileMenu\" class=\"fixed top-0 right-0 w-screen h-screen bg-[#121212] dark:bg-white text-white dark:text-black z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col\"><!-- Close Button - Fixed position with proper z-index --><div class=\"flex w-full border-b border-[#252525] dark:border-[#ededed] p-4 gap-4\"><!-- Search Bar in Mobile Menu --><div class=\"flex-1\"><form method=\"GET\" action=\"/search\" class=\"relative w-full\" onsubmit=\"return handleSearch(event, this)\"><input type=\"text\" name=\"q\" placeholder=\"Search novels...\" class=\"w-full px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-white dark:text-black border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500\"> <button type=\"submit\" class=\"absolute right-2 top-2 p-1 text-gray-400 dark:text-gray-600 hover:text-blue-500 dark:hover:text-blue-600 cursor-pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></form></div><button id=\"closeMenu\" class=\"shrink-0 text-3xl cursor-pointer z-60 bg-[#252525] dark:bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center\" onclick=\"closeMenu()\"><span class=\"text-white dark:text-black\">✕</span></button></div><!-- Links --><div class=\"flex flex-col items-center justify-center h-full space-y-8 text-2xl pt-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -99,22 +102,22 @@ func Header(navLinks []string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 templ.SafeURL
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(strings.ToLower(link))
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/%s", strings.ToLower(link)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 49, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 147, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"relative pb-1 group\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"relative pb-1 group\" onclick=\"closeMenu()\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(link)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 50, Col: 11}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 148, Col: 11}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -125,7 +128,7 @@ func Header(navLinks []string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><script>\n    document.addEventListener(\"DOMContentLoaded\", () => {\n        const menu = document.getElementById(\"mobileMenu\");\n        const toggle = document.getElementById(\"menuToggle\");\n        const close = document.getElementById(\"closeMenu\");\n\n        function openMenu() {\n            menu.classList.remove(\"translate-x-full\");\n            menu.classList.add(\"translate-x-0\");\n            document.body.classList.add(\"overflow-hidden\");\n        }\n\n        function closeMenuFunc() {\n            menu.classList.add(\"translate-x-full\");\n            menu.classList.remove(\"translate-x-0\");\n            document.body.classList.remove(\"overflow-hidden\");\n        }\n\n        toggle.addEventListener(\"click\", openMenu);\n        close.addEventListener(\"click\", closeMenuFunc);\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div><script>\n    // Menu functions\n    function openMenu() {\n        const menu = document.getElementById(\"mobileMenu\");\n        menu.classList.remove(\"translate-x-full\");\n        menu.classList.add(\"translate-x-0\");\n        document.body.classList.add(\"overflow-hidden\");\n    }\n\n    function closeMenu() {\n        const menu = document.getElementById(\"mobileMenu\");\n        menu.classList.add(\"translate-x-full\");\n        menu.classList.remove(\"translate-x-0\");\n        document.body.classList.remove(\"overflow-hidden\");\n    }\n\n    // Search form handler\n    function handleSearch(event, form) {\n        event.preventDefault();\n        const searchInput = form.querySelector('input[name=\"q\"]');\n        const searchTerm = searchInput.value.trim();\n\n        if (searchTerm) {\n            const formattedTerm = searchTerm.toLowerCase().replace(/\\s+/g, '-');\n            window.location.href = `/search/${formattedTerm}`;\n        }\n\n        return false;\n    }\n\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -154,7 +157,7 @@ func ThemeToggle() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<button id=\"toggleDark\" class=\"relative w-8 h-8 cursor-pointer rounded-full \n\t\t       hover:bg-gray-800 dark:hover:bg-gray-100 \n\t\t       transition-colors duration-200 focus:outline-none \n\t\t       focus:ring-2 focus:ring-gray-600 dark:focus:ring-gray-300\" aria-label=\"Toggle theme\"><!-- Sun Icon (Light Mode) --><svg id=\"sun-icon\" class=\"absolute inset-0 w-5 h-5 m-auto text-white dark:text-black \n\t\t\t       transition-all duration-300 ease-in-out opacity-0 scale-75\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"5\"></circle> <path d=\"M12 1v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8l1.4 1.4M1 12h2m18 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4\"></path></svg><!-- Moon Icon (Dark Mode) --><svg id=\"moon-icon\" class=\"absolute inset-0 w-5 h-5 m-auto text-white dark:text-black \n\t\t\t       transition-all duration-300 ease-in-out\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"></path></svg></button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<button id=\"toggleDark\" class=\"relative w-8 h-8 cursor-pointer rounded-full \n               hover:bg-gray-800 dark:hover:bg-gray-100 \n               transition-colors duration-200 focus:outline-none \n               focus:ring-2 focus:ring-gray-600 dark:focus:ring-gray-300\" aria-label=\"Toggle theme\"><!-- Sun Icon (Light Mode) --><svg id=\"sun-icon\" class=\"absolute inset-0 w-5 h-5 m-auto text-white dark:text-black \n                   transition-all duration-300 ease-in-out opacity-0 scale-75\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"5\"></circle> <path d=\"M12 1v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8l1.4 1.4M1 12h2m18 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4\"></path></svg><!-- Moon Icon (Dark Mode) --><svg id=\"moon-icon\" class=\"absolute inset-0 w-5 h-5 m-auto text-white dark:text-black \n                   transition-all duration-300 ease-in-out\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"></path></svg></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -9,6 +9,21 @@ import (
 	"context"
 )
 
+const countSearchNovels = `-- name: CountSearchNovels :one
+SELECT COUNT(*) AS total
+FROM novels
+WHERE LOWER(title) LIKE '%' || LOWER(?1) || '%'
+   OR LOWER(author) LIKE '%' || LOWER(?1) || '%'
+   OR LOWER(description) LIKE '%' || LOWER(?1) || '%'
+`
+
+func (q *Queries) CountSearchNovels(ctx context.Context, search string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countSearchNovels, search)
+	var total int64
+	err := row.Scan(&total)
+	return total, err
+}
+
 const createNovel = `-- name: CreateNovel :one
 INSERT INTO novels (
     title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
@@ -281,6 +296,56 @@ ORDER BY update_time DESC
 
 func (q *Queries) ListNovels(ctx context.Context) ([]Novel, error) {
 	rows, err := q.db.QueryContext(ctx, listNovels)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Novel
+	for rows.Next() {
+		var i Novel
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.CoverImage,
+			&i.Author,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
+			&i.UpdateTime,
+			&i.ViewCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const searchNovels = `-- name: SearchNovels :many
+SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+FROM novels
+WHERE LOWER(title) LIKE '%' || LOWER(?1) || '%'
+   OR LOWER(author) LIKE '%' || LOWER(?1) || '%'
+   OR LOWER(description) LIKE '%' || LOWER(?1) || '%'
+ORDER BY update_time DESC
+LIMIT ?3 OFFSET ?2
+`
+
+type SearchNovelsParams struct {
+	Search string
+	Offset int64
+	Limit  int64
+}
+
+func (q *Queries) SearchNovels(ctx context.Context, arg SearchNovelsParams) ([]Novel, error) {
+	rows, err := q.db.QueryContext(ctx, searchNovels, arg.Search, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}

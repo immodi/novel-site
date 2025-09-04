@@ -47,7 +47,7 @@ func MapDBNovelToNovel(
 		Publisher:           dbNovel.Publisher,
 		CoverImage:          dbNovel.CoverImage,
 		TotalChaptersNumber: totalChapters,
-		CurrentPage:         pkg.AdjustPageNumber(currentPage, totalChapters),
+		CurrentPage:         currentPage,
 		TotalPages:          pkg.CalculateTotalPages(totalChapters),
 		Chapters:            chapters,
 		LastChapterName:     lastChapter.Title,

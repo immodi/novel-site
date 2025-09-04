@@ -8,8 +8,11 @@ package chapters
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "immodi/novel-site/internal/http/structs/chapters"
-import "immodi/novel-site/internal/http/components/chapters"
+import (
+	"immodi/novel-site/internal/http/components/chapters"
+	"immodi/novel-site/internal/http/structs/chapters"
+	"strings"
+)
 
 func ChapterReader(ch chaptersdtostructs.ChapterPage) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -39,7 +42,7 @@ func ChapterReader(ch chaptersdtostructs.ChapterPage) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(ch.ChapterTitle)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/chapters/chapter.templ`, Line: 11, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/chapters/chapter.templ`, Line: 14, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -52,7 +55,7 @@ func ChapterReader(ch chaptersdtostructs.ChapterPage) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(ch.NovelName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/chapters/chapter.templ`, Line: 14, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/chapters/chapter.templ`, Line: 17, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -66,20 +69,30 @@ func ChapterReader(ch chaptersdtostructs.ChapterPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<!-- Content --><div id=\"chapter-content\" class=\"prose prose-invert dark:prose max-w-none mb-8 w-full leading-relaxed text-gray-200 dark:text-gray-800 rounded-lg p-6 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] whitespace-pre-line\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<!-- Content --><div id=\"chapter-content\" class=\"prose prose-invert dark:prose max-w-none mb-8 w-full leading-relaxed text-gray-200 dark:text-gray-800 rounded-lg p-6 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] space-y-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(ch.ChapterContent)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/chapters/chapter.templ`, Line: 23, Col: 23}
+		for _, paragraph := range strings.Split(ch.ChapterContent, "\n") {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(paragraph)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/chapters/chapter.templ`, Line: 27, Col: 19}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><!-- Navigation (bottom) -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><!-- Navigation (bottom) -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -87,7 +100,7 @@ func ChapterReader(ch chaptersdtostructs.ChapterPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><!-- Back to Top Button --><button id=\"backToTop\" onclick=\"window.scrollTo({ top: 0, behavior: 'smooth' })\" class=\"hidden fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg bg-[#252525] dark:bg-gray-300 text-gray-100 dark:text-gray-800 hover:bg-[#353535] dark:hover:bg-gray-400 transition-all duration-300\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 15l7-7 7 7\"></path></svg></button><script>\n        // Fade in/out Back to Top button\n        window.addEventListener(\"scroll\", () => {\n            const btn = document.getElementById(\"backToTop\");\n            if (window.scrollY > 200) {\n                btn.classList.remove(\"hidden\");\n                btn.classList.add(\"opacity-100\");\n            } else {\n                btn.classList.remove(\"opacity-100\");\n                btn.classList.add(\"hidden\");\n            }\n        });\n    </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><!-- Back to Top Button --><button id=\"backToTop\" onclick=\"window.scrollTo({ top: 0, behavior: 'smooth' })\" class=\"hidden cursor-pointer fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg bg-[#252525] dark:bg-gray-300 text-gray-100 dark:text-gray-800 hover:bg-[#353535] dark:hover:bg-gray-400 transition-all duration-300\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 15l7-7 7 7\"></path></svg></button><script>\n        // Fade in/out Back to Top button\n        window.addEventListener(\"scroll\", () => {\n            const btn = document.getElementById(\"backToTop\");\n            if (window.scrollY > 200) {\n                btn.classList.remove(\"hidden\");\n                btn.classList.add(\"opacity-100\");\n            } else {\n                btn.classList.remove(\"opacity-100\");\n                btn.classList.add(\"hidden\");\n            }\n        });\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -95,7 +108,7 @@ func ChapterReader(ch chaptersdtostructs.ChapterPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -124,7 +137,7 @@ func ContentSettingsScript() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<script>\n    document.addEventListener(\"DOMContentLoaded\", () => {\n        const content = document.querySelector(\"#chapter-content\");\n\n        // Font size\n        document.querySelectorAll(\".font-size\").forEach(btn => {\n            btn.addEventListener(\"change\", (e) => {\n                content.classList.remove(\"text-base\", \"text-lg\", \"text-xl\");\n                content.classList.add(e.target.value);\n                localStorage.setItem(\"font-size\", e.target.value);\n                reload()\n            });\n        })\n\n        // Line height slider\n        const lineHeightSlider = document.querySelectorAll(\".line-height\");\n        const lineHeightValue = document.querySelectorAll(\".line-height-value\");\n\n\n        for (let i = 0; i < lineHeightSlider.length; i++) {\n            lineHeightSlider[i].addEventListener(\"input\", (e) => {\n                const value = e.target.value;\n                lineHeightValue[i].textContent = value + \"%\";\n                content.style.lineHeight = value + \"%\";\n                localStorage.setItem(\"line-height\", value);\n                reload()\n            });\n        }\n\n        // Load settings from localStorage\n        const savedFont = localStorage.getItem(\"font-size\");\n        const savedLineHeight = localStorage.getItem(\"line-height\");\n        if (savedFont) {\n            content.classList.remove(\"text-base\", \"text-lg\", \"text-xl\");\n            content.classList.add(savedFont);\n            document.querySelectorAll(\".font-size\").forEach(d => d.value = savedFont);\n        }\n        if (savedLineHeight) {\n            content.style.lineHeight = savedLineHeight + \"%\";\n            lineHeightSlider.forEach(d => d.value = savedLineHeight);\n            lineHeightValue.forEach(d => d.textContent = savedLineHeight + \"%\");\n        }\n\n        function reload() {\n            let font = localStorage.getItem(\"font-size\");\n            let lineHeight = localStorage.getItem(\"line-height\");\n            document.querySelectorAll(\".font-size\").forEach(d => d.value = font);\n            lineHeightSlider.forEach(d => d.value = lineHeight);\n            lineHeightValue.forEach(d => d.textContent = lineHeight + \"%\");\n        }\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n    document.addEventListener(\"DOMContentLoaded\", () => {\n        const content = document.querySelector(\"#chapter-content\");\n\n        // Font size\n        document.querySelectorAll(\".font-size\").forEach(btn => {\n            btn.addEventListener(\"change\", (e) => {\n                content.classList.remove(\"text-base\", \"text-lg\", \"text-xl\");\n                content.classList.add(e.target.value);\n                localStorage.setItem(\"font-size\", e.target.value);\n                reload()\n            });\n        })\n\n        // Line height slider\n        const lineHeightSlider = document.querySelectorAll(\".line-height\");\n        const lineHeightValue = document.querySelectorAll(\".line-height-value\");\n\n\n        for (let i = 0; i < lineHeightSlider.length; i++) {\n            lineHeightSlider[i].addEventListener(\"input\", (e) => {\n                const value = e.target.value;\n                lineHeightValue[i].textContent = value + \"%\";\n                content.style.lineHeight = value + \"%\";\n                localStorage.setItem(\"line-height\", value);\n                reload()\n            });\n        }\n\n        // Load settings from localStorage\n        const savedFont = localStorage.getItem(\"font-size\");\n        const savedLineHeight = localStorage.getItem(\"line-height\");\n        if (savedFont) {\n            content.classList.remove(\"text-base\", \"text-lg\", \"text-xl\");\n            content.classList.add(savedFont);\n            document.querySelectorAll(\".font-size\").forEach(d => d.value = savedFont);\n        }\n        if (savedLineHeight) {\n            content.style.lineHeight = savedLineHeight + \"%\";\n            lineHeightSlider.forEach(d => d.value = savedLineHeight);\n            lineHeightValue.forEach(d => d.textContent = savedLineHeight + \"%\");\n        }\n\n        function reload() {\n            let font = localStorage.getItem(\"font-size\");\n            let lineHeight = localStorage.getItem(\"line-height\");\n            document.querySelectorAll(\".font-size\").forEach(d => d.value = font);\n            lineHeightSlider.forEach(d => d.value = lineHeight);\n            lineHeightValue.forEach(d => d.textContent = lineHeight + \"%\");\n        }\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

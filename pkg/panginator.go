@@ -1,6 +1,7 @@
 package pkg
 
 const PAGE_LIMIT = 21
+const SEARCH_PAGE_LIMIT = 8
 
 func MakePages(total int) []int {
 	pages := make([]int, total)
@@ -39,12 +40,12 @@ func GetPageChapters[T any](items []T, page int) []T {
 }
 
 // AdjustPage ensures the requested page is within valid bounds.
-func AdjustPageNumber(requestedPage, totalChapters int) int {
+func AdjustPageNumber(requestedPage, totalChapters, pageLimit int) int {
 	if requestedPage < 1 {
 		return 1
 	}
 
-	totalPages := (totalChapters + PAGE_LIMIT - 1) / PAGE_LIMIT
+	totalPages := (totalChapters + pageLimit - 1) / pageLimit
 	if totalPages == 0 {
 		return 1 // no chapters, but default to page 1
 	}

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"immodi/novel-site/internal/app/handlers"
 	"immodi/novel-site/internal/http/utils"
 	"log"
 	"net/http"
@@ -34,6 +35,7 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/novel/{novelName}", router.handlers.Novel.GetNovel)
 	router.r.Get("/novel/{novelName}/chapters", router.handlers.Chapter.GetChaptersDropDown)
 	router.r.Get("/novel/{novelName}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
+	router.r.Get("/search/{novelName}", router.handlers.Search.SearchNovel)
 
 	router.r.Get("/privacy", router.handlers.Privacy.Privacy)
 	router.r.Get("/terms", router.handlers.Terms.Terms)
@@ -45,7 +47,7 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)
 	router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
 
-	router.r.NotFound(router.redirectToHome())
+	router.r.NotFound(handlers.NotFoundHandler)
 }
 
 func (router *Router) RegisterServices() {

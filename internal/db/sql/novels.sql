@@ -79,3 +79,19 @@ UPDATE novels
 SET view_count = view_count + 1,
     update_time = update_time
 WHERE id = ?;
+
+-- name: SearchNovels :many
+SELECT *
+FROM novels
+WHERE LOWER(title) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
+   OR LOWER(author) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
+   OR LOWER(description) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
+ORDER BY update_time DESC
+LIMIT sqlc.arg(limit) OFFSET sqlc.arg(offset);
+
+-- name: CountSearchNovels :one
+SELECT COUNT(*) AS total
+FROM novels
+WHERE LOWER(title) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
+   OR LOWER(author) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
+   OR LOWER(description) LIKE '%' || LOWER(sqlc.arg(search)) || '%';

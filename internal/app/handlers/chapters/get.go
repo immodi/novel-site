@@ -18,26 +18,26 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 
 	chapterNum, err := strconv.Atoi(chapterNumStr)
 	if err != nil || chapterNum < 1 {
-		http.Error(w, "Invalid chapter number", http.StatusBadRequest)
+		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
 	dbNovel, err := h.chapterService.GetNovelByNameLike(novelName)
 	if err != nil {
-		http.Error(w, "Novel not found", http.StatusNotFound)
+		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
 	totalChaptersNumber, err := h.chapterService.CountChaptersByNovel(dbNovel.ID)
 	if err != nil {
-		http.Error(w, "Failed to get total chapters", http.StatusInternalServerError)
+		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
 	// Get the chapter
 	dbChapter, err := h.chapterService.GetChapterByNumber(dbNovel.ID, int64(chapterNum))
 	if err != nil {
-		http.Error(w, "Chapter not found", http.StatusNotFound)
+		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
@@ -74,13 +74,13 @@ func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Requ
 
 	dbNovel, err := h.chapterService.GetNovelByNameLike(novelName)
 	if err != nil {
-		http.Error(w, "Novel not found", http.StatusNotFound)
+		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
 	dbChapters, err := h.chapterService.ListChaptersByNovel(dbNovel.ID)
 	if err != nil {
-		http.Error(w, "Failed to get total chapters", http.StatusInternalServerError)
+		handlers.ServerErrorHandler(w, r)
 		return
 	}
 

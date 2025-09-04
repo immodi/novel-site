@@ -23,5 +23,5 @@ func (h *ChapterHandler) CreateChapterWithDefaults(w http.ResponseWriter, r *htt
 		return
 	}
 
-	http.Redirect(w, r, "/novel", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

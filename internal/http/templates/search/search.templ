@@ -1,0 +1,205 @@
+package search
+
+import (
+	"fmt"
+	"immodi/novel-site/internal/http/components/search"
+	"immodi/novel-site/internal/http/helpers"
+	"immodi/novel-site/internal/http/structs/index"
+	"immodi/novel-site/internal/http/structs/search"
+	"immodi/novel-site/pkg"
+)
+
+templ SearchResults(
+	searchQuery string,
+	searchResults []searchresutlsdto.SearchResultDto,
+	hotNovels []indexdtostructs.HomeNovelDto,
+	currentPage int,
+	totalPages int,
+) {
+	<div class="w-full bg-[#121212] dark:bg-white text-gray-100 dark:text-gray-900">
+		<!-- Main Content -->
+		<div class="container max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+			<!-- Search Results -->
+			<div class="w-full lg:w-3/4">
+				<div class="flex justify-between items-center mb-6">
+					<h2 class="text-2xl font-bold">SEARCH: { searchQuery }</h2>
+					if len(searchResults) > 0 {
+						<p class="text-gray-400 dark:text-gray-600 text-sm">
+							Page { currentPage } of { totalPages }
+						</p>
+					}
+				</div>
+				if len(searchResults) == 0 {
+					<!-- No Results Found -->
+					<div
+						class="bg-[#1a1a1a] dark:bg-gray-100 rounded-lg border border-[#252525] dark:border-gray-300 p-8 text-center"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-16 w-16 mx-auto text-gray-400 dark:text-gray-600 mb-4"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+							></path>
+						</svg>
+						<h3 class="text-xl font-semibold mb-2">No results found</h3>
+						<p class="text-gray-400 dark:text-gray-600">Try different keywords or browse our popular novels</p>
+					</div>
+				} else {
+					<div
+						class="bg-[#1a1a1a] dark:bg-gray-100 rounded-lg overflow-hidden border border-[#252525] dark:border-gray-300"
+					>
+						<!-- Header row for larger screens -->
+						<div
+							class="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-[#252525] dark:border-gray-300 text-sm font-semibold"
+						>
+							<div class="col-span-3">Cover</div>
+							<div class="col-span-5">Title & Author</div>
+							<div class="col-span-4 text-right">Latest Chapter</div>
+						</div>
+						<!-- Search Results -->
+						for _, result := range searchResults {
+							<div
+								class="p-4 border-b border-[#252525] dark:border-gray-300 hover:bg-[#252525] dark:hover:bg-gray-200 transition-colors"
+							>
+								<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+									<!-- Cover Image -->
+									<div class="md:col-span-3">
+										<a href={ fmt.Sprintf("/novel/%s", pkg.TitleToSlug(result.Name)) } class="block group">
+											<div class="relative overflow-hidden rounded-lg shadow-lg">
+												<img
+													src={ result.CoverImage }
+													alt={ result.Name }
+													class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+												/>
+												if result.Status == "Completed" {
+													<span
+														class="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full"
+													>
+														Completed
+													</span>
+												}
+											</div>
+										</a>
+									</div>
+									<!-- Title & Author -->
+									<div class="md:col-span-5">
+										<div class="flex items-center mb-2">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="h-4 w-4 mr-2 text-blue-400 dark:text-blue-600 flex-shrink-0"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M9 5l7 7-7 7"
+												></path>
+											</svg>
+											<a
+												href={ fmt.Sprintf("/novel/%s", pkg.TitleToSlug(result.Name)) }
+												class="font-medium hover:text-blue-400 dark:hover:text-blue-600 transition-colors line-clamp-2"
+											>
+												{ result.Name }
+											</a>
+										</div>
+										<div class="text-sm text-gray-400 dark:text-gray-600 flex items-center">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												class="h-4 w-4 mr-1 text-blue-400 dark:text-blue-600 flex-shrink-0"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													stroke-width="2"
+													d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+												></path>
+											</svg>
+											<span>{ result.Author }</span>
+										</div>
+									</div>
+									<!-- Latest Chapter -->
+									<div class="md:col-span-4 text-right">
+										<a
+											href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(result.Name),
+                                result.LastestChapterNumber) }
+											class="text-blue-400 dark:text-blue-600 hover:underline text-sm line-clamp-2"
+										>
+											{ result.LastestChapterName }
+										</a>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+					<!-- Pagination -->
+					@search.Pagination(currentPage, totalPages, searchQuery)
+				}
+			</div>
+			<!-- Hot Novels Sidebar -->
+			<div class="w-full lg:w-1/4">
+				<div class="bg-[#1a1a1a] dark:bg-gray-100 rounded-lg border border-[#252525] dark:border-gray-300 p-4">
+					<div class="flex justify-between items-center mb-4">
+						<h4 class="text-xl font-bold">Hot Novel</h4>
+					</div>
+					for i, novel := range hotNovels {
+						<div class="mb-4 last:mb-0">
+							<div class="flex items-start">
+								<div
+									class={ fmt.Sprintf(`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
+                            mr-3 text-white text-sm font-bold %s`, helpers.GetRankStyle(i+1)) }
+								>
+									{ i+1 }
+								</div>
+								<div>
+									<a
+										href={ fmt.Sprintf("/novel/%s", pkg.TitleToSlug(novel.Name)) }
+										class="font-medium hover:text-blue-400 dark:hover:text-blue-600 transition-colors line-clamp-2 text-sm"
+									>
+										{ novel.Name }
+									</a>
+									<div class="flex flex-wrap gap-1 mt-1">
+										for _, genre := range novel.Genres {
+											<span
+												class="text-xs bg-[#252525] dark:bg-gray-200 text-gray-400 dark:text-gray-600 px-2 py-1 rounded"
+											>
+												{ genre }
+											</span>
+										}
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+    .line-clamp-1 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+    }
+
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+</style>
+}

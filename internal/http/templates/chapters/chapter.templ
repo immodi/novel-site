@@ -1,7 +1,10 @@
 package chapters
 
-import "immodi/novel-site/internal/http/structs/chapters"
-import "immodi/novel-site/internal/http/components/chapters"
+import (
+	"immodi/novel-site/internal/http/components/chapters"
+	"immodi/novel-site/internal/http/structs/chapters"
+	"strings"
+)
 
 templ ChapterReader(ch chaptersdtostructs.ChapterPage) {
 	<div class="w-full flex justify-center bg-[#121212] dark:bg-white min-h-screen">
@@ -18,9 +21,11 @@ templ ChapterReader(ch chaptersdtostructs.ChapterPage) {
 			<!-- Content -->
 			<div
 				id="chapter-content"
-				class="prose prose-invert dark:prose max-w-none mb-8 w-full leading-relaxed text-gray-200 dark:text-gray-800 rounded-lg p-6 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] whitespace-pre-line"
+				class="prose prose-invert dark:prose max-w-none mb-8 w-full leading-relaxed text-gray-200 dark:text-gray-800 rounded-lg p-6 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] space-y-4"
 			>
-				{ ch.ChapterContent }
+				for _, paragraph := range strings.Split(ch.ChapterContent, "\n") {
+					<p>{ paragraph }</p>
+				}
 			</div>
 			<!-- Navigation (bottom) -->
 			@chapters.NavigationButtons(&ch)
@@ -29,7 +34,7 @@ templ ChapterReader(ch chaptersdtostructs.ChapterPage) {
 		<button
 			id="backToTop"
 			onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
-			class="hidden fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg bg-[#252525] dark:bg-gray-300 text-gray-100 dark:text-gray-800 hover:bg-[#353535] dark:hover:bg-gray-400 transition-all duration-300"
+			class="hidden cursor-pointer fixed bottom-6 right-6 z-50 p-3 rounded-full shadow-lg bg-[#252525] dark:bg-gray-300 text-gray-100 dark:text-gray-800 hover:bg-[#353535] dark:hover:bg-gray-400 transition-all duration-300"
 		>
 			<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>

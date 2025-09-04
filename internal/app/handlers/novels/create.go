@@ -39,5 +39,5 @@ func (h *NovelHandler) CreateNovelWithDefaults(w http.ResponseWriter, r *http.Re
 		}
 	}
 
-	http.Redirect(w, r, "/novel", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

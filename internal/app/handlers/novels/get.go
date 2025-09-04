@@ -24,20 +24,23 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 
 	dbNovel, err := h.novelService.GetNovelByName(novelName)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-
-	// Chapters
-	dbChapters, err := h.novelService.GetChapters(int(dbNovel.ID), currentPage)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
 	totalChaptersInt64, err := h.novelService.CountChapters(dbNovel.ID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		handlers.ServerErrorHandler(w, r)
+		return
+	}
+
+	totalChapters := int(totalChaptersInt64)
+	currentPage = pkg.AdjustPageNumber(currentPage, totalChapters, pkg.PAGE_LIMIT)
+
+	// Chapters
+	dbChapters, err := h.novelService.GetChapters(int(dbNovel.ID), currentPage)
+	if err != nil {
+		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
@@ -49,7 +52,6 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	totalChapters := int(totalChaptersInt64)
 	chapters := CastDbChaptersToInfoChapters(dbChapters)
 
 	genres, _ := h.novelService.GetGenres(dbNovel.ID)
