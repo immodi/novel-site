@@ -1,0 +1,9 @@
+from typing import Protocol, List
+from lxml import html
+from datatypes.novel import ChapterData, NovelData, NovelLink
+
+
+class Parser(Protocol):
+    def parse_list_of_novels(self, tree: html.HtmlElement) -> List[NovelLink]: ...
+    def parse_novel(self, tree: html.HtmlElement, url: str) -> NovelData: ...
+    def parse_chapters(self, url: str) -> List[ChapterData]: ...
