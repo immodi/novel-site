@@ -9,4 +9,5 @@ type HomeService interface {
 	GetLatestChapterByNovel(novelID int64) (repositories.Chapter, error)
 	ListGenresByNovel(novelID int64) ([]string, error)
 	CountChaptersByNovel(novelID int64) (int64, error)
+	ListGenres() ([]string, error)
 }

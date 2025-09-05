@@ -5,7 +5,7 @@ import (
 	"immodi/novel-site/pkg"
 )
 
-templ Pagination(currentPage int, totalPages int, searchQuery string) {
+templ Pagination(paramter string, currentPage int, totalPages int, searchQuery string) {
 	{{ isNextPage := currentPage < totalPages }}
 	<div class="flex justify-center mt-8">
 		<div class="flex items-center space-x-2">
@@ -13,7 +13,7 @@ templ Pagination(currentPage int, totalPages int, searchQuery string) {
 			{{ isMore := currentPage > 1 }}
 			if isMore {
 				<a
-					href={ fmt.Sprintf("/search/%s?page=%d", pkg.TitleToSlug(searchQuery), currentPage-1) }
+					href={ fmt.Sprintf("/%s/%s?page=%d", paramter, pkg.TitleToSlug(searchQuery), currentPage-1) }
 					class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors border border-[#353535] dark:border-gray-300"
 				>
 					<svg
@@ -51,7 +51,7 @@ templ Pagination(currentPage int, totalPages int, searchQuery string) {
 					</span>
 				} else {
 					<a
-						href={ fmt.Sprintf("/search/%s?page=%d", pkg.TitleToSlug(searchQuery), pageNumber) }
+						href={ fmt.Sprintf("/%s/%s?page=%d", paramter, pkg.TitleToSlug(searchQuery), pageNumber) }
 						class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors border border-[#353535] dark:border-gray-300"
 					>
 						{ pageNumber }
@@ -61,7 +61,7 @@ templ Pagination(currentPage int, totalPages int, searchQuery string) {
 			<!-- Next Button -->
 			if isNextPage {
 				<a
-					href={ fmt.Sprintf("/search/%s?page=%d", pkg.TitleToSlug(searchQuery), currentPage+1) }
+					href={ fmt.Sprintf("/%s/%s?page=%d", paramter, pkg.TitleToSlug(searchQuery), currentPage+1) }
 					class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors border border-[#353535] dark:border-gray-300"
 				>
 					<svg

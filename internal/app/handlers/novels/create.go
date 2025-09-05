@@ -2,6 +2,7 @@ package novels
 
 import (
 	"fmt"
+	"immodi/novel-site/pkg"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -22,7 +23,7 @@ func (h *NovelHandler) CreateNovelWithDefaults(w http.ResponseWriter, r *http.Re
 	}
 
 	// Add default genres
-	defaultGenres := []string{"Adventure", "Drama", "Fantasy"}
+	defaultGenres := pkg.RandomGenres(3)
 	for _, genre := range defaultGenres {
 		if err := h.novelService.AddGenreToNovel(dbNovel.ID, genre); err != nil {
 			http.Error(w, fmt.Sprintf("Failed to add genre %s: %v", genre, err), http.StatusInternalServerError)
@@ -31,7 +32,7 @@ func (h *NovelHandler) CreateNovelWithDefaults(w http.ResponseWriter, r *http.Re
 	}
 
 	// Add default tags
-	defaultTags := []string{"Harem", "Male Protagonist", "Magic", "Dragons"}
+	defaultTags := pkg.RandomGenres(5)
 	for _, tag := range defaultTags {
 		if err := h.novelService.AddTagToNovel(dbNovel.ID, tag); err != nil {
 			http.Error(w, fmt.Sprintf("Failed to add tag %s: %v", tag, err), http.StatusInternalServerError)

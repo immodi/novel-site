@@ -7,9 +7,12 @@ import (
 	"immodi/novel-site/internal/http/structs/index"
 	"immodi/novel-site/internal/http/structs/search"
 	"immodi/novel-site/pkg"
+	"strings"
 )
 
 templ SearchResults(
+	paramter string,
+	headerText string,
 	searchQuery string,
 	searchResults []searchresutlsdto.SearchResultDto,
 	hotNovels []indexdtostructs.HomeNovelDto,
@@ -22,7 +25,7 @@ templ SearchResults(
 			<!-- Search Results -->
 			<div class="w-full lg:w-3/4">
 				<div class="flex justify-between items-center mb-6">
-					<h2 class="text-2xl font-bold">SEARCH: { searchQuery }</h2>
+					<h2 class="text-2xl font-bold">{ strings.ToUpper(headerText) }: { searchQuery }</h2>
 					if len(searchResults) > 0 {
 						<p class="text-gray-400 dark:text-gray-600 text-sm">
 							Page { currentPage } of { totalPages }
@@ -145,7 +148,7 @@ templ SearchResults(
 						}
 					</div>
 					<!-- Pagination -->
-					@search.Pagination(currentPage, totalPages, searchQuery)
+					@search.Pagination(paramter, currentPage, totalPages, searchQuery)
 				}
 			</div>
 			<!-- Hot Novels Sidebar -->

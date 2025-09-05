@@ -107,7 +107,7 @@ func (s *novelService) CreateNovelWithDefaults(title string, isCompleted bool) (
 		Title:       title,
 		Description: fmt.Sprintf("%s is a brand new story.", title),
 		CoverImage:  "https://dummyimage.com/500x720/8a818a/ffffff",
-		Author:      "Default Author",
+		Author:      "default author",
 		Publisher:   "Default Publisher",
 		ReleaseYear: int64(pkg.GetRandomYear(randomYear)),
 		IsCompleted: int64(isCompletedInt),

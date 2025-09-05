@@ -25,6 +25,19 @@ func (q *Queries) AddTagToNovel(ctx context.Context, arg AddTagToNovelParams) er
 	return err
 }
 
+const countNovelsByTag = `-- name: CountNovelsByTag :one
+SELECT COUNT(*)
+FROM novel_tags
+WHERE tag = ?
+`
+
+func (q *Queries) CountNovelsByTag(ctx context.Context, tag string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countNovelsByTag, tag)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteAllTagsByNovel = `-- name: DeleteAllTagsByNovel :exec
 DELETE FROM novel_tags
 WHERE novel_id = ?
@@ -45,6 +58,55 @@ ORDER BY n.update_time DESC
 
 func (q *Queries) ListNovelsByTag(ctx context.Context, tag string) ([]Novel, error) {
 	rows, err := q.db.QueryContext(ctx, listNovelsByTag, tag)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Novel
+	for rows.Next() {
+		var i Novel
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.CoverImage,
+			&i.Author,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
+			&i.UpdateTime,
+			&i.ViewCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listNovelsByTagPaginated = `-- name: ListNovelsByTagPaginated :many
+SELECT n.id, n.title, n.description, n.cover_image, n.author, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
+FROM novels n
+JOIN novel_tags t ON n.id = t.novel_id
+WHERE t.tag = ?
+ORDER BY n.update_time DESC
+LIMIT ? OFFSET ?
+`
+
+type ListNovelsByTagPaginatedParams struct {
+	Tag    string
+	Limit  int64
+	Offset int64
+}
+
+func (q *Queries) ListNovelsByTagPaginated(ctx context.Context, arg ListNovelsByTagPaginatedParams) ([]Novel, error) {
+	rows, err := q.db.QueryContext(ctx, listNovelsByTagPaginated, arg.Tag, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

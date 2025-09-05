@@ -14,6 +14,21 @@ WHERE id = ? LIMIT 1;
 SELECT * FROM novels
 ORDER BY update_time DESC;
 
+-- name: CountNovels :one
+SELECT COUNT(*) FROM novels;
+
+-- name: CountNovelsByAuthor :one
+SELECT COUNT(*)
+FROM novels
+WHERE author = ?;
+
+-- name: ListNovelsByAuthorPaginated :many
+SELECT *
+FROM novels
+WHERE author = ?
+ORDER BY update_time DESC
+LIMIT ? OFFSET ?;
+
 -- name: UpdateNovel :one
 UPDATE novels
 SET
@@ -68,6 +83,42 @@ SELECT *
 FROM novels
 WHERE is_completed = 1
 ORDER BY update_time DESC;
+
+-- name: ListNewestHomeNovelsPaginated :many
+SELECT *
+FROM novels
+ORDER BY update_time DESC
+LIMIT ? OFFSET ?;
+
+-- name: ListHotNovelsPaginated :many
+SELECT *
+FROM novels
+ORDER BY view_count DESC, update_time DESC
+LIMIT ? OFFSET ?;
+
+-- name: ListCompletedNovelsPaginated :many
+SELECT *
+FROM novels
+WHERE is_completed = 1
+ORDER BY update_time DESC
+LIMIT ? OFFSET ?;
+
+-- name: ListOnGoingNovelsPaginated :many
+SELECT *
+FROM novels
+WHERE is_completed = 0
+ORDER BY update_time DESC
+LIMIT ? OFFSET ?;
+
+-- name: CountCompletedNovels :one
+SELECT COUNT(*) 
+FROM novels
+WHERE is_completed = 1;
+
+-- name: CountOnGoingNovels :one
+SELECT COUNT(*) 
+FROM novels
+WHERE is_completed = 0;
 
 -- name: GetNovelTags :many
 SELECT tag

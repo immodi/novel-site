@@ -1,5 +1,6 @@
 *.db
+tmp/
 novels_json/
 chapters_json/
 __pycache__/
-
+.venv/

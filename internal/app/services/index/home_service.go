@@ -32,6 +32,12 @@ func (s *homeService) ListCompletedNovels() ([]repositories.Novel, error) {
 	})
 }
 
+func (s *homeService) ListGenres() ([]string, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
+		return q.ListAllGenres(ctx)
+	})
+}
+
 func (s *homeService) GetLatestChapterByNovel(novelID int64) (repositories.Chapter, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (repositories.Chapter, error) {
 		return q.GetLatestChapterByNovel(ctx, novelID)

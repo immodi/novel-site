@@ -25,6 +25,21 @@ CREATE TABLE IF NOT EXISTS chapters (
     UNIQUE(novel_id, chapter_number) -- Ensure unique chapter numbers per novel
 );
 
+-- Table: genres (acts like enum constants)
+CREATE TABLE IF NOT EXISTS genres (
+    genre TEXT PRIMARY KEY
+);
+
+-- constant values
+INSERT OR IGNORE INTO genres (genre) VALUES
+    ('action'),
+    ('adventure'),
+    ('fantasy'),
+    ('romance'),
+    ('mystery'),
+    ('supernatural'),
+    ('drama');
+
 -- Index for faster lookups of chapters by novel
 CREATE INDEX IF NOT EXISTS idx_chapters_novel_id ON chapters(novel_id);
 
@@ -36,7 +51,8 @@ CREATE TABLE IF NOT EXISTS novel_genres (
     novel_id INTEGER NOT NULL,
     genre TEXT NOT NULL,
     PRIMARY KEY (novel_id, genre),
-    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE
+    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE,
+    FOREIGN KEY (genre) REFERENCES genres(genre) ON DELETE CASCADE
 );
 
 -- Table: novel_tags (many-to-many for tags)

@@ -12,6 +12,10 @@ type Chapter struct {
 	Content       string
 }
 
+type Genre struct {
+	Genre string
+}
+
 type Novel struct {
 	ID          int64
 	Title       string

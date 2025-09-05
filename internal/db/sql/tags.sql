@@ -24,3 +24,16 @@ ORDER BY n.update_time DESC;
 DELETE FROM novel_tags
 WHERE novel_id = ?;
 
+-- name: CountNovelsByTag :one
+SELECT COUNT(*)
+FROM novel_tags
+WHERE tag = ?;
+
+-- name: ListNovelsByTagPaginated :many
+SELECT n.*
+FROM novels n
+JOIN novel_tags t ON n.id = t.novel_id
+WHERE t.tag = ?
+ORDER BY n.update_time DESC
+LIMIT ? OFFSET ?;
+

@@ -35,7 +35,12 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/novel/{novelName}", router.handlers.Novel.GetNovel)
 	router.r.Get("/novel/{novelName}/chapters", router.handlers.Chapter.GetChaptersDropDown)
 	router.r.Get("/novel/{novelName}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
+
 	router.r.Get("/search/{novelName}", router.handlers.Search.SearchNovel)
+	router.r.Get("/sort/{collection}", router.handlers.Search.SortNovelsByCollection)
+	router.r.Get("/genre/{genre}", router.handlers.Search.SortNovelsByGenres)
+	router.r.Get("/tag/{tag}", router.handlers.Search.SortNovelsByTags)
+	router.r.Get("/author/{author}", router.handlers.Search.SortNovelsByAuthor)
 
 	router.r.Get("/privacy", router.handlers.Privacy.Privacy)
 	router.r.Get("/terms", router.handlers.Terms.Terms)

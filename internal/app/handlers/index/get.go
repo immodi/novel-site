@@ -32,6 +32,12 @@ func (h *HomeHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// genres, err := h.homeService.ListGenres()
+	// if err != nil {
+	// 	handlers.ServerErrorHandler(w, r)
+	// 	return
+	// }
+
 	completedNovels, err := DbNovelToHomeNovelMapper(dbCompletedNovels, h.homeService)
 	handlers.GenericServiceHandler(w, r, GetIndexMetaData(), index.Index(hotNovels, newestNovels, completedNovels))
 }

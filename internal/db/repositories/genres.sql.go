@@ -25,6 +25,19 @@ func (q *Queries) AddGenreToNovel(ctx context.Context, arg AddGenreToNovelParams
 	return err
 }
 
+const countNovelsByGenre = `-- name: CountNovelsByGenre :one
+SELECT COUNT(*) 
+FROM novel_genres
+WHERE genre = ?
+`
+
+func (q *Queries) CountNovelsByGenre(ctx context.Context, genre string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countNovelsByGenre, genre)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteGenreFromNovel = `-- name: DeleteGenreFromNovel :exec
 DELETE FROM novel_genres
 WHERE novel_id = ? AND genre = ?
@@ -38,6 +51,34 @@ type DeleteGenreFromNovelParams struct {
 func (q *Queries) DeleteGenreFromNovel(ctx context.Context, arg DeleteGenreFromNovelParams) error {
 	_, err := q.db.ExecContext(ctx, deleteGenreFromNovel, arg.NovelID, arg.Genre)
 	return err
+}
+
+const listAllGenres = `-- name: ListAllGenres :many
+SELECT genre FROM genres
+ORDER BY genre
+`
+
+func (q *Queries) ListAllGenres(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listAllGenres)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var genre string
+		if err := rows.Scan(&genre); err != nil {
+			return nil, err
+		}
+		items = append(items, genre)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listGenresByNovel = `-- name: ListGenresByNovel :many
@@ -58,6 +99,55 @@ func (q *Queries) ListGenresByNovel(ctx context.Context, novelID int64) ([]strin
 			return nil, err
 		}
 		items = append(items, genre)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listNovelsByGenrePaginated = `-- name: ListNovelsByGenrePaginated :many
+SELECT n.id, n.title, n.description, n.cover_image, n.author, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
+FROM novels n
+JOIN novel_genres ng ON n.id = ng.novel_id
+WHERE ng.genre = ?
+ORDER BY n.update_time DESC
+LIMIT ? OFFSET ?
+`
+
+type ListNovelsByGenrePaginatedParams struct {
+	Genre  string
+	Limit  int64
+	Offset int64
+}
+
+func (q *Queries) ListNovelsByGenrePaginated(ctx context.Context, arg ListNovelsByGenrePaginatedParams) ([]Novel, error) {
+	rows, err := q.db.QueryContext(ctx, listNovelsByGenrePaginated, arg.Genre, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Novel
+	for rows.Next() {
+		var i Novel
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.CoverImage,
+			&i.Author,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
+			&i.UpdateTime,
+			&i.ViewCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

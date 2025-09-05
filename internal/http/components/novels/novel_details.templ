@@ -5,6 +5,7 @@ import (
 	"immodi/novel-site/internal/http/structs/novels"
 	"immodi/novel-site/pkg"
 	"math"
+	"strings"
 )
 
 templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
@@ -33,7 +34,7 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 					href={ fmt.Sprintf("/author/%s", pkg.TitleToSlug(novel.Author)) }
 					class="text-blue-400 dark:text-blue-600 hover:underline"
 				>
-					{ novel.Author }
+					{ pkg.CapitalizeFirstLetter(novel.Author) }
 				</a>
 			</div>
 			<div>
@@ -44,7 +45,7 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 							href={ fmt.Sprintf("/genre/%s", pkg.TitleToSlug(genre)) }
 							class="text-blue-400 dark:text-blue-600 hover:underline text-sm"
 						>
-							{ genre }
+							{ pkg.CapitalizeFirstLetter(genre) }
 						</a>
 					}
 				</div>
@@ -54,14 +55,18 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 				{{ var textStyle string }}
 				{{
 	if novel.Status == "Ongoing" {
-		textStyle = "text-green-400 dark:text-green-600"
-	} else {
 		textStyle = "text-blue-400 dark:text-blue-600"
+	} else {
+		textStyle = "text-green-400 dark:text-green-600"
 	}
 				}}
-				<span class={ fmt.Sprintf("font-semibold %s", textStyle) }>
+				<a
+					href={ fmt.Sprintf("/sort/%s", strings.ToLower(novel.Status)) }
+					class={ fmt.Sprintf(`font-semibold %s
+                hover:underline`, textStyle) }
+				>
 					{ novel.Status }
-				</span>
+				</a>
 			</div>
 			<div>
 				<h3 class="font-semibold">Publishers:</h3>
@@ -81,7 +86,7 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 						href={ fmt.Sprintf("/tag/%s", pkg.TitleToSlug(tag)) }
 						class="bg-[#252525] dark:bg-gray-200 hover:bg-[#333] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-3 py-1 rounded-full text-sm transition-colors"
 					>
-						{ tag }
+						{ pkg.CapitalizeFirstLetter(tag) }
 					</a>
 				}
 			</div>
