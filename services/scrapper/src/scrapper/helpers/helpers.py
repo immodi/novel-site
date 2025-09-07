@@ -14,7 +14,7 @@ def download_image(
 
         # Extract extension from URL
         url_path = urlparse(src).path
-        ext = ".jpg"
+        ext = os.path.splitext(url_path)[1] or ".jpg"
 
         # Decide filename
         if image_name:
@@ -24,7 +24,16 @@ def download_image(
 
         filepath = os.path.join(directory, filename)
 
-        response = requests.get(src, timeout=10)
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (X11; Linux x86_64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/127.0.0.0 Safari/537.36"
+            ),
+            "Referer": "https://novelfire.net/",
+        }
+
+        response = requests.get(src, headers=headers, timeout=10)
         response.raise_for_status()
 
         with open(filepath, "wb") as f:

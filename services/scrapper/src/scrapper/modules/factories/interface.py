@@ -1,4 +1,4 @@
-from typing import Protocol, List
+from typing import Protocol, List, Union
 from lxml import html
 from scrapper import config
 from scrapper.helpers import utils
@@ -7,7 +7,7 @@ from scrapper.datatypes.novel import (
     NovelData,
     NovelLink,
 )
-from os import path
+from os import path, remove
 from enum import Enum
 
 
@@ -18,7 +18,9 @@ class SkipDuplicate(Enum):
 
 
 class Parser(Protocol):
-    def parse_list_of_novels(self, tree: html.HtmlElement) -> List[NovelLink]: ...
+    def parse_list_of_novels(
+        self, tree: Union[html.HtmlElement, List[html.HtmlElement]]
+    ) -> List[NovelLink]: ...
     def parse_novel(
         self, tree: html.HtmlElement, url: str, save_image: bool = True
     ) -> NovelData: ...
@@ -38,4 +40,18 @@ class Parser(Protocol):
         file_path = path.join(
             config.OUTPUT_DIR, "chapters", novel_name, f"{safe_title}.json"
         )
+
         return path.exists(file_path)
+
+    def clean_up_novel(self, novel_name: str):
+        json_file = f"{config.OUTPUT_DIR}/novels/{utils.slugify(novel_name)}.json"
+        cover_file = f"{config.OUTPUT_DIR}/covers/{utils.slugify(novel_name)}.jpg"
+
+        for file_path in [json_file, cover_file]:
+            try:
+                remove(file_path)
+                print(f"Removed {file_path}")
+            except FileNotFoundError:
+                print(f"File not found: {file_path}")
+            except Exception as e:
+                print(f"Failed to remove {file_path}: {e}")

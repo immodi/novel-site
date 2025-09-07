@@ -1,5 +1,5 @@
-BASE_URL = "https://novelbin.me"
-LIST_URL = f"{BASE_URL}/sort/novelbin-hot"
+BASE_URL = "https://novelfire.net"
+LIST_URL = f"{BASE_URL}/genre-all/sort-popular/status-all/all-novel"
 OUTPUT_DIR = "data"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
