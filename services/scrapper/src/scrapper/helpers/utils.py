@@ -1,7 +1,7 @@
 import re
-import requests
+from botasaurus.request import request, Request
 from lxml import html
-from . import config
+from scrapper import config
 
 
 def slugify(text: str) -> str:
@@ -16,7 +16,12 @@ def safe_text(el: html.HtmlElement) -> str | None:
     return el.text_content().strip()
 
 
-def fetch_page(url: str) -> html.HtmlElement:
-    resp = requests.get(url, headers=config.HEADERS)
+def bold_green(text):
+    return f"\033[1;32m{text}\033[0m"
+
+
+@request(output=None)
+def fetch_page(request: Request, url: str) -> html.HtmlElement:
+    resp = request.get(url)
     resp.raise_for_status()
     return html.fromstring(resp.text)

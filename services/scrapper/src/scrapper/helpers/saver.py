@@ -1,10 +1,11 @@
 import os
 import json
 from typing import Any, Mapping, Sequence
-from modules import config, utils
+from scrapper import config
+from scrapper.helpers import utils
 
 
-def save_item(novel_data: Mapping[str, Any], directory: str = config.OUTPUT_DIR) -> str:
+def save_item(novel_data: Mapping[str, Any], directory: str) -> str:
     os.makedirs(directory, exist_ok=True)  # <--- use the passed directory
 
     title = novel_data.get("title") or "untitled"
