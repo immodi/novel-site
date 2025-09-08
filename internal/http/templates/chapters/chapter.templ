@@ -1,9 +1,9 @@
 package chapters
 
 import (
+	"fmt"
 	"immodi/novel-site/internal/http/components/chapters"
 	"immodi/novel-site/internal/http/structs/chapters"
-	"strings"
 )
 
 templ ChapterReader(ch chaptersdtostructs.ChapterPage) {
@@ -14,18 +14,18 @@ templ ChapterReader(ch chaptersdtostructs.ChapterPage) {
 				{ ch.ChapterTitle }
 			</h1>
 			<p class="text-center text-gray-400 dark:text-gray-600 mb-8">
-				{ ch.NovelName }
+				<a href={ fmt.Sprintf("/novel/%s", ch.NovelSlug) }>
+					{ ch.NovelName }
+				</a>
 			</p>
 			<!-- Navigation (top) -->
 			@chapters.NavigationButtons(&ch)
 			<!-- Content -->
 			<div
 				id="chapter-content"
-				class="prose prose-invert dark:prose max-w-none mb-8 w-full leading-relaxed text-gray-200 dark:text-gray-800 rounded-lg p-6 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] space-y-4"
+				class="whitespace-pre-wrap prose prose-invert dark:prose max-w-none mb-8 w-full leading-relaxed text-gray-200 dark:text-gray-800 rounded-lg p-6 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] space-y-4"
 			>
-				for _, paragraph := range strings.Split(ch.ChapterContent, "\n") {
-					<p>{ paragraph }</p>
-				}
+				@templ.Raw(ch.ChapterContent)
 			</div>
 			<!-- Navigation (bottom) -->
 			@chapters.NavigationButtons(&ch)

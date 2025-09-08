@@ -8,7 +8,6 @@ import (
 )
 
 func dbNovelsToSearchDtos(service search.SearchService, dbNovels []repositories.Novel) []searchresutlsdto.SearchResultDto {
-
 	var searchDtos []searchresutlsdto.SearchResultDto
 	for _, novel := range dbNovels {
 		status := "Ongoing"

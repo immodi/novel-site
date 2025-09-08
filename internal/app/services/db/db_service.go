@@ -18,14 +18,33 @@ func NewDBService(databasePath string) (*DBService, error) {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
+	// Limit to 1 writer connection (SQLite safe setup)
+	db.SetMaxOpenConns(1)
+	db.SetMaxIdleConns(1)
+	db.SetConnMaxLifetime(0)
+
 	// Test the connection
 	if err := db.Ping(); err != nil {
 		db.Close()
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	// Create context with cancel
+	// Context with cancel
 	ctx, cancel := context.WithCancel(context.Background())
+
+	// Enable WAL mode (non-blocking reads during writes)
+	if _, err := db.ExecContext(ctx, "PRAGMA journal_mode=WAL;"); err != nil {
+		db.Close()
+		cancel()
+		return nil, fmt.Errorf("failed to enable WAL mode: %w", err)
+	}
+
+	// Optional: improve performance with normal sync
+	if _, err := db.ExecContext(ctx, "PRAGMA synchronous=NORMAL;"); err != nil {
+		db.Close()
+		cancel()
+		return nil, fmt.Errorf("failed to set synchronous: %w", err)
+	}
 
 	// create tables
 	if _, err := db.ExecContext(ctx, schema.Schema); err != nil {
@@ -79,6 +98,26 @@ func Execute(s *DBService, fn func(context.Context, *repositories.Queries) error
 	s.mu.RUnlock()
 
 	return fn(ctx, queries)
+}
+
+func ExecuteTx(s *DBService, fn func(context.Context, *repositories.Queries) error) error {
+	s.mu.RLock()
+	ctx := s.ctx
+	s.mu.RUnlock()
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	q := s.queries.WithTx(tx)
+
+	if err := fn(ctx, q); err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 // Helper functions for creating sql.Null types

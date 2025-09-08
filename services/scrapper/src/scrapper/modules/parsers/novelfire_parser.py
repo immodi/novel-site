@@ -1,4 +1,5 @@
-from botasaurus.request import request, Request 
+from bs4 import Tag, BeautifulSoup
+from botasaurus.request import request, Request
 from botasaurus.soupify import soupify
 from botasaurus.browser import browser, Driver
 from urllib.parse import urljoin
@@ -13,7 +14,11 @@ from scrapper.datatypes.novel_fire_chapter import NovelFireChapter
 
 
 class NovelFireParser(Parser):
-    def __init__(self,  max_chapters_number: int, skip_duplicates: SkipDuplicate = SkipDuplicate.NONE):
+    def __init__(
+        self,
+        max_chapters_number: int,
+        skip_duplicates: SkipDuplicate = SkipDuplicate.NONE,
+    ):
         self.max_chapters_number = max_chapters_number
         self.skip_duplicates = skip_duplicates
 
@@ -35,7 +40,9 @@ class NovelFireParser(Parser):
                 title = title_el[0].text_content().strip()
                 url = urljoin(config.BASE_URL, link_el[0].get("href"))
 
-                if self.skip_duplicates == SkipDuplicate.NOVEL and self.novel_exists(title):
+                if self.skip_duplicates == SkipDuplicate.NOVEL and self.novel_exists(
+                    title
+                ):
                     print(f"Novel {title} already exists. Skipping...")
                     continue
 
@@ -64,7 +71,9 @@ class NovelFireParser(Parser):
 
         # Genres
         genres_el = tree.cssselect(".categories ul li")
-        genres = [g.text_content().strip() for g in genres_el] if len(genres_el) > 0 else []
+        genres = (
+            [g.text_content().strip() for g in genres_el] if len(genres_el) > 0 else []
+        )
 
         # Tags
         tags_el = tree.cssselect("ul.content li")
@@ -75,21 +84,22 @@ class NovelFireParser(Parser):
         cover_image = cover_el[0].get("src") if len(cover_el) > 0 else ""
 
         # Description
-        desc_el = tree.cssselect(".content")
+        desc_el = tree.cssselect(".content p")
         if len(desc_el) > 0:
-            description = desc_el[0].text_content().split("Show More")[0].strip()
+            # Get the text of all <p> tags inside .content, join with newline
+            description = "\n".join([p.text_content().strip() for p in desc_el])
         else:
             description = ""
 
         novel_data = NovelData(
-            title= title or "",
-            author= author,
-            genres= genres,
-            status= status,
-            tags= tags,
-            cover_image= cover_image,
-            description= description,
-            url= url,
+            title=title or "",
+            author=author,
+            genres=genres,
+            status=status,
+            tags=tags,
+            cover_image=cover_image,
+            description=description,
+            url=url,
         )
 
         saver.save_item(novel_data, f"{config.OUTPUT_DIR}/novels")
@@ -134,27 +144,24 @@ class NovelFireParser(Parser):
             self.clean_up_novel(novel_name)
             return chapters
 
-
         # Build chapter links (ascending order)
         for i in range(1, last_chapter_number + 1):
             chapter_link = f"{base_url}chapter-{i}"
 
             chapter_data = scrape_chapter_with_request(chapter_link)  # type: ignore
             # chapter_data = scrape_chapter(chapter_link)  # type: ignore
-            
+
             if self.skip_duplicates == SkipDuplicate.CHAPTER and self.chapter_exists(
                 chapter_data.title, utils.slugify(novel_name)
-                
             ):
                 print(f"Chapter {chapter_data.title} already exists. Skipping...")
                 continue
 
-            chapter= ChapterData (
-                title= chapter_data.title,
-                content= chapter_data.content,
-                url= chapter_link,
+            chapter = ChapterData(
+                title=chapter_data.title,
+                content=chapter_data.content,
+                url=chapter_link,
             )
-
 
             chapters.append(chapter)
 
@@ -179,10 +186,20 @@ class NovelFireParser(Parser):
 @browser(output=None, headless=False, max_retry=10)
 def scrape_chapter(driver: Driver, url: str) -> NovelFireChapter:
     driver.google_get(url)
-    title = driver.get_text(".chapter-title")
-    content = driver.get_text("#content")
-    return NovelFireChapter(title=title, content=content)
 
+    # Title
+    title = driver.get_text(".chapter-title").strip()
+
+    # Get raw HTML of content container
+    content_tab = driver.get("#content")
+    content_html = getattr(content_tab, "html", str(content_tab))  # fallback to str
+
+    # Extract only <p> tags
+    soup = BeautifulSoup(content_html, "html.parser")
+
+    content = "".join(str(p) for p in soup.find_all("p"))
+
+    return NovelFireChapter(title=title, content=content)
 
 
 @request(output=None, max_retry=10)
@@ -193,10 +210,16 @@ def scrape_chapter_with_request(request: Request, url: str) -> NovelFireChapter:
     if soup.get_text() == "Just a moment...Enable JavaScript and cookies to continue":
         return scrape_chapter(url)  # type: ignore
 
+    # Title
     chapter_title = soup.find("span", class_="chapter-title")
-    title = chapter_title.get_text().strip() if chapter_title else ""
-    
+    title = chapter_title.get_text(strip=True) if chapter_title else ""
+
+    # Content (keep <p> tags)
     chapter_content = soup.find(id="content")
-    content = chapter_content.get_text().strip() if chapter_content else ""
+    content = (
+        "".join(str(p) for p in chapter_content.find_all("p"))
+        if isinstance(chapter_content, Tag)
+        else ""
+    )
 
     return NovelFireChapter(title=title, content=content)

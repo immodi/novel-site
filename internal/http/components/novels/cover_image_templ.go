@@ -11,7 +11,6 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 	"immodi/novel-site/internal/http/structs/novels"
-	"immodi/novel-site/pkg"
 )
 
 func CoverImageComponent(novel *novelsdtostructs.Novel) templ.Component {
@@ -42,7 +41,7 @@ func CoverImageComponent(novel *novelsdtostructs.Novel) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(novel.CoverImage)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/cover_image.templ`, Line: 12, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/cover_image.templ`, Line: 11, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -55,7 +54,7 @@ func CoverImageComponent(novel *novelsdtostructs.Novel) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/cover_image.templ`, Line: 12, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/cover_image.templ`, Line: 11, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -66,9 +65,9 @@ func CoverImageComponent(novel *novelsdtostructs.Novel) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 templ.SafeURL
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), 1))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, 1))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/cover_image.templ`, Line: 16, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/cover_image.templ`, Line: 15, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

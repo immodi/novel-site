@@ -58,9 +58,9 @@ func ChapterListComponent(novel *novelsdtostructs.Novel) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 templ.SafeURL
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), chapter.Number))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, chapter.Number))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/chapter_list.templ`, Line: 15, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/chapter_list.templ`, Line: 15, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -100,9 +100,9 @@ func ChapterListComponent(novel *novelsdtostructs.Novel) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 templ.SafeURL
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s?page=%d#chapters", pkg.TitleToSlug(novel.Name), novel.CurrentPage-1))
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, novel.CurrentPage-1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/chapter_list.templ`, Line: 29, Col: 104}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/chapter_list.templ`, Line: 29, Col: 87}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -138,9 +138,9 @@ func ChapterListComponent(novel *novelsdtostructs.Novel) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 templ.SafeURL
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s?page=%d#chapters", pkg.TitleToSlug(novel.Name), i))
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/chapter_list.templ`, Line: 40, Col: 87}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/chapter_list.templ`, Line: 40, Col: 70}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -171,9 +171,9 @@ func ChapterListComponent(novel *novelsdtostructs.Novel) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 templ.SafeURL
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s?page=%d#chapters", pkg.TitleToSlug(novel.Name), novel.CurrentPage+1))
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, novel.CurrentPage+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/chapter_list.templ`, Line: 49, Col: 104}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/chapter_list.templ`, Line: 49, Col: 87}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {

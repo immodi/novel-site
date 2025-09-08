@@ -8,4 +8,5 @@ type LoadService interface {
 	AddGenreToNovel(novelID int64, genre string) error
 	AddTagToNovel(novelID int64, tag string) error
 	DeleteNovel(novelID int64) error
+	CreateBulkChapters(chapters []repositories.CreateChapterParams) error
 }

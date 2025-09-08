@@ -38,24 +38,23 @@ func DescriptionComponent(novel *novelsdtostructs.Novel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		sentences := strings.Split(novel.Description, ".")
+		sentences := strings.Split(novel.Description, "\n")
 		for _, sentence := range sentences {
-			trimmed := strings.TrimSpace(sentence)
-			if trimmed != "" {
+			if sentence != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var2 string
-				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(trimmed)
+				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strings.ReplaceAll(sentence, ".", ". "))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/description.templ`, Line: 16, Col: 17}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/novels/description.templ`, Line: 15, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, ".</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -68,6 +68,28 @@ func (s *chapterService) CreateChapterWithDefaults(novelID int64) (repositories.
 	})
 }
 
+func (s *chapterService) CreateBulkChapters(chapters []repositories.CreateChapterParams) error {
+	return db.ExecuteTx(s.db, func(ctx context.Context, q *repositories.Queries) error {
+		if len(chapters) == 0 {
+			return nil
+		}
+
+		novelID := chapters[0].NovelID
+
+		for _, chapter := range chapters {
+			if _, err := q.CreateChapter(ctx, chapter); err != nil {
+				return err
+			}
+		}
+
+		_, err := q.UpdateNovelPartial(ctx, repositories.UpdateNovelPartialParams{
+			ID:         novelID,
+			UpdateTime: pkg.GetCurrentTimeRFC3339(),
+		})
+		return err
+	})
+}
+
 func (s *chapterService) ListChaptersByNovel(novelID int64) ([]repositories.Chapter, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Chapter, error) {
 		return q.ListChaptersByNovel(ctx, novelID)

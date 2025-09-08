@@ -25,6 +25,7 @@ func dbChaptersToChapters(dbChapters []repositories.Chapter) []novelsdtostructs.
 func BuildChapterPage(dbNovel repositories.Novel, dbChapter repositories.Chapter, prevChapter, nextChapter *int) chaptersdtostructs.ChapterPage {
 	return chaptersdtostructs.ChapterPage{
 		NovelName:      dbNovel.Title,
+		NovelSlug:      dbNovel.Slug,
 		ChapterTitle:   dbChapter.Title,
 		ChapterContent: dbChapter.Content,
 		PrevChapter:    prevChapter,

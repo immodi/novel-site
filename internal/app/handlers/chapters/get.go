@@ -4,7 +4,6 @@ import (
 	"immodi/novel-site/internal/app/handlers"
 	dropdown "immodi/novel-site/internal/http/components/chapters"
 	"immodi/novel-site/internal/http/templates/chapters"
-	"immodi/novel-site/pkg"
 	"net/http"
 	"strconv"
 
@@ -13,8 +12,8 @@ import (
 )
 
 func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
-	novelSlug := pkg.SlugToTitle(chi.URLParam(r, "novelSlug"))
-	chapterNumStr := pkg.SlugToTitle(chi.URLParam(r, "chapterNumber"))
+	novelSlug := chi.URLParam(r, "novelSlug")
+	chapterNumStr := chi.URLParam(r, "chapterNumber")
 
 	chapterNum, err := strconv.Atoi(chapterNumStr)
 	if err != nil || chapterNum < 1 {
@@ -70,7 +69,7 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Request) {
-	novelSlug := pkg.TitleToSlug(chi.URLParam(r, "novelSlug"))
+	novelSlug := chi.URLParam(r, "novelSlug")
 
 	dbNovel, err := h.chapterService.GetNovelBySlug(novelSlug)
 	if err != nil {

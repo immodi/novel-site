@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	chaptersdtostructs "immodi/novel-site/internal/http/structs/chapters"
-	"immodi/novel-site/pkg"
 )
 
 templ NavigationButtons(ch *chaptersdtostructs.ChapterPage) {
@@ -13,35 +12,73 @@ templ NavigationButtons(ch *chaptersdtostructs.ChapterPage) {
 		<!-- Prev Button -->
 		if ch.PrevChapter != nil {
 			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(ch.NovelName), *ch.PrevChapter) }
+				href={ fmt.Sprintf("/novel/%s/chapter-%d", ch.NovelSlug, *ch.PrevChapter) }
 				class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300"
 			>
-				<span class="sm:hidden">←</span>
+				<span class="sm:hidden">
+					<svg
+						class="w-5 h-5 stroke-current dark:text-black text-white"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+						<g id="SVGRepo_iconCarrier">
+							<path
+								d="M15 7L10 12L15 17"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							></path>
+						</g>
+					</svg>
+				</span>
 				<span class="hidden sm:inline">Previous</span>
 			</a>
 		} else {
 			<span
 				class="px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 flex items-center gap-2 border border-[#353535] dark:border-gray-300"
 			>
-				<span class="sm:hidden">←</span>
+				<span class="sm:hidden">
+					<svg
+						class="w-5 h-5 stroke-current dark:text-black text-white"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+						<g id="SVGRepo_iconCarrier">
+							<path
+								d="M15 7L10 12L15 17"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							></path>
+						</g>
+					</svg>
+				</span>
 				<span class="hidden sm:inline">Previous</span>
 			</span>
 		}
 		<!-- Home Button -->
-		<a
-			href={ fmt.Sprintf("/novel/%s", pkg.TitleToSlug(ch.NovelName)) }
-			class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300"
-		>
-			<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-				></path>
-			</svg>
-			<span class="hidden sm:inline">Home</span>
-		</a>
+		<!-- <a -->
+		<!-- 	href={ fmt.Sprintf("/novel/%s", ch.NovelSlug) } -->
+		<!-- 	class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300" -->
+		<!-- > -->
+		<!-- 	<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> -->
+		<!-- 		<path -->
+		<!-- 			stroke-linecap="round" -->
+		<!-- 			stroke-linejoin="round" -->
+		<!-- 			stroke-width="2" -->
+		<!-- 			d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" -->
+		<!-- 		></path> -->
+		<!-- 	</svg> -->
+		<!-- 	<span class="hidden sm:inline">Home</span> -->
+		<!-- </a> -->
 		<!-- Chapter Dropdown -->
 		<div
 			class="relative flex items-center bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 rounded-lg hover:bg-[#353535] dark:hover:bg-gray-300 transition"
@@ -50,7 +87,7 @@ templ NavigationButtons(ch *chaptersdtostructs.ChapterPage) {
 				id={ fmt.Sprintf("chapter-select-%s", id) }
 				name="chapter"
 				class="chapter-select w-full px-4 py-2 bg-transparent text-gray-100 dark:text-gray-800 font-medium appearance-none cursor-pointer focus:outline-none pr-8"
-				hx-get={ fmt.Sprintf("/novel/%s/chapters", pkg.TitleToSlug(ch.NovelName)) }
+				hx-get={ fmt.Sprintf("/novel/%s/chapters", ch.NovelSlug) }
 				hx-target={ fmt.Sprintf("#chapters-list-%s", id) }
 				hx-trigger="focus once"
 				hx-swap="innerHTML"
@@ -114,18 +151,56 @@ templ NavigationButtons(ch *chaptersdtostructs.ChapterPage) {
 		<!-- Next Button -->
 		if ch.NextChapter != nil {
 			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(ch.NovelName), *ch.NextChapter) }
+				href={ fmt.Sprintf("/novel/%s/chapter-%d", ch.NovelSlug, *ch.NextChapter) }
 				class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300"
 			>
 				<span class="hidden sm:inline">Next</span>
-				<span class="sm:hidden">→</span>
+				<span class="sm:hidden">
+					<svg
+						class="w-5 h-5 stroke-current dark:text-black text-white"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+						<g id="SVGRepo_iconCarrier">
+							<path
+								d="M10 7L15 12L10 17"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							></path>
+						</g>
+					</svg>
+				</span>
 			</a>
 		} else {
 			<span
 				class="px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 flex items-center gap-2 border border-[#353535] dark:border-gray-300"
 			>
 				<span class="hidden sm:inline">Next</span>
-				<span class="sm:hidden">→</span>
+				<span class="sm:hidden">
+					<svg
+						class="w-5 h-5 stroke-current dark:text-black text-white"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+						<g id="SVGRepo_iconCarrier">
+							<path
+								d="M10 7L15 12L10 17"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							></path>
+						</g>
+					</svg>
+				</span>
 			</span>
 		}
 	</div>

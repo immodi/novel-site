@@ -1,4 +1,5 @@
 from botasaurus.request import request, Request
+from bs4 import BeautifulSoup, Tag
 from botasaurus.soupify import soupify
 from botasaurus.browser import browser, Driver
 from urllib.parse import urljoin
@@ -12,12 +13,17 @@ from lxml import html
 
 
 class NovelBinParser(Parser):
-    def __init__(self, max_chapters_number: int, skip_duplicates: SkipDuplicate = SkipDuplicate.NONE):
-        self.max_chapters_number = max_chapters_number            
+    def __init__(
+        self,
+        max_chapters_number: int,
+        skip_duplicates: SkipDuplicate = SkipDuplicate.NONE,
+    ):
+        self.max_chapters_number = max_chapters_number
         self.skip_duplicates = skip_duplicates
 
-
-    def parse_list_of_novels(self, tree: Union[html.HtmlElement, List[html.HtmlElement]]) -> List[NovelLink]:
+    def parse_list_of_novels(
+        self, tree: Union[html.HtmlElement, List[html.HtmlElement]]
+    ) -> List[NovelLink]:
         novels = []
 
         # Normalize into a list
@@ -27,7 +33,9 @@ class NovelBinParser(Parser):
             for a in t.cssselect(".list-novel .row .novel-title > a"):
                 title = a.text_content().strip()
 
-                if self.skip_duplicates == SkipDuplicate.NOVEL and self.novel_exists(title):
+                if self.skip_duplicates == SkipDuplicate.NOVEL and self.novel_exists(
+                    title
+                ):
                     print(f"Novel {title} already exists. Skipping...")
                     continue
 
@@ -76,15 +84,15 @@ class NovelBinParser(Parser):
         description = safe_text(desc_el[0]) if desc_el else None
 
         novel_data = NovelData(
-            title = title or "",
-            author = author or "",
-            genres = genres or [],
-            status = status or "",
-            tags = tags or [],
-            cover_image = img or "",
-            description = description or "",
-            url = url or "",
-        ) 
+            title=title or "",
+            author=author or "",
+            genres=genres or [],
+            status=status or "",
+            tags=tags or [],
+            cover_image=img or "",
+            description=description or "",
+            url=url or "",
+        )
 
         saver.save_item(novel_data, f"{config.OUTPUT_DIR}/novels")
         if save_image:
@@ -127,10 +135,10 @@ class NovelBinParser(Parser):
             chapter_content = scrape_chapter_with_request(chapter_url)  # type: ignore
             # chapter_content = scrape_chapter(chapter_url)  # type: ignore
 
-            chapter= ChapterData(
-                title= chapter_title,
-                content= chapter_content,
-                url= chapter_url,
+            chapter = ChapterData(
+                title=chapter_title,
+                content=chapter_content,
+                url=chapter_url,
             )
             chapters.append(chapter)
 
@@ -151,10 +159,19 @@ class NovelBinParser(Parser):
 
         return chapters
 
+
 @browser(output=None, headless=False, max_retry=10)
 def scrape_chapter(driver: Driver, url: str) -> str:
     driver.google_get(url)
-    chapter_text = driver.get_text("#chr-content")
+
+    # Get raw HTML of content container
+    content_tab = driver.get("#chr-content")
+    content_html = getattr(content_tab, "html", str(content_tab))  # ensure string
+
+    # Extract only <p> tags
+    soup = BeautifulSoup(content_html, "html.parser")
+    chapter_text = "".join(str(p) for p in soup.find_all("p"))
+
     return chapter_text
 
 
@@ -162,9 +179,14 @@ def scrape_chapter(driver: Driver, url: str) -> str:
 def scrape_chapter_with_request(request: Request, url: str) -> str:
     response = request.get(url, timeout=30)
     soup = soupify(response)
-    el = soup.find(id="chr-content")
+
     if soup.get_text() == "Just a moment...Enable JavaScript and cookies to continue":
         return scrape_chapter(url)  # type: ignore
-    chapter_text = el.get_text().strip() if el else ""
-    return chapter_text
 
+    # Content (keep <p> tags)
+    el = soup.find(id="chr-content")
+    chapter_text = (
+        "".join(str(p) for p in el.find_all("p")) if isinstance(el, Tag) else ""
+    )
+
+    return chapter_text

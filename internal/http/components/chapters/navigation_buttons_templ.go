@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	chaptersdtostructs "immodi/novel-site/internal/http/structs/chapters"
-	"immodi/novel-site/pkg"
 )
 
 func NavigationButtons(ch *chaptersdtostructs.ChapterPage) templ.Component {
@@ -47,118 +46,105 @@ func NavigationButtons(ch *chaptersdtostructs.ChapterPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 templ.SafeURL
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(ch.NovelName), *ch.PrevChapter))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", ch.NovelSlug, *ch.PrevChapter))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 16, Col: 94}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 15, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><span class=\"sm:hidden\">←</span> <span class=\"hidden sm:inline\">Previous</span></a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><span class=\"sm:hidden\"><svg class=\"w-5 h-5 stroke-current dark:text-black text-white\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g> <g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g> <g id=\"SVGRepo_iconCarrier\"><path d=\"M15 7L10 12L15 17\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></g></svg></span> <span class=\"hidden sm:inline\">Previous</span></a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<span class=\"px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><span class=\"sm:hidden\">←</span> <span class=\"hidden sm:inline\">Previous</span></span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<span class=\"px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><span class=\"sm:hidden\"><svg class=\"w-5 h-5 stroke-current dark:text-black text-white\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g> <g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g> <g id=\"SVGRepo_iconCarrier\"><path d=\"M15 7L10 12L15 17\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></g></svg></span> <span class=\"hidden sm:inline\">Previous</span></span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<!-- Home Button --><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<!-- Home Button --><!-- <a --><!-- \thref={ fmt.Sprintf(\"/novel/%s\", ch.NovelSlug) } --><!-- \tclass=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300\" --><!-- > --><!-- \t<svg class=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"> --><!-- \t\t<path --><!-- \t\t\tstroke-linecap=\"round\" --><!-- \t\t\tstroke-linejoin=\"round\" --><!-- \t\t\tstroke-width=\"2\" --><!-- \t\t\td=\"M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6\" --><!-- \t\t></path> --><!-- \t</svg> --><!-- \t<span class=\"hidden sm:inline\">Home</span> --><!-- </a> --><!-- Chapter Dropdown --><div class=\"relative flex items-center bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 rounded-lg hover:bg-[#353535] dark:hover:bg-gray-300 transition\"><select id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.SafeURL
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s", pkg.TitleToSlug(ch.NovelName)))
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("chapter-select-%s", id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 32, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 87, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><svg class=\"w-5 h-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6\"></path></svg> <span class=\"hidden sm:inline\">Home</span></a><!-- Chapter Dropdown --><div class=\"relative flex items-center bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 rounded-lg hover:bg-[#353535] dark:hover:bg-gray-300 transition\"><select id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" name=\"chapter\" class=\"chapter-select w-full px-4 py-2 bg-transparent text-gray-100 dark:text-gray-800 font-medium appearance-none cursor-pointer focus:outline-none pr-8\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("chapter-select-%s", id))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/novel/%s/chapters", ch.NovelSlug))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 50, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 90, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" name=\"chapter\" class=\"chapter-select w-full px-4 py-2 bg-transparent text-gray-100 dark:text-gray-800 font-medium appearance-none cursor-pointer focus:outline-none pr-8\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" hx-target=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/novel/%s/chapters", pkg.TitleToSlug(ch.NovelName)))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("#chapters-list-%s", id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 53, Col: 77}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 91, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-target=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-trigger=\"focus once\" hx-swap=\"innerHTML\" onchange=\"if (this.value) window.location.href = this.value\"><option disabled selected>Jump To Chapter</option> <optgroup id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("#chapters-list-%s", id))
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("chapters-list-%s", id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 54, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 97, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" hx-trigger=\"focus once\" hx-swap=\"innerHTML\" onchange=\"if (this.value) window.location.href = this.value\"><option disabled selected>Jump To Chapter</option> <optgroup id=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("chapters-list-%s", id))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 60, Col: 54}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" label=\"Chapters\"></optgroup></select><div class=\"absolute pointer-events-none inset-y-0 right-0 flex items-center px-2 text-gray-100 dark:text-gray-800\"><svg class=\"fill-current h-4 w-4\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\"><path d=\"M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z\"></path></svg></div></div><!-- Settings Dropdown --><div class=\"relative\"><button class=\"settings-button px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium cursor-pointer flex hover:bg-[#353535] dark:hover:bg-gray-300 transition items-center gap-2 border border-[#353535] dark:border-gray-300 second-settings\" type=\"button\"><svg class=\"w-5 h-5 stroke-current\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle stroke-width=\"2\" cx=\"12\" cy=\"12\" r=\"3\"></circle> <path stroke-width=\"2\" d=\"M13.7654 2.15224C13.3978 2 12.9319 2 12 2C11.0681 2 10.6022 2 10.2346 2.15224C9.74457 2.35523 9.35522 2.74458 9.15223 3.23463C9.05957 3.45834 9.0233 3.7185 9.00911 4.09799C8.98826 4.65568 8.70226 5.17189 8.21894 5.45093C7.73564 5.72996 7.14559 5.71954 6.65219 5.45876C6.31645 5.2813 6.07301 5.18262 5.83294 5.15102C5.30704 5.08178 4.77518 5.22429 4.35436 5.5472C4.03874 5.78938 3.80577 6.1929 3.33983 6.99993C2.87389 7.80697 2.64092 8.21048 2.58899 8.60491C2.51976 9.1308 2.66227 9.66266 2.98518 10.0835C3.13256 10.2756 3.3397 10.437 3.66119 10.639C4.1338 10.936 4.43789 11.4419 4.43786 12C4.43783 12.5581 4.13375 13.0639 3.66118 13.3608C3.33965 13.5629 3.13248 13.7244 2.98508 13.9165C2.66217 14.3373 2.51966 14.8691 2.5889 15.395C2.64082 15.7894 2.87379 16.193 3.33973 17C3.80568 17.807 4.03865 18.2106 4.35426 18.4527C4.77508 18.7756 5.30694 18.9181 5.83284 18.8489C6.07289 18.8173 6.31632 18.7186 6.65204 18.5412C7.14547 18.2804 7.73556 18.27 8.2189 18.549C8.70224 18.8281 8.98826 19.3443 9.00911 19.9021C9.02331 20.2815 9.05957 20.5417 9.15223 20.7654C9.35522 21.2554 9.74457 21.6448 10.2346 21.8478C10.6022 22 11.0681 22 12 22C12.9319 22 13.3978 22 13.7654 21.8478C14.2554 21.6448 14.6448 21.2554 14.8477 20.7654C14.9404 20.5417 14.9767 20.2815 14.9909 19.902C15.0117 19.3443 15.2977 18.8281 15.781 18.549C16.2643 18.2699 16.8544 18.2804 17.3479 18.5412C17.6836 18.7186 17.927 18.8172 18.167 18.8488C18.6929 18.9181 19.2248 18.7756 19.6456 18.4527C19.9612 18.2105 20.1942 17.807 20.6601 16.9999C21.1261 16.1929 21.3591 15.7894 21.411 15.395C21.4802 14.8691 21.3377 14.3372 21.0148 13.9164C20.8674 13.7243 20.6602 13.5628 20.3387 13.3608C19.8662 13.0639 19.5621 12.558 19.5621 11.9999C19.5621 11.4418 19.8662 10.9361 20.3387 10.6392C20.6603 10.4371 20.8675 10.2757 21.0149 10.0835C21.3378 9.66273 21.4803 9.13087 21.4111 8.60497C21.3592 8.21055 21.1262 7.80703 20.6602 7C20.1943 6.19297 19.9613 5.78945 19.6457 5.54727C19.2249 5.22436 18.693 5.08185 18.1671 5.15109C17.9271 5.18269 17.6837 5.28136 17.3479 5.4588C16.8545 5.71959 16.2644 5.73002 15.7811 5.45096C15.2977 5.17191 15.0117 4.65566 14.9909 4.09794C14.9767 3.71848 14.9404 3.45833 14.8477 3.23463C14.6448 2.74458 14.2554 2.35523 13.7654 2.15224Z\"></path></svg> <span class=\"hidden sm:inline\">Settings</span></button><div class=\"settings-dropdown hidden absolute right-0 mt-2 w-56 bg-[#252525] dark:bg-gray-200 rounded-lg shadow-lg p-4 space-y-4 border border-[#353535] dark:border-gray-300 z-10\"><div><label class=\"block text-sm font-medium mb-2 text-gray-100 dark:text-gray-800\">Font Size</label> <select class=\"font-size w-full rounded border border-[#353535] dark:border-gray-300 bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 px-3 py-2 cursor-pointer\"><option value=\"text-base\">Default</option> <option value=\"text-lg\">Large</option> <option value=\"text-xl\">Extra Large</option></select></div><div><label class=\"block text-sm font-medium mb-2 text-gray-100 dark:text-gray-800\">Line Height</label> <input type=\"range\" min=\"100\" max=\"200\" value=\"150\" step=\"10\" class=\"line-height w-full cursor-pointer accent-gray-400 dark:accent-gray-600\"> <span class=\"line-height-value text-sm ml-1 text-gray-100 dark:text-gray-800\">150%</span></div></div></div><!-- Next Button -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" label=\"Chapters\"></optgroup></select><div class=\"absolute pointer-events-none inset-y-0 right-0 flex items-center px-2 text-gray-100 dark:text-gray-800\"><svg class=\"fill-current h-4 w-4\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\"><path d=\"M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z\"></path></svg></div></div><!-- Settings Dropdown --><div class=\"relative\"><button class=\"settings-button px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium cursor-pointer flex hover:bg-[#353535] dark:hover:bg-gray-300 transition items-center gap-2 border border-[#353535] dark:border-gray-300 second-settings\" type=\"button\"><svg class=\"w-5 h-5 stroke-current\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle stroke-width=\"2\" cx=\"12\" cy=\"12\" r=\"3\"></circle> <path stroke-width=\"2\" d=\"M13.7654 2.15224C13.3978 2 12.9319 2 12 2C11.0681 2 10.6022 2 10.2346 2.15224C9.74457 2.35523 9.35522 2.74458 9.15223 3.23463C9.05957 3.45834 9.0233 3.7185 9.00911 4.09799C8.98826 4.65568 8.70226 5.17189 8.21894 5.45093C7.73564 5.72996 7.14559 5.71954 6.65219 5.45876C6.31645 5.2813 6.07301 5.18262 5.83294 5.15102C5.30704 5.08178 4.77518 5.22429 4.35436 5.5472C4.03874 5.78938 3.80577 6.1929 3.33983 6.99993C2.87389 7.80697 2.64092 8.21048 2.58899 8.60491C2.51976 9.1308 2.66227 9.66266 2.98518 10.0835C3.13256 10.2756 3.3397 10.437 3.66119 10.639C4.1338 10.936 4.43789 11.4419 4.43786 12C4.43783 12.5581 4.13375 13.0639 3.66118 13.3608C3.33965 13.5629 3.13248 13.7244 2.98508 13.9165C2.66217 14.3373 2.51966 14.8691 2.5889 15.395C2.64082 15.7894 2.87379 16.193 3.33973 17C3.80568 17.807 4.03865 18.2106 4.35426 18.4527C4.77508 18.7756 5.30694 18.9181 5.83284 18.8489C6.07289 18.8173 6.31632 18.7186 6.65204 18.5412C7.14547 18.2804 7.73556 18.27 8.2189 18.549C8.70224 18.8281 8.98826 19.3443 9.00911 19.9021C9.02331 20.2815 9.05957 20.5417 9.15223 20.7654C9.35522 21.2554 9.74457 21.6448 10.2346 21.8478C10.6022 22 11.0681 22 12 22C12.9319 22 13.3978 22 13.7654 21.8478C14.2554 21.6448 14.6448 21.2554 14.8477 20.7654C14.9404 20.5417 14.9767 20.2815 14.9909 19.902C15.0117 19.3443 15.2977 18.8281 15.781 18.549C16.2643 18.2699 16.8544 18.2804 17.3479 18.5412C17.6836 18.7186 17.927 18.8172 18.167 18.8488C18.6929 18.9181 19.2248 18.7756 19.6456 18.4527C19.9612 18.2105 20.1942 17.807 20.6601 16.9999C21.1261 16.1929 21.3591 15.7894 21.411 15.395C21.4802 14.8691 21.3377 14.3372 21.0148 13.9164C20.8674 13.7243 20.6602 13.5628 20.3387 13.3608C19.8662 13.0639 19.5621 12.558 19.5621 11.9999C19.5621 11.4418 19.8662 10.9361 20.3387 10.6392C20.6603 10.4371 20.8675 10.2757 21.0149 10.0835C21.3378 9.66273 21.4803 9.13087 21.4111 8.60497C21.3592 8.21055 21.1262 7.80703 20.6602 7C20.1943 6.19297 19.9613 5.78945 19.6457 5.54727C19.2249 5.22436 18.693 5.08185 18.1671 5.15109C17.9271 5.18269 17.6837 5.28136 17.3479 5.4588C16.8545 5.71959 16.2644 5.73002 15.7811 5.45096C15.2977 5.17191 15.0117 4.65566 14.9909 4.09794C14.9767 3.71848 14.9404 3.45833 14.8477 3.23463C14.6448 2.74458 14.2554 2.35523 13.7654 2.15224Z\"></path></svg> <span class=\"hidden sm:inline\">Settings</span></button><div class=\"settings-dropdown hidden absolute right-0 mt-2 w-56 bg-[#252525] dark:bg-gray-200 rounded-lg shadow-lg p-4 space-y-4 border border-[#353535] dark:border-gray-300 z-10\"><div><label class=\"block text-sm font-medium mb-2 text-gray-100 dark:text-gray-800\">Font Size</label> <select class=\"font-size w-full rounded border border-[#353535] dark:border-gray-300 bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 px-3 py-2 cursor-pointer\"><option value=\"text-base\">Default</option> <option value=\"text-lg\">Large</option> <option value=\"text-xl\">Extra Large</option></select></div><div><label class=\"block text-sm font-medium mb-2 text-gray-100 dark:text-gray-800\">Line Height</label> <input type=\"range\" min=\"100\" max=\"200\" value=\"150\" step=\"10\" class=\"line-height w-full cursor-pointer accent-gray-400 dark:accent-gray-600\"> <span class=\"line-height-value text-sm ml-1 text-gray-100 dark:text-gray-800\">150%</span></div></div></div><!-- Next Button -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if ch.NextChapter != nil {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var8 templ.SafeURL
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(ch.NovelName), *ch.NextChapter))
+			var templ_7745c5c3_Var7 templ.SafeURL
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", ch.NovelSlug, *ch.NextChapter))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 117, Col: 94}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 154, Col: 77}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><span class=\"hidden sm:inline\">Next</span> <span class=\"sm:hidden\">→</span></a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 font-medium shadow hover:bg-[#353535] dark:hover:bg-gray-300 transition flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><span class=\"hidden sm:inline\">Next</span> <span class=\"sm:hidden\"><svg class=\"w-5 h-5 stroke-current dark:text-black text-white\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g> <g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g> <g id=\"SVGRepo_iconCarrier\"><path d=\"M10 7L15 12L10 17\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></g></svg></span></a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span class=\"px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><span class=\"hidden sm:inline\">Next</span> <span class=\"sm:hidden\">→</span></span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<span class=\"px-4 py-2 rounded-lg text-gray-500 dark:text-gray-400 flex items-center gap-2 border border-[#353535] dark:border-gray-300\"><span class=\"hidden sm:inline\">Next</span> <span class=\"sm:hidden\"><svg class=\"w-5 h-5 stroke-current dark:text-black text-white\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"></g> <g id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></g> <g id=\"SVGRepo_iconCarrier\"><path d=\"M10 7L15 12L10 17\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></g></svg></span></span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div><style>\n    .second-settings+.settings-dropdown {\n        top: auto;\n        /* remove default top */\n        bottom: 100%;\n        /* position above the button */\n        margin-top: 0;\n        margin-bottom: 0.5rem;\n        /* small gap */\n    }\n</style>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div><style>\n    .second-settings+.settings-dropdown {\n        top: auto;\n        /* remove default top */\n        bottom: 100%;\n        /* position above the button */\n        margin-top: 0;\n        margin-bottom: 0.5rem;\n        /* small gap */\n    }\n</style>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -186,24 +172,24 @@ func NavigationButtonScript(id string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var9 == nil {
-			templ_7745c5c3_Var9 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<script>\n    (function () {\n        function initNavigationButtons() {\n            // ---------- Settings Dropdown ----------\n            document.querySelectorAll(\".settings-button\").forEach(btn => {\n                const dropdown = btn.nextElementSibling; // assumes dropdown is immediately after button\n                if (!dropdown) return;\n\n                // Avoid adding duplicate listeners\n                if (btn.dataset.listenerAdded) return;\n                btn.dataset.listenerAdded = \"true\";\n\n                btn.addEventListener(\"click\", e => {\n                    e.stopPropagation();\n                    dropdown.classList.toggle(\"hidden\");\n\n                    // ---------- Flip logic ----------\n                    const rect = dropdown.getBoundingClientRect();\n                    const btnRect = btn.getBoundingClientRect();\n                    const spaceBelow = window.innerHeight - btnRect.bottom;\n                    const spaceAbove = btnRect.top;\n\n                    if (!dropdown.classList.contains(\"hidden\")) {\n                        if (spaceBelow < rect.height && spaceAbove > rect.height) {\n                            // Open upwards\n                            dropdown.style.top = \"auto\";\n                            dropdown.style.bottom = \"100%\";\n                            dropdown.style.marginTop = \"0\";\n                            dropdown.style.marginBottom = \"0.5rem\";\n                        } else {\n                            // Open downwards\n                            dropdown.style.bottom = \"auto\";\n                            dropdown.style.top = \"100%\";\n                            dropdown.style.marginBottom = \"0\";\n                            dropdown.style.marginTop = \"0.5rem\";\n                        }\n                    }\n                });\n            });\n\n            // Close dropdowns when clicking outside\n            document.addEventListener(\"click\", event => {\n                document.querySelectorAll(\".settings-dropdown\").forEach(dd => {\n                    if (!dd.classList.contains(\"hidden\") &&\n                        !dd.contains(event.target) &&\n                        !event.target.closest(\".settings-button\")) {\n                        dd.classList.add(\"hidden\");\n                    }\n                });\n            });\n\n            // ---------- Chapter Dropdown Truncate ----------\n            const chapterSelect = document.getElementById(\"chapter-select-")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<script>\n    (function () {\n        function initNavigationButtons() {\n            // ---------- Settings Dropdown ----------\n            document.querySelectorAll(\".settings-button\").forEach(btn => {\n                const dropdown = btn.nextElementSibling; // assumes dropdown is immediately after button\n                if (!dropdown) return;\n\n                // Avoid adding duplicate listeners\n                if (btn.dataset.listenerAdded) return;\n                btn.dataset.listenerAdded = \"true\";\n\n                btn.addEventListener(\"click\", e => {\n                    e.stopPropagation();\n                    dropdown.classList.toggle(\"hidden\");\n\n                    // ---------- Flip logic ----------\n                    const rect = dropdown.getBoundingClientRect();\n                    const btnRect = btn.getBoundingClientRect();\n                    const spaceBelow = window.innerHeight - btnRect.bottom;\n                    const spaceAbove = btnRect.top;\n\n                    if (!dropdown.classList.contains(\"hidden\")) {\n                        if (spaceBelow < rect.height && spaceAbove > rect.height) {\n                            // Open upwards\n                            dropdown.style.top = \"auto\";\n                            dropdown.style.bottom = \"100%\";\n                            dropdown.style.marginTop = \"0\";\n                            dropdown.style.marginBottom = \"0.5rem\";\n                        } else {\n                            // Open downwards\n                            dropdown.style.bottom = \"auto\";\n                            dropdown.style.top = \"100%\";\n                            dropdown.style.marginBottom = \"0\";\n                            dropdown.style.marginTop = \"0.5rem\";\n                        }\n                    }\n                });\n            });\n\n            // Close dropdowns when clicking outside\n            document.addEventListener(\"click\", event => {\n                document.querySelectorAll(\".settings-dropdown\").forEach(dd => {\n                    if (!dd.classList.contains(\"hidden\") &&\n                        !dd.contains(event.target) &&\n                        !event.target.closest(\".settings-button\")) {\n                        dd.classList.add(\"hidden\");\n                    }\n                });\n            });\n\n            // ---------- Chapter Dropdown Truncate ----------\n            const chapterSelect = document.getElementById(\"chapter-select-")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var10, templ_7745c5c3_Err := templruntime.ScriptContentInsideStringLiteral(id)
+		templ_7745c5c3_Var9, templ_7745c5c3_Err := templruntime.ScriptContentInsideStringLiteral(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 199, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 274, Col: 79}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\");\n            if (chapterSelect) {\n                const maxChars = 20;\n                setTimeout(() => {\n                    for (let i = 0; i < chapterSelect.options.length; i++) {\n                        const opt = chapterSelect.options[i];\n                        if (opt.text.length > maxChars) {\n                            opt.text = opt.text.substring(0, maxChars) + \"...\";\n                        }\n                    }\n                }, 500);\n            }\n        }\n\n        // Run once after DOM is ready\n        if (document.readyState === \"complete\" || document.readyState === \"interactive\") {\n            initNavigationButtons();\n        } else {\n            document.addEventListener(\"DOMContentLoaded\", initNavigationButtons);\n        }\n    })();\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\");\n            if (chapterSelect) {\n                const maxChars = 20;\n                setTimeout(() => {\n                    for (let i = 0; i < chapterSelect.options.length; i++) {\n                        const opt = chapterSelect.options[i];\n                        if (opt.text.length > maxChars) {\n                            opt.text = opt.text.substring(0, maxChars) + \"...\";\n                        }\n                    }\n                }, 500);\n            }\n        }\n\n        // Run once after DOM is ready\n        if (document.readyState === \"complete\" || document.readyState === \"interactive\") {\n            initNavigationButtons();\n        } else {\n            document.addEventListener(\"DOMContentLoaded\", initNavigationButtons);\n        }\n    })();\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

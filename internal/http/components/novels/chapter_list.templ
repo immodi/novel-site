@@ -12,7 +12,7 @@ templ ChapterListComponent(novel *novelsdtostructs.Novel) {
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			for _, chapter := range novel.Chapters {
 				<a
-					href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), chapter.Number) }
+					href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, chapter.Number) }
 					class="block p-3 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
 				>
 					<div class="font-medium">{ chapter.Title }</div>
@@ -26,7 +26,7 @@ templ ChapterListComponent(novel *novelsdtostructs.Novel) {
 			<div class="flex space-x-2">
 				if isPreviousPage {
 					<a
-						href={ fmt.Sprintf("/novel/%s?page=%d#chapters", pkg.TitleToSlug(novel.Name), novel.CurrentPage-1) }
+						href={ fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, novel.CurrentPage-1) }
 						class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
 					>
 						Previous
@@ -37,7 +37,7 @@ templ ChapterListComponent(novel *novelsdtostructs.Novel) {
 						<span class="px-4 py-2 bg-blue-600 text-white rounded-lg">{ fmt.Sprintf("%d", i) }</span>
 					} else {
 						<a
-							href={ fmt.Sprintf("/novel/%s?page=%d#chapters", pkg.TitleToSlug(novel.Name), i) }
+							href={ fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, i) }
 							class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
 						>
 							{ fmt.Sprintf("%d", i) }
@@ -46,7 +46,7 @@ templ ChapterListComponent(novel *novelsdtostructs.Novel) {
 				}
 				if isNextPage {
 					<a
-						href={ fmt.Sprintf("/novel/%s?page=%d#chapters", pkg.TitleToSlug(novel.Name), novel.CurrentPage+1) }
+						href={ fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, novel.CurrentPage+1) }
 						class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
 					>
 						Next

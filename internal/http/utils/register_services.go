@@ -33,15 +33,16 @@ func RegisterServices() *Services {
 
 	homeService := index.NewHomeService(dbService)
 	novelService := novels.New(dbService)
+	chapterService := chapters.New(dbService, novelService)
 
 	return &Services{
 		DB:             dbService,
 		HomeService:    homeService,
 		NovelService:   novelService,
-		ChapterService: chapters.New(dbService, novelService),
+		ChapterService: chapterService,
 		AuthService:    auth.New(dbService),
 		SearchServie:   search.NewSearchService(dbService, homeService),
-		LoadService:    load.NewLoadService(dbService, novelService),
+		LoadService:    load.NewLoadService(dbService, novelService, chapterService),
 	}
 }
 

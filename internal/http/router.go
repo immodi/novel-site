@@ -49,6 +49,7 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/novels", router.redirectToHome())
 
 	router.r.Post("/load-novel", router.handlers.Load.LoadNovel)
+	router.r.Post("/load-chapters", router.handlers.Load.LoadChapter)
 
 	// testing routes, should be disabled in production
 	router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)

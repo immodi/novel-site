@@ -3,7 +3,6 @@ package components
 import (
 	"fmt"
 	"immodi/novel-site/internal/http/structs/novels"
-	"immodi/novel-site/pkg"
 )
 
 templ CoverImageComponent(novel *novelsdtostructs.Novel) {
@@ -13,7 +12,7 @@ templ CoverImageComponent(novel *novelsdtostructs.Novel) {
 		</div>
 		<div class="flex flex-col gap-2">
 			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), 1) }
+				href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, 1) }
 				class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded text-center transition-colors"
 			>
 				READ NOW

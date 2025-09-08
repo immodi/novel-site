@@ -16,19 +16,28 @@ func NewHomeService(db *db.DBService) HomeService {
 
 func (s *homeService) ListNewestNovels() ([]repositories.Novel, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
-		return q.ListNewestHomeNovels(ctx)
+		return q.ListNewestHomeNovelsPaginated(ctx, repositories.ListNewestHomeNovelsPaginatedParams{
+			Limit:  6,
+			Offset: 0,
+		})
 	})
 }
 
 func (s *homeService) ListHotNovels() ([]repositories.Novel, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
-		return q.ListHotNovels(ctx)
+		return q.ListHotNovelsPaginated(ctx, repositories.ListHotNovelsPaginatedParams{
+			Limit:  6,
+			Offset: 0,
+		})
 	})
 }
 
 func (s *homeService) ListCompletedNovels() ([]repositories.Novel, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
-		return q.ListCompletedNovels(ctx)
+		return q.ListCompletedNovelsPaginated(ctx, repositories.ListCompletedNovelsPaginatedParams{
+			Limit:  6,
+			Offset: 0,
+		})
 	})
 }
 
