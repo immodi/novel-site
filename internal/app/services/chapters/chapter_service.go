@@ -4,21 +4,23 @@ import (
 	"context"
 	"fmt"
 	"immodi/novel-site/internal/app/services/db"
+	"immodi/novel-site/internal/app/services/novels"
 	"immodi/novel-site/internal/db/repositories"
 	"immodi/novel-site/pkg"
 )
 
 type chapterService struct {
-	db *db.DBService
+	db           *db.DBService
+	novelService novels.NovelService
 }
 
-func New(db *db.DBService) ChapterService {
-	return &chapterService{db: db}
+func New(db *db.DBService, novelService novels.NovelService) ChapterService {
+	return &chapterService{db: db, novelService: novelService}
 }
 
-func (s *chapterService) GetNovelByNameLike(name string) (repositories.Novel, error) {
+func (s *chapterService) GetNovelBySlug(slug string) (repositories.Novel, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (repositories.Novel, error) {
-		return q.GetNovelByNameLike(ctx, name)
+		return q.GetNovelBySlug(ctx, slug)
 	})
 }
 

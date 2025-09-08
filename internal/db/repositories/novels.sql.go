@@ -36,11 +36,11 @@ func (q *Queries) CountNovels(ctx context.Context) (int64, error) {
 const countNovelsByAuthor = `-- name: CountNovelsByAuthor :one
 SELECT COUNT(*)
 FROM novels
-WHERE author = ?
+WHERE author_slug = ? COLLATE NOCASE
 `
 
-func (q *Queries) CountNovelsByAuthor(ctx context.Context, author string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countNovelsByAuthor, author)
+func (q *Queries) CountNovelsByAuthor(ctx context.Context, authorSlug string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countNovelsByAuthor, authorSlug)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -63,8 +63,6 @@ const countSearchNovels = `-- name: CountSearchNovels :one
 SELECT COUNT(*) AS total
 FROM novels
 WHERE LOWER(title) LIKE '%' || LOWER(?1) || '%'
-   OR LOWER(author) LIKE '%' || LOWER(?1) || '%'
-   OR LOWER(description) LIKE '%' || LOWER(?1) || '%'
 `
 
 func (q *Queries) CountSearchNovels(ctx context.Context, search string) (int64, error) {
@@ -76,18 +74,20 @@ func (q *Queries) CountSearchNovels(ctx context.Context, search string) (int64, 
 
 const createNovel = `-- name: CreateNovel :one
 INSERT INTO novels (
-    title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+    title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, 0
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0
 )
-RETURNING id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+RETURNING id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 `
 
 type CreateNovelParams struct {
 	Title       string
+	Slug        string
 	Description string
 	CoverImage  string
 	Author      string
+	AuthorSlug  string
 	Publisher   string
 	ReleaseYear int64
 	IsCompleted int64
@@ -97,9 +97,11 @@ type CreateNovelParams struct {
 func (q *Queries) CreateNovel(ctx context.Context, arg CreateNovelParams) (Novel, error) {
 	row := q.db.QueryRowContext(ctx, createNovel,
 		arg.Title,
+		arg.Slug,
 		arg.Description,
 		arg.CoverImage,
 		arg.Author,
+		arg.AuthorSlug,
 		arg.Publisher,
 		arg.ReleaseYear,
 		arg.IsCompleted,
@@ -109,9 +111,11 @@ func (q *Queries) CreateNovel(ctx context.Context, arg CreateNovelParams) (Novel
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
+		&i.Slug,
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
+		&i.AuthorSlug,
 		&i.Publisher,
 		&i.ReleaseYear,
 		&i.IsCompleted,
@@ -130,8 +134,53 @@ func (q *Queries) DeleteNovel(ctx context.Context, id int64) error {
 	return err
 }
 
+const getAuthorBySlug = `-- name: GetAuthorBySlug :one
+SELECT DISTINCT author, author_slug
+FROM novels
+WHERE author_slug = ? COLLATE NOCASE
+LIMIT 1
+`
+
+type GetAuthorBySlugRow struct {
+	Author     string
+	AuthorSlug string
+}
+
+func (q *Queries) GetAuthorBySlug(ctx context.Context, authorSlug string) (GetAuthorBySlugRow, error) {
+	row := q.db.QueryRowContext(ctx, getAuthorBySlug, authorSlug)
+	var i GetAuthorBySlugRow
+	err := row.Scan(&i.Author, &i.AuthorSlug)
+	return i, err
+}
+
+const getNovelByExactName = `-- name: GetNovelByExactName :one
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
+WHERE LOWER(title) = LOWER(?)
+LIMIT 1
+`
+
+func (q *Queries) GetNovelByExactName(ctx context.Context, lower string) (Novel, error) {
+	row := q.db.QueryRowContext(ctx, getNovelByExactName, lower)
+	var i Novel
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Slug,
+		&i.Description,
+		&i.CoverImage,
+		&i.Author,
+		&i.AuthorSlug,
+		&i.Publisher,
+		&i.ReleaseYear,
+		&i.IsCompleted,
+		&i.UpdateTime,
+		&i.ViewCount,
+	)
+	return i, err
+}
+
 const getNovelByID = `-- name: GetNovelByID :one
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
 WHERE id = ? LIMIT 1
 `
 
@@ -141,9 +190,11 @@ func (q *Queries) GetNovelByID(ctx context.Context, id int64) (Novel, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
+		&i.Slug,
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
+		&i.AuthorSlug,
 		&i.Publisher,
 		&i.ReleaseYear,
 		&i.IsCompleted,
@@ -154,7 +205,7 @@ func (q *Queries) GetNovelByID(ctx context.Context, id int64) (Novel, error) {
 }
 
 const getNovelByNameLike = `-- name: GetNovelByNameLike :one
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
 WHERE LOWER(title) LIKE LOWER(?)
 LIMIT 1
 `
@@ -165,9 +216,37 @@ func (q *Queries) GetNovelByNameLike(ctx context.Context, lower string) (Novel, 
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
+		&i.Slug,
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
+		&i.AuthorSlug,
+		&i.Publisher,
+		&i.ReleaseYear,
+		&i.IsCompleted,
+		&i.UpdateTime,
+		&i.ViewCount,
+	)
+	return i, err
+}
+
+const getNovelBySlug = `-- name: GetNovelBySlug :one
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
+WHERE LOWER(slug) = LOWER(?)
+LIMIT 1
+`
+
+func (q *Queries) GetNovelBySlug(ctx context.Context, lower string) (Novel, error) {
+	row := q.db.QueryRowContext(ctx, getNovelBySlug, lower)
+	var i Novel
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Slug,
+		&i.Description,
+		&i.CoverImage,
+		&i.Author,
+		&i.AuthorSlug,
 		&i.Publisher,
 		&i.ReleaseYear,
 		&i.IsCompleted,
@@ -178,24 +257,24 @@ func (q *Queries) GetNovelByNameLike(ctx context.Context, lower string) (Novel, 
 }
 
 const getNovelTags = `-- name: GetNovelTags :many
-SELECT tag
+SELECT novel_id, tag, tag_slug
 FROM novel_tags
 WHERE novel_id = ?
 `
 
-func (q *Queries) GetNovelTags(ctx context.Context, novelID int64) ([]string, error) {
+func (q *Queries) GetNovelTags(ctx context.Context, novelID int64) ([]NovelTag, error) {
 	rows, err := q.db.QueryContext(ctx, getNovelTags, novelID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []NovelTag
 	for rows.Next() {
-		var tag string
-		if err := rows.Scan(&tag); err != nil {
+		var i NovelTag
+		if err := rows.Scan(&i.NovelID, &i.Tag, &i.TagSlug); err != nil {
 			return nil, err
 		}
-		items = append(items, tag)
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -219,7 +298,7 @@ func (q *Queries) IncrementNovelViewCount(ctx context.Context, id int64) error {
 }
 
 const listCompletedNovels = `-- name: ListCompletedNovels :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels
 WHERE is_completed = 1
 ORDER BY update_time DESC
@@ -237,9 +316,11 @@ func (q *Queries) ListCompletedNovels(ctx context.Context) ([]Novel, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -260,7 +341,7 @@ func (q *Queries) ListCompletedNovels(ctx context.Context) ([]Novel, error) {
 }
 
 const listCompletedNovelsPaginated = `-- name: ListCompletedNovelsPaginated :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels
 WHERE is_completed = 1
 ORDER BY update_time DESC
@@ -284,9 +365,11 @@ func (q *Queries) ListCompletedNovelsPaginated(ctx context.Context, arg ListComp
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -307,7 +390,7 @@ func (q *Queries) ListCompletedNovelsPaginated(ctx context.Context, arg ListComp
 }
 
 const listHotNovels = `-- name: ListHotNovels :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
 ORDER BY view_count DESC, update_time DESC
 LIMIT 6
 `
@@ -324,9 +407,11 @@ func (q *Queries) ListHotNovels(ctx context.Context) ([]Novel, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -347,7 +432,7 @@ func (q *Queries) ListHotNovels(ctx context.Context) ([]Novel, error) {
 }
 
 const listHotNovelsPaginated = `-- name: ListHotNovelsPaginated :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels
 ORDER BY view_count DESC, update_time DESC
 LIMIT ? OFFSET ?
@@ -370,9 +455,11 @@ func (q *Queries) ListHotNovelsPaginated(ctx context.Context, arg ListHotNovelsP
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -393,7 +480,7 @@ func (q *Queries) ListHotNovelsPaginated(ctx context.Context, arg ListHotNovelsP
 }
 
 const listNewestHomeNovels = `-- name: ListNewestHomeNovels :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
 ORDER BY update_time DESC
 LIMIT 6
 `
@@ -410,9 +497,11 @@ func (q *Queries) ListNewestHomeNovels(ctx context.Context) ([]Novel, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -433,7 +522,7 @@ func (q *Queries) ListNewestHomeNovels(ctx context.Context) ([]Novel, error) {
 }
 
 const listNewestHomeNovelsPaginated = `-- name: ListNewestHomeNovelsPaginated :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels
 ORDER BY update_time DESC
 LIMIT ? OFFSET ?
@@ -456,9 +545,11 @@ func (q *Queries) ListNewestHomeNovelsPaginated(ctx context.Context, arg ListNew
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -479,7 +570,7 @@ func (q *Queries) ListNewestHomeNovelsPaginated(ctx context.Context, arg ListNew
 }
 
 const listNovels = `-- name: ListNovels :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count FROM novels
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
 ORDER BY update_time DESC
 `
 
@@ -495,9 +586,11 @@ func (q *Queries) ListNovels(ctx context.Context) ([]Novel, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -518,21 +611,21 @@ func (q *Queries) ListNovels(ctx context.Context) ([]Novel, error) {
 }
 
 const listNovelsByAuthorPaginated = `-- name: ListNovelsByAuthorPaginated :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels
-WHERE author = ?
+WHERE author_slug = ? COLLATE NOCASE
 ORDER BY update_time DESC
 LIMIT ? OFFSET ?
 `
 
 type ListNovelsByAuthorPaginatedParams struct {
-	Author string
-	Limit  int64
-	Offset int64
+	AuthorSlug string
+	Limit      int64
+	Offset     int64
 }
 
 func (q *Queries) ListNovelsByAuthorPaginated(ctx context.Context, arg ListNovelsByAuthorPaginatedParams) ([]Novel, error) {
-	rows, err := q.db.QueryContext(ctx, listNovelsByAuthorPaginated, arg.Author, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listNovelsByAuthorPaginated, arg.AuthorSlug, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -543,9 +636,11 @@ func (q *Queries) ListNovelsByAuthorPaginated(ctx context.Context, arg ListNovel
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -566,7 +661,7 @@ func (q *Queries) ListNovelsByAuthorPaginated(ctx context.Context, arg ListNovel
 }
 
 const listOnGoingNovelsPaginated = `-- name: ListOnGoingNovelsPaginated :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels
 WHERE is_completed = 0
 ORDER BY update_time DESC
@@ -590,9 +685,11 @@ func (q *Queries) ListOnGoingNovelsPaginated(ctx context.Context, arg ListOnGoin
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -613,11 +710,9 @@ func (q *Queries) ListOnGoingNovelsPaginated(ctx context.Context, arg ListOnGoin
 }
 
 const searchNovels = `-- name: SearchNovels :many
-SELECT id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels
 WHERE LOWER(title) LIKE '%' || LOWER(?1) || '%'
-   OR LOWER(author) LIKE '%' || LOWER(?1) || '%'
-   OR LOWER(description) LIKE '%' || LOWER(?1) || '%'
 ORDER BY update_time DESC
 LIMIT ?3 OFFSET ?2
 `
@@ -640,9 +735,11 @@ func (q *Queries) SearchNovels(ctx context.Context, arg SearchNovelsParams) ([]N
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -666,23 +763,27 @@ const updateNovel = `-- name: UpdateNovel :one
 UPDATE novels
 SET
     title = ?,
+    slug = ?,
     description = ?,
     cover_image = ?,
     author = ?,
+    author_slug = ?,
     publisher = ?,
     release_year = ?,
     is_completed = ?,
     update_time = ?,
     view_count = ?
 WHERE id = ?
-RETURNING id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+RETURNING id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 `
 
 type UpdateNovelParams struct {
 	Title       string
+	Slug        string
 	Description string
 	CoverImage  string
 	Author      string
+	AuthorSlug  string
 	Publisher   string
 	ReleaseYear int64
 	IsCompleted int64
@@ -694,9 +795,11 @@ type UpdateNovelParams struct {
 func (q *Queries) UpdateNovel(ctx context.Context, arg UpdateNovelParams) (Novel, error) {
 	row := q.db.QueryRowContext(ctx, updateNovel,
 		arg.Title,
+		arg.Slug,
 		arg.Description,
 		arg.CoverImage,
 		arg.Author,
+		arg.AuthorSlug,
 		arg.Publisher,
 		arg.ReleaseYear,
 		arg.IsCompleted,
@@ -708,9 +811,11 @@ func (q *Queries) UpdateNovel(ctx context.Context, arg UpdateNovelParams) (Novel
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
+		&i.Slug,
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
+		&i.AuthorSlug,
 		&i.Publisher,
 		&i.ReleaseYear,
 		&i.IsCompleted,
@@ -724,23 +829,27 @@ const updateNovelPartial = `-- name: UpdateNovelPartial :one
 UPDATE novels
 SET
     title = CASE WHEN ?1 IS NOT NULL THEN ?1 ELSE title END,
-    description = CASE WHEN ?2 IS NOT NULL THEN ?2 ELSE description END,
-    cover_image = CASE WHEN ?3 IS NOT NULL THEN ?3 ELSE cover_image END,
-    author = CASE WHEN ?4 IS NOT NULL THEN ?4 ELSE author END,
-    publisher = CASE WHEN ?5 IS NOT NULL THEN ?5 ELSE publisher END,
-    release_year = CASE WHEN ?6 IS NOT NULL THEN ?6 ELSE release_year END,
-    is_completed = CASE WHEN ?7 IS NOT NULL THEN ?7 ELSE is_completed END,
-    update_time = CASE WHEN ?8 IS NOT NULL THEN ?8 ELSE update_time END,
-    view_count = CASE WHEN ?9 IS NOT NULL THEN ?9 ELSE view_count END
-WHERE id = ?10
-RETURNING id, title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+    slug = CASE WHEN ?2 IS NOT NULL THEN ?2 ELSE slug END,
+    description = CASE WHEN ?3 IS NOT NULL THEN ?3 ELSE description END,
+    cover_image = CASE WHEN ?4 IS NOT NULL THEN ?4 ELSE cover_image END,
+    author = CASE WHEN ?5 IS NOT NULL THEN ?5 ELSE author END,
+    author_slug = CASE WHEN ?6 IS NOT NULL THEN ?6 ELSE author_slug END,
+    publisher = CASE WHEN ?7 IS NOT NULL THEN ?7 ELSE publisher END,
+    release_year = CASE WHEN ?8 IS NOT NULL THEN ?8 ELSE release_year END,
+    is_completed = CASE WHEN ?9 IS NOT NULL THEN ?9 ELSE is_completed END,
+    update_time = CASE WHEN ?10 IS NOT NULL THEN ?10 ELSE update_time END,
+    view_count = CASE WHEN ?11 IS NOT NULL THEN ?11 ELSE view_count END
+WHERE id = ?12
+RETURNING id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 `
 
 type UpdateNovelPartialParams struct {
 	Title       interface{}
+	Slug        interface{}
 	Description interface{}
 	CoverImage  interface{}
 	Author      interface{}
+	AuthorSlug  interface{}
 	Publisher   interface{}
 	ReleaseYear interface{}
 	IsCompleted interface{}
@@ -752,9 +861,11 @@ type UpdateNovelPartialParams struct {
 func (q *Queries) UpdateNovelPartial(ctx context.Context, arg UpdateNovelPartialParams) (Novel, error) {
 	row := q.db.QueryRowContext(ctx, updateNovelPartial,
 		arg.Title,
+		arg.Slug,
 		arg.Description,
 		arg.CoverImage,
 		arg.Author,
+		arg.AuthorSlug,
 		arg.Publisher,
 		arg.ReleaseYear,
 		arg.IsCompleted,
@@ -766,9 +877,11 @@ func (q *Queries) UpdateNovelPartial(ctx context.Context, arg UpdateNovelPartial
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
+		&i.Slug,
 		&i.Description,
 		&i.CoverImage,
 		&i.Author,
+		&i.AuthorSlug,
 		&i.Publisher,
 		&i.ReleaseYear,
 		&i.IsCompleted,

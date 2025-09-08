@@ -10,29 +10,30 @@ import (
 )
 
 const addGenreToNovel = `-- name: AddGenreToNovel :exec
-INSERT INTO novel_genres (novel_id, genre)
-VALUES (?, ?)
-ON CONFLICT DO NOTHING
+INSERT INTO novel_genres (novel_id, genre, genre_slug)
+VALUES (?, ?, ?)
+ON CONFLICT(novel_id, genre) DO NOTHING
 `
 
 type AddGenreToNovelParams struct {
-	NovelID int64
-	Genre   string
+	NovelID   int64
+	Genre     string
+	GenreSlug string
 }
 
 func (q *Queries) AddGenreToNovel(ctx context.Context, arg AddGenreToNovelParams) error {
-	_, err := q.db.ExecContext(ctx, addGenreToNovel, arg.NovelID, arg.Genre)
+	_, err := q.db.ExecContext(ctx, addGenreToNovel, arg.NovelID, arg.Genre, arg.GenreSlug)
 	return err
 }
 
 const countNovelsByGenre = `-- name: CountNovelsByGenre :one
 SELECT COUNT(*) 
 FROM novel_genres
-WHERE genre = ?
+WHERE genre_slug = ?
 `
 
-func (q *Queries) CountNovelsByGenre(ctx context.Context, genre string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countNovelsByGenre, genre)
+func (q *Queries) CountNovelsByGenre(ctx context.Context, genreSlug string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countNovelsByGenre, genreSlug)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -53,8 +54,23 @@ func (q *Queries) DeleteGenreFromNovel(ctx context.Context, arg DeleteGenreFromN
 	return err
 }
 
+const getGenreBySlug = `-- name: GetGenreBySlug :one
+SELECT novel_id, genre, genre_slug
+FROM novel_genres
+WHERE genre_slug = ?
+LIMIT 1
+`
+
+func (q *Queries) GetGenreBySlug(ctx context.Context, genreSlug string) (NovelGenre, error) {
+	row := q.db.QueryRowContext(ctx, getGenreBySlug, genreSlug)
+	var i NovelGenre
+	err := row.Scan(&i.NovelID, &i.Genre, &i.GenreSlug)
+	return i, err
+}
+
 const listAllGenres = `-- name: ListAllGenres :many
-SELECT genre FROM genres
+SELECT DISTINCT genre
+FROM novel_genres
 ORDER BY genre
 `
 
@@ -82,23 +98,25 @@ func (q *Queries) ListAllGenres(ctx context.Context) ([]string, error) {
 }
 
 const listGenresByNovel = `-- name: ListGenresByNovel :many
-SELECT genre FROM novel_genres
+SELECT novel_id, genre, genre_slug
+FROM novel_genres
 WHERE novel_id = ?
+ORDER BY genre
 `
 
-func (q *Queries) ListGenresByNovel(ctx context.Context, novelID int64) ([]string, error) {
+func (q *Queries) ListGenresByNovel(ctx context.Context, novelID int64) ([]NovelGenre, error) {
 	rows, err := q.db.QueryContext(ctx, listGenresByNovel, novelID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []NovelGenre
 	for rows.Next() {
-		var genre string
-		if err := rows.Scan(&genre); err != nil {
+		var i NovelGenre
+		if err := rows.Scan(&i.NovelID, &i.Genre, &i.GenreSlug); err != nil {
 			return nil, err
 		}
-		items = append(items, genre)
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -110,22 +128,22 @@ func (q *Queries) ListGenresByNovel(ctx context.Context, novelID int64) ([]strin
 }
 
 const listNovelsByGenrePaginated = `-- name: ListNovelsByGenrePaginated :many
-SELECT n.id, n.title, n.description, n.cover_image, n.author, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
+SELECT n.id, n.title, n.slug, n.description, n.cover_image, n.author, n.author_slug, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
 FROM novels n
 JOIN novel_genres ng ON n.id = ng.novel_id
-WHERE ng.genre = ?
+WHERE ng.genre_slug = ?
 ORDER BY n.update_time DESC
 LIMIT ? OFFSET ?
 `
 
 type ListNovelsByGenrePaginatedParams struct {
-	Genre  string
-	Limit  int64
-	Offset int64
+	GenreSlug string
+	Limit     int64
+	Offset    int64
 }
 
 func (q *Queries) ListNovelsByGenrePaginated(ctx context.Context, arg ListNovelsByGenrePaginatedParams) ([]Novel, error) {
-	rows, err := q.db.QueryContext(ctx, listNovelsByGenrePaginated, arg.Genre, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listNovelsByGenrePaginated, arg.GenreSlug, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -136,9 +154,11 @@ func (q *Queries) ListNovelsByGenrePaginated(ctx context.Context, arg ListNovels
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,

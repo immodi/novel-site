@@ -23,7 +23,7 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 		<!-- </div> -->
 		<br/>
 		<!-- Metadata -->
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+		<div class="grid grid-cols-1 gap-4 mb-6 auto-rows-min">
 			<div>
 				<h3 class="font-semibold">Alternative names:</h3>
 				<p>{ novel.Name }</p>
@@ -31,26 +31,26 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 			<div>
 				<h3 class="font-semibold">Author:</h3>
 				<a
-					href={ fmt.Sprintf("/author/%s", pkg.TitleToSlug(novel.Author)) }
+					href={ fmt.Sprintf("/author/%s", novel.AuthorSlug) }
 					class="text-blue-400 dark:text-blue-600 hover:underline"
 				>
-					{ pkg.CapitalizeFirstLetter(novel.Author) }
+					{ novel.Author }
 				</a>
 			</div>
 			<div>
-				<h3 class="font-semibold">Genre:</h3>
-				<div class="flex flex-wrap gap-1">
+				<h3 class="mb-2 font-semibold">Genre:</h3>
+				<div class="flex flex-wrap gap-2">
 					for _, genre := range novel.Genres {
 						<a
-							href={ fmt.Sprintf("/genre/%s", pkg.TitleToSlug(genre)) }
-							class="text-blue-400 dark:text-blue-600 hover:underline text-sm"
+							href={ fmt.Sprintf("/genre/%s", genre.GenreSlug) }
+							class="bg-[#333333] dark:bg-gray-100 hover:bg-[#444] dark:hover:bg-gray-200 border border-[#252525] dark:border-[#ededed] px-3 py-1 rounded-full text-sm transition-colors"
 						>
-							{ pkg.CapitalizeFirstLetter(genre) }
+							{ genre.Genre }
 						</a>
 					}
 				</div>
 			</div>
-			<div>
+			<div class="self-start">
 				<h3 class="font-semibold">Status:</h3>
 				{{ var textStyle string }}
 				{{
@@ -73,22 +73,8 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 				<p>{ novel.Publisher }</p>
 			</div>
 			<div>
-				<h3 class="font-semibold">Year:</h3>
-				<p>{ novel.ReleaseYear }</p>
-			</div>
-		</div>
-		<!-- Tags -->
-		<div class="mb-6">
-			<h3 class="font-semibold mb-2">Tags:</h3>
-			<div class="flex flex-wrap gap-2">
-				for _, tag := range novel.Tags {
-					<a
-						href={ fmt.Sprintf("/tag/%s", pkg.TitleToSlug(tag)) }
-						class="bg-[#252525] dark:bg-gray-200 hover:bg-[#333] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-3 py-1 rounded-full text-sm transition-colors"
-					>
-						{ pkg.CapitalizeFirstLetter(tag) }
-					</a>
-				}
+				<h3 class="font-semibold">Views:</h3>
+				<p>{ novel.Views }</p>
 			</div>
 		</div>
 		<!-- Latest chapter -->
@@ -98,7 +84,7 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 				<div class="text-gray-400 dark:text-gray-600 text-sm">{ pkg.TimeAgo(novel.LastUpdated) } </div>
 			</div>
 			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", pkg.TitleToSlug(novel.Name), novel.TotalChaptersNumber) }
+				href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, novel.TotalChaptersNumber) }
 				class="text-blue-400 dark:text-blue-600 hover:underline font-medium block mt-2"
 			>
 				{ novel.LastChapterName }

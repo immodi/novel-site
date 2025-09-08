@@ -25,6 +25,7 @@ func (h *HomeHandler) Index(w http.ResponseWriter, r *http.Request) {
 		handlers.ServerErrorHandler(w, r)
 		return
 	}
+	println(hotNovels[0].Slug)
 
 	dbCompletedNovels, err := h.homeService.ListCompletedNovels()
 	if err != nil {

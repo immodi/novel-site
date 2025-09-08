@@ -4,6 +4,7 @@ import (
 	"immodi/novel-site/internal/app/handlers"
 	sql "immodi/novel-site/internal/db/schema"
 	"immodi/novel-site/pkg"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -29,6 +30,7 @@ func (h *SearchHandler) SortNovelsByCollection(w http.ResponseWriter, r *http.Re
 	totalResults, err := h.searchService.CountSortedNovels(collection)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 
@@ -38,6 +40,7 @@ func (h *SearchHandler) SortNovelsByCollection(w http.ResponseWriter, r *http.Re
 	dbResults, err := h.searchService.ListSortedNovels(collection, offset, pkg.SEARCH_PAGE_LIMIT)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 	results := dbNovelsToSearchDtos(h.searchService, dbResults)
@@ -56,7 +59,7 @@ func (h *SearchHandler) SortNovelsByCollection(w http.ResponseWriter, r *http.Re
 
 func (h *SearchHandler) SortNovelsByGenres(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
-	genreFromHeader := strings.ToLower(chi.URLParam(r, "genre"))
+	genreSlug := chi.URLParam(r, "genre")
 
 	currentPage := 1
 	if pageStr != "" {
@@ -65,23 +68,21 @@ func (h *SearchHandler) SortNovelsByGenres(w http.ResponseWriter, r *http.Reques
 		}
 	}
 
-	genre := sql.Genre(genreFromHeader)
-	if !genre.IsValidGenre() {
-		genre = sql.Genre(sql.GenreAction)
-	}
-
-	totalResults, err := h.searchService.CountNovelsByGenre(genre)
+	totalResults, err := h.searchService.CountNovelsByGenre(genreSlug)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 
 	currentPage = pkg.AdjustPageNumber(currentPage, int(totalResults), pkg.SEARCH_PAGE_LIMIT)
 	offset := (currentPage - 1) * pkg.SEARCH_PAGE_LIMIT
 
-	dbResults, err := h.searchService.ListNovelsByGenre(genre, offset, pkg.SEARCH_PAGE_LIMIT)
+	genreName, dbResults, err := h.searchService.ListNovelsByGenre(genreSlug, offset, pkg.SEARCH_PAGE_LIMIT)
+	println(genreName)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 	results := dbNovelsToSearchDtos(h.searchService, dbResults)
@@ -90,7 +91,7 @@ func (h *SearchHandler) SortNovelsByGenres(w http.ResponseWriter, r *http.Reques
 		"genre",
 		totalResults,
 		"genre",
-		strings.ToUpper(string(genre)),
+		genreName,
 		results,
 		currentPage,
 		w,
@@ -100,7 +101,7 @@ func (h *SearchHandler) SortNovelsByGenres(w http.ResponseWriter, r *http.Reques
 
 func (h *SearchHandler) SortNovelsByTags(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
-	tag := strings.ToLower(pkg.SlugToTitle(chi.URLParam(r, "tag")))
+	tag := chi.URLParam(r, "tag")
 
 	currentPage := 1
 	if pageStr != "" {
@@ -112,15 +113,17 @@ func (h *SearchHandler) SortNovelsByTags(w http.ResponseWriter, r *http.Request)
 	totalResults, err := h.searchService.CountNovelsByTag(tag)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 
 	currentPage = pkg.AdjustPageNumber(currentPage, int(totalResults), pkg.SEARCH_PAGE_LIMIT)
 	offset := (currentPage - 1) * pkg.SEARCH_PAGE_LIMIT
 
-	dbResults, err := h.searchService.ListNovelsByTag(tag, offset, pkg.SEARCH_PAGE_LIMIT)
+	tagName, dbResults, err := h.searchService.ListNovelsByTag(tag, offset, pkg.SEARCH_PAGE_LIMIT)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 	results := dbNovelsToSearchDtos(h.searchService, dbResults)
@@ -129,7 +132,7 @@ func (h *SearchHandler) SortNovelsByTags(w http.ResponseWriter, r *http.Request)
 		"tag",
 		totalResults,
 		"tag",
-		strings.ToUpper(tag),
+		tagName,
 		results,
 		currentPage,
 		w,
@@ -139,7 +142,7 @@ func (h *SearchHandler) SortNovelsByTags(w http.ResponseWriter, r *http.Request)
 
 func (h *SearchHandler) SortNovelsByAuthor(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
-	author := strings.ToLower(pkg.SlugToTitle(chi.URLParam(r, "author")))
+	author := chi.URLParam(r, "author")
 
 	currentPage := 1
 	if pageStr != "" {
@@ -151,15 +154,17 @@ func (h *SearchHandler) SortNovelsByAuthor(w http.ResponseWriter, r *http.Reques
 	totalResults, err := h.searchService.CountNovelsByAuthor(author)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 
 	currentPage = pkg.AdjustPageNumber(currentPage, int(totalResults), pkg.SEARCH_PAGE_LIMIT)
 	offset := (currentPage - 1) * pkg.SEARCH_PAGE_LIMIT
 
-	dbResults, err := h.searchService.ListNovelsByAuthor(author, offset, pkg.SEARCH_PAGE_LIMIT)
+	authorName, dbResults, err := h.searchService.ListNovelsByAuthor(author, offset, pkg.SEARCH_PAGE_LIMIT)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 	results := dbNovelsToSearchDtos(h.searchService, dbResults)
@@ -168,7 +173,7 @@ func (h *SearchHandler) SortNovelsByAuthor(w http.ResponseWriter, r *http.Reques
 		"author",
 		totalResults,
 		"auhtor",
-		strings.ToUpper(author),
+		authorName,
 		results,
 		currentPage,
 		w,

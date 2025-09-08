@@ -50,12 +50,13 @@ func DbNovelToHomeNovelMapper(dbNovels []repositories.Novel, homeService index.H
 func MapToHomeNovelDto(
 	dbNovel repositories.Novel,
 	dbLatestChapter repositories.Chapter,
-	dbNovelGenres []string,
+	dbNovelGenres []repositories.NovelGenre,
 	dbChaptersCount int64,
 	novelStatus string,
 ) homenovelsdto.HomeNovelDto {
 	return homenovelsdto.HomeNovelDto{
 		Name:                 dbNovel.Title,
+		Slug:                 dbNovel.Slug,
 		CoverImage:           dbNovel.CoverImage,
 		LastestChapterNumber: int(dbLatestChapter.ChapterNumber),
 		LastestChapterName:   dbLatestChapter.Title,

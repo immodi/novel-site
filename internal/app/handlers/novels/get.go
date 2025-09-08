@@ -5,6 +5,7 @@ import (
 	"immodi/novel-site/internal/db/repositories"
 	novelscomponents "immodi/novel-site/internal/http/templates/novels"
 	"immodi/novel-site/pkg"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -13,7 +14,7 @@ import (
 
 func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
-	novelName := pkg.SlugToTitle(chi.URLParam(r, "novelName"))
+	novelSlug := chi.URLParam(r, "novelSlug")
 
 	currentPage := 1
 	if pageStr != "" {
@@ -22,15 +23,17 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	dbNovel, err := h.novelService.GetNovelByName(novelName)
+	dbNovel, err := h.novelService.GetNovelBySlug(novelSlug)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 
 	totalChaptersInt64, err := h.novelService.CountChapters(dbNovel.ID)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 
@@ -41,6 +44,7 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 	dbChapters, err := h.novelService.GetChapters(int(dbNovel.ID), currentPage)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 

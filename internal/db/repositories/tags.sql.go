@@ -10,29 +10,30 @@ import (
 )
 
 const addTagToNovel = `-- name: AddTagToNovel :exec
-INSERT INTO novel_tags (novel_id, tag)
-VALUES (?, ?)
+INSERT INTO novel_tags (novel_id, tag, tag_slug)
+VALUES (?, ?, ?)
 ON CONFLICT(novel_id, tag) DO NOTHING
 `
 
 type AddTagToNovelParams struct {
 	NovelID int64
 	Tag     string
+	TagSlug string
 }
 
 func (q *Queries) AddTagToNovel(ctx context.Context, arg AddTagToNovelParams) error {
-	_, err := q.db.ExecContext(ctx, addTagToNovel, arg.NovelID, arg.Tag)
+	_, err := q.db.ExecContext(ctx, addTagToNovel, arg.NovelID, arg.Tag, arg.TagSlug)
 	return err
 }
 
 const countNovelsByTag = `-- name: CountNovelsByTag :one
 SELECT COUNT(*)
 FROM novel_tags
-WHERE tag = ?
+WHERE tag_slug = ?
 `
 
-func (q *Queries) CountNovelsByTag(ctx context.Context, tag string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countNovelsByTag, tag)
+func (q *Queries) CountNovelsByTag(ctx context.Context, tagSlug string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countNovelsByTag, tagSlug)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -48,16 +49,30 @@ func (q *Queries) DeleteAllTagsByNovel(ctx context.Context, novelID int64) error
 	return err
 }
 
+const getTagBySlug = `-- name: GetTagBySlug :one
+SELECT novel_id, tag, tag_slug
+FROM novel_tags
+WHERE tag_slug = ?
+LIMIT 1
+`
+
+func (q *Queries) GetTagBySlug(ctx context.Context, tagSlug string) (NovelTag, error) {
+	row := q.db.QueryRowContext(ctx, getTagBySlug, tagSlug)
+	var i NovelTag
+	err := row.Scan(&i.NovelID, &i.Tag, &i.TagSlug)
+	return i, err
+}
+
 const listNovelsByTag = `-- name: ListNovelsByTag :many
-SELECT n.id, n.title, n.description, n.cover_image, n.author, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
+SELECT n.id, n.title, n.slug, n.description, n.cover_image, n.author, n.author_slug, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
 FROM novels n
 JOIN novel_tags t ON n.id = t.novel_id
-WHERE t.tag = ?
+WHERE t.tag_slug = ?
 ORDER BY n.update_time DESC
 `
 
-func (q *Queries) ListNovelsByTag(ctx context.Context, tag string) ([]Novel, error) {
-	rows, err := q.db.QueryContext(ctx, listNovelsByTag, tag)
+func (q *Queries) ListNovelsByTag(ctx context.Context, tagSlug string) ([]Novel, error) {
+	rows, err := q.db.QueryContext(ctx, listNovelsByTag, tagSlug)
 	if err != nil {
 		return nil, err
 	}
@@ -68,9 +83,11 @@ func (q *Queries) ListNovelsByTag(ctx context.Context, tag string) ([]Novel, err
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -91,22 +108,22 @@ func (q *Queries) ListNovelsByTag(ctx context.Context, tag string) ([]Novel, err
 }
 
 const listNovelsByTagPaginated = `-- name: ListNovelsByTagPaginated :many
-SELECT n.id, n.title, n.description, n.cover_image, n.author, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
+SELECT n.id, n.title, n.slug, n.description, n.cover_image, n.author, n.author_slug, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
 FROM novels n
 JOIN novel_tags t ON n.id = t.novel_id
-WHERE t.tag = ?
+WHERE t.tag_slug = ?
 ORDER BY n.update_time DESC
 LIMIT ? OFFSET ?
 `
 
 type ListNovelsByTagPaginatedParams struct {
-	Tag    string
-	Limit  int64
-	Offset int64
+	TagSlug string
+	Limit   int64
+	Offset  int64
 }
 
 func (q *Queries) ListNovelsByTagPaginated(ctx context.Context, arg ListNovelsByTagPaginatedParams) ([]Novel, error) {
-	rows, err := q.db.QueryContext(ctx, listNovelsByTagPaginated, arg.Tag, arg.Limit, arg.Offset)
+	rows, err := q.db.QueryContext(ctx, listNovelsByTagPaginated, arg.TagSlug, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -117,9 +134,11 @@ func (q *Queries) ListNovelsByTagPaginated(ctx context.Context, arg ListNovelsBy
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
+			&i.Slug,
 			&i.Description,
 			&i.CoverImage,
 			&i.Author,
+			&i.AuthorSlug,
 			&i.Publisher,
 			&i.ReleaseYear,
 			&i.IsCompleted,
@@ -140,25 +159,25 @@ func (q *Queries) ListNovelsByTagPaginated(ctx context.Context, arg ListNovelsBy
 }
 
 const listTagsByNovel = `-- name: ListTagsByNovel :many
-SELECT tag
+SELECT novel_id, tag, tag_slug
 FROM novel_tags
 WHERE novel_id = ?
 ORDER BY tag ASC
 `
 
-func (q *Queries) ListTagsByNovel(ctx context.Context, novelID int64) ([]string, error) {
+func (q *Queries) ListTagsByNovel(ctx context.Context, novelID int64) ([]NovelTag, error) {
 	rows, err := q.db.QueryContext(ctx, listTagsByNovel, novelID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []NovelTag
 	for rows.Next() {
-		var tag string
-		if err := rows.Scan(&tag); err != nil {
+		var i NovelTag
+		if err := rows.Scan(&i.NovelID, &i.Tag, &i.TagSlug); err != nil {
 			return nil, err
 		}
-		items = append(items, tag)
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

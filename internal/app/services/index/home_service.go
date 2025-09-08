@@ -44,8 +44,8 @@ func (s *homeService) GetLatestChapterByNovel(novelID int64) (repositories.Chapt
 	})
 }
 
-func (s *homeService) ListGenresByNovel(novelID int64) ([]string, error) {
-	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
+func (s *homeService) ListGenresByNovel(novelID int64) ([]repositories.NovelGenre, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.NovelGenre, error) {
 		return q.ListGenresByNovel(ctx, novelID)
 	})
 }

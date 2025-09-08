@@ -5,10 +5,10 @@ import (
 )
 
 type NovelService interface {
-	GetNovelByName(name string) (repositories.Novel, error)
+	GetNovelBySlug(slug string) (repositories.Novel, error)
 	GetChapters(novelID, page int) ([]repositories.Chapter, error)
-	GetGenres(novelID int64) ([]string, error)
-	GetTags(novelID int64) ([]string, error)
+	GetGenres(novelID int64) ([]repositories.NovelGenre, error)
+	GetTags(novelID int64) ([]repositories.NovelTag, error)
 	CountChapters(novelID int64) (int, error)
 	GetLastChapter(novelID int64) (repositories.Chapter, error)
 	CreateNovel(params repositories.CreateNovelParams) (repositories.Novel, error)
@@ -16,4 +16,5 @@ type NovelService interface {
 	AddGenreToNovel(novelID int64, genre string) error
 	AddTagToNovel(novelID int64, tag string) error
 	IncrementNovelViewCount(novelID int64) error
+	DeleteNovel(novelID int64) error
 }

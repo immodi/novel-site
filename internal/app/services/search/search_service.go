@@ -6,6 +6,7 @@ import (
 	"immodi/novel-site/internal/app/services/index"
 	"immodi/novel-site/internal/db/repositories"
 	sql "immodi/novel-site/internal/db/schema"
+	"immodi/novel-site/pkg"
 	"strings"
 )
 
@@ -40,6 +41,30 @@ func (s *searchService) SearchNovelsPaginated(name string, offset, limit int) ([
 			Limit:  int64(limit),
 		})
 	})
+}
+
+func (s *searchService) GetGenreBySlug(slug string) (repositories.NovelGenre, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (repositories.NovelGenre, error) {
+		return q.GetGenreBySlug(ctx, slug)
+	})
+}
+
+func (s *searchService) GetTagBySlug(slug string) (repositories.NovelTag, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (repositories.NovelTag, error) {
+		return q.GetTagBySlug(ctx, slug)
+	})
+}
+
+func (s *searchService) GetAuthorNameBySlug(slug string) (string, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (string, error) {
+		author, err := q.GetAuthorBySlug(ctx, slug)
+		if err != nil {
+			return pkg.SlugToTitle(slug), err
+		}
+
+		return author.Author, err
+	})
+
 }
 
 func (s *searchService) CountTotalSearchedNovels(name string) (int64, error) {
@@ -95,19 +120,9 @@ func (s *searchService) ListSortedNovels(collection sql.Collection, offset int, 
 	})
 }
 
-func (s *searchService) CountNovelsByGenre(genre sql.Genre) (int64, error) {
+func (s *searchService) CountNovelsByGenre(genre string) (int64, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (int64, error) {
-		return q.CountNovelsByGenre(ctx, string(genre))
-	})
-}
-
-func (s *searchService) ListNovelsByGenre(genre sql.Genre, offset int, limit int) ([]repositories.Novel, error) {
-	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
-		return q.ListNovelsByGenrePaginated(ctx, repositories.ListNovelsByGenrePaginatedParams{
-			Genre:  string(genre),
-			Offset: int64(offset),
-			Limit:  int64(limit),
-		})
+		return q.CountNovelsByGenre(ctx, genre)
 	})
 }
 
@@ -123,22 +138,41 @@ func (s *searchService) CountNovelsByTag(tag string) (int64, error) {
 	})
 }
 
-func (s *searchService) ListNovelsByAuthor(author string, offset int, limit int) ([]repositories.Novel, error) {
-	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
+func (s *searchService) ListNovelsByAuthor(author string, offset int, limit int) (string, []repositories.Novel, error) {
+	novels, err := db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
 		return q.ListNovelsByAuthorPaginated(ctx, repositories.ListNovelsByAuthorPaginatedParams{
-			Author: author,
-			Offset: int64(offset),
-			Limit:  int64(limit),
+			AuthorSlug: author,
+			Offset:     int64(offset),
+			Limit:      int64(limit),
 		})
 	})
+
+	authorName, err := s.GetAuthorNameBySlug(author)
+	return authorName, novels, err
 }
 
-func (s *searchService) ListNovelsByTag(tag string, offset int, limit int) ([]repositories.Novel, error) {
-	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
+func (s *searchService) ListNovelsByTag(tag string, offset int, limit int) (string, []repositories.Novel, error) {
+	novels, err := db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
 		return q.ListNovelsByTagPaginated(ctx, repositories.ListNovelsByTagPaginatedParams{
-			Tag:    tag,
-			Offset: int64(offset),
-			Limit:  int64(limit),
+			TagSlug: tag,
+			Offset:  int64(offset),
+			Limit:   int64(limit),
 		})
 	})
+
+	tagName, err := s.GetTagBySlug(tag)
+	return tagName.Tag, novels, err
+}
+
+func (s *searchService) ListNovelsByGenre(genre string, offset int, limit int) (string, []repositories.Novel, error) {
+	novels, err := db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
+		return q.ListNovelsByGenrePaginated(ctx, repositories.ListNovelsByGenrePaginatedParams{
+			GenreSlug: genre,
+			Offset:    int64(offset),
+			Limit:     int64(limit),
+		})
+	})
+
+	dbGenre, err := s.GetGenreBySlug(genre)
+	return dbGenre.Genre, novels, err
 }

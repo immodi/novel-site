@@ -29,7 +29,8 @@ func IncrementNovelViews(service novels.NovelService, novelId int64) {
 
 func MapDBNovelToNovel(
 	dbNovel repositories.Novel,
-	genres, tags []string,
+	genres []repositories.NovelGenre,
+	tags []repositories.NovelTag,
 	novelStatus string,
 	totalChapters int,
 	currentPage int,
@@ -40,7 +41,10 @@ func MapDBNovelToNovel(
 		Name:                dbNovel.Title,
 		Description:         dbNovel.Description,
 		Author:              dbNovel.Author,
+		Slug:                dbNovel.Slug,
+		AuthorSlug:          dbNovel.AuthorSlug,
 		Genres:              genres,
+		Views:               pkg.AbbreviateInt(int(dbNovel.ViewCount)),
 		Tags:                tags,
 		Status:              novelStatus,
 		ReleaseYear:         int(dbNovel.ReleaseYear),
@@ -59,6 +63,10 @@ func MapNovelToMetaData(
 	novel novelsdtostructs.Novel,
 	novelStatus string,
 ) *indexdtostructs.MetaDataStruct {
+	var genres []string
+	for _, g := range novel.Genres {
+		genres = append(genres, g.Genre)
+	}
 	return &indexdtostructs.MetaDataStruct{
 		IsRendering:       true,
 		Title:             fmt.Sprintf("%s - Read %s For Free - %s", novel.Name, novel.Name, indexdtostructs.SITE_NAME),
@@ -67,7 +75,7 @@ func MapNovelToMetaData(
 		OgURL:             fmt.Sprintf("%s/novel/%s", indexdtostructs.DOMAIN, novel.Name),
 		Canonical:         fmt.Sprintf("%s/novel/%s", indexdtostructs.DOMAIN, novel.Name),
 		CoverImage:        novel.CoverImage,
-		Genres:            novel.Genres,
+		Genres:            genres,
 		Author:            novel.Author,
 		Status:            novelStatus,
 		AuthorLink:        fmt.Sprintf("%s/author/%s", indexdtostructs.DOMAIN, novel.Author),

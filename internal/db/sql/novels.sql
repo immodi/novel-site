@@ -1,14 +1,19 @@
 -- name: CreateNovel :one
 INSERT INTO novels (
-    title, description, cover_image, author, publisher, release_year, is_completed, update_time, view_count
+    title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, 0
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0
 )
 RETURNING *;
 
 -- name: GetNovelByID :one
 SELECT * FROM novels
 WHERE id = ? LIMIT 1;
+
+-- name: GetNovelBySlug :one
+SELECT * FROM novels
+WHERE LOWER(slug) = LOWER(?)
+LIMIT 1;
 
 -- name: ListNovels :many
 SELECT * FROM novels
@@ -20,12 +25,18 @@ SELECT COUNT(*) FROM novels;
 -- name: CountNovelsByAuthor :one
 SELECT COUNT(*)
 FROM novels
-WHERE author = ?;
+WHERE author_slug = ? COLLATE NOCASE;
+
+-- name: GetAuthorBySlug :one
+SELECT DISTINCT author, author_slug
+FROM novels
+WHERE author_slug = ? COLLATE NOCASE
+LIMIT 1;
 
 -- name: ListNovelsByAuthorPaginated :many
 SELECT *
 FROM novels
-WHERE author = ?
+WHERE author_slug = ? COLLATE NOCASE
 ORDER BY update_time DESC
 LIMIT ? OFFSET ?;
 
@@ -33,9 +44,11 @@ LIMIT ? OFFSET ?;
 UPDATE novels
 SET
     title = ?,
+    slug = ?,
     description = ?,
     cover_image = ?,
     author = ?,
+    author_slug = ?,
     publisher = ?,
     release_year = ?,
     is_completed = ?,
@@ -48,9 +61,11 @@ RETURNING *;
 UPDATE novels
 SET
     title = CASE WHEN :title IS NOT NULL THEN :title ELSE title END,
+    slug = CASE WHEN :slug IS NOT NULL THEN :slug ELSE slug END,
     description = CASE WHEN :description IS NOT NULL THEN :description ELSE description END,
     cover_image = CASE WHEN :cover_image IS NOT NULL THEN :cover_image ELSE cover_image END,
     author = CASE WHEN :author IS NOT NULL THEN :author ELSE author END,
+    author_slug = CASE WHEN :author_slug IS NOT NULL THEN :author_slug ELSE author_slug END,
     publisher = CASE WHEN :publisher IS NOT NULL THEN :publisher ELSE publisher END,
     release_year = CASE WHEN :release_year IS NOT NULL THEN :release_year ELSE release_year END,
     is_completed = CASE WHEN :is_completed IS NOT NULL THEN :is_completed ELSE is_completed END,
@@ -59,13 +74,17 @@ SET
 WHERE id = :id
 RETURNING *;
 
-
 -- name: DeleteNovel :exec
 DELETE FROM novels WHERE id = ?;
 
 -- name: GetNovelByNameLike :one
 SELECT * FROM novels
 WHERE LOWER(title) LIKE LOWER(?)
+LIMIT 1;
+
+-- name: GetNovelByExactName :one
+SELECT * FROM novels
+WHERE LOWER(title) = LOWER(?)
 LIMIT 1;
 
 -- name: ListNewestHomeNovels :many
@@ -121,7 +140,7 @@ FROM novels
 WHERE is_completed = 0;
 
 -- name: GetNovelTags :many
-SELECT tag
+SELECT *
 FROM novel_tags
 WHERE novel_id = ?;
 
@@ -135,14 +154,10 @@ WHERE id = ?;
 SELECT *
 FROM novels
 WHERE LOWER(title) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
-   OR LOWER(author) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
-   OR LOWER(description) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
 ORDER BY update_time DESC
 LIMIT sqlc.arg(limit) OFFSET sqlc.arg(offset);
 
 -- name: CountSearchNovels :one
 SELECT COUNT(*) AS total
 FROM novels
-WHERE LOWER(title) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
-   OR LOWER(author) LIKE '%' || LOWER(sqlc.arg(search)) || '%'
-   OR LOWER(description) LIKE '%' || LOWER(sqlc.arg(search)) || '%';
+WHERE LOWER(title) LIKE '%' || LOWER(sqlc.arg(search)) || '%';

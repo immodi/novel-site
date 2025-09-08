@@ -12,16 +12,14 @@ type Chapter struct {
 	Content       string
 }
 
-type Genre struct {
-	Genre string
-}
-
 type Novel struct {
 	ID          int64
 	Title       string
+	Slug        string
 	Description string
 	CoverImage  string
 	Author      string
+	AuthorSlug  string
 	Publisher   string
 	ReleaseYear int64
 	IsCompleted int64
@@ -30,11 +28,13 @@ type Novel struct {
 }
 
 type NovelGenre struct {
-	NovelID int64
-	Genre   string
+	NovelID   int64
+	Genre     string
+	GenreSlug string
 }
 
 type NovelTag struct {
 	NovelID int64
 	Tag     string
+	TagSlug string
 }

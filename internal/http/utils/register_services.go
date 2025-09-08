@@ -5,6 +5,7 @@ import (
 	"immodi/novel-site/internal/app/services/chapters"
 	"immodi/novel-site/internal/app/services/db"
 	"immodi/novel-site/internal/app/services/index"
+	"immodi/novel-site/internal/app/services/load"
 	"immodi/novel-site/internal/app/services/novels"
 	"immodi/novel-site/internal/app/services/search"
 	"log"
@@ -21,6 +22,7 @@ type Services struct {
 	HomeService    index.HomeService
 	AuthService    auth.AuthService
 	SearchServie   search.SearchService
+	LoadService    load.LoadService
 }
 
 func RegisterServices() *Services {
@@ -30,14 +32,16 @@ func RegisterServices() *Services {
 	}
 
 	homeService := index.NewHomeService(dbService)
+	novelService := novels.New(dbService)
 
 	return &Services{
 		DB:             dbService,
 		HomeService:    homeService,
-		NovelService:   novels.New(dbService),
-		ChapterService: chapters.New(dbService),
+		NovelService:   novelService,
+		ChapterService: chapters.New(dbService, novelService),
 		AuthService:    auth.New(dbService),
 		SearchServie:   search.NewSearchService(dbService, homeService),
+		LoadService:    load.NewLoadService(dbService, novelService),
 	}
 }
 

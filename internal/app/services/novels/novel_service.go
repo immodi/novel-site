@@ -18,9 +18,9 @@ func New(db *db.DBService) NovelService {
 	return &novelService{db: db}
 }
 
-func (s *novelService) GetNovelByName(name string) (repositories.Novel, error) {
+func (s *novelService) GetNovelBySlug(slug string) (repositories.Novel, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (repositories.Novel, error) {
-		return q.GetNovelByNameLike(ctx, name)
+		return q.GetNovelBySlug(ctx, slug)
 	})
 }
 
@@ -55,14 +55,14 @@ func (s *novelService) GetLastChapter(novelID int64) (repositories.Chapter, erro
 	})
 }
 
-func (s *novelService) GetGenres(novelID int64) ([]string, error) {
-	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
+func (s *novelService) GetGenres(novelID int64) ([]repositories.NovelGenre, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.NovelGenre, error) {
 		return q.ListGenresByNovel(ctx, novelID)
 	})
 }
 
-func (s *novelService) GetTags(novelID int64) ([]string, error) {
-	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
+func (s *novelService) GetTags(novelID int64) ([]repositories.NovelTag, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.NovelTag, error) {
 		return q.GetNovelTags(ctx, novelID)
 	})
 }
@@ -76,8 +76,9 @@ func (s *novelService) CreateNovel(params repositories.CreateNovelParams) (repos
 func (s *novelService) AddGenreToNovel(novelID int64, genre string) error {
 	_, err := db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (any, error) {
 		return nil, q.AddGenreToNovel(ctx, repositories.AddGenreToNovelParams{
-			NovelID: novelID,
-			Genre:   genre,
+			NovelID:   novelID,
+			Genre:     genre,
+			GenreSlug: pkg.TitleToSlug(genre),
 		})
 	})
 	return err
@@ -88,6 +89,7 @@ func (s *novelService) AddTagToNovel(novelID int64, tag string) error {
 		return nil, q.AddTagToNovel(ctx, repositories.AddTagToNovelParams{
 			NovelID: novelID,
 			Tag:     tag,
+			TagSlug: pkg.TitleToSlug(tag),
 		})
 	})
 	return err
@@ -98,16 +100,18 @@ func (s *novelService) CreateNovelWithDefaults(title string, isCompleted bool) (
 	maxYear := time.Now().Year()
 	randomYear := rand.Intn(maxYear-minYear+1) + minYear
 	isCompletedInt := 0
-
+	author := "Default Author"
 	if isCompleted {
 		isCompletedInt = 1
 	}
 
 	params := repositories.CreateNovelParams{
 		Title:       title,
+		Slug:        pkg.TitleToSlug(title),
 		Description: fmt.Sprintf("%s is a brand new story.", title),
 		CoverImage:  "https://dummyimage.com/500x720/8a818a/ffffff",
-		Author:      "default author",
+		Author:      author,
+		AuthorSlug:  pkg.TitleToSlug(author),
 		Publisher:   "Default Publisher",
 		ReleaseYear: int64(pkg.GetRandomYear(randomYear)),
 		IsCompleted: int64(isCompletedInt),
@@ -120,5 +124,11 @@ func (s *novelService) CreateNovelWithDefaults(title string, isCompleted bool) (
 func (s *novelService) IncrementNovelViewCount(novelID int64) error {
 	return db.Execute(s.db, func(ctx context.Context, q *repositories.Queries) error {
 		return q.IncrementNovelViewCount(ctx, novelID)
+	})
+}
+
+func (s *novelService) DeleteNovel(novelID int64) error {
+	return db.Execute(s.db, func(ctx context.Context, q *repositories.Queries) error {
+		return q.DeleteNovel(ctx, novelID)
 	})
 }

@@ -11,7 +11,6 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 	"immodi/novel-site/internal/http/structs/index"
-	"immodi/novel-site/pkg"
 )
 
 func ListNovels(novels []indexdtostructs.HomeNovelDto) templ.Component {
@@ -41,9 +40,9 @@ func ListNovels(novels []indexdtostructs.HomeNovelDto) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 templ.SafeURL
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s", pkg.TitleToSlug(novel.Name)))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s", novel.Slug))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/novels_list.templ`, Line: 12, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/novels_list.templ`, Line: 11, Col: 49}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -56,7 +55,7 @@ func ListNovels(novels []indexdtostructs.HomeNovelDto) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(novel.CoverImage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/novels_list.templ`, Line: 15, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/novels_list.templ`, Line: 14, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -69,7 +68,7 @@ func ListNovels(novels []indexdtostructs.HomeNovelDto) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/novels_list.templ`, Line: 16, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/novels_list.templ`, Line: 15, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -92,7 +91,7 @@ func ListNovels(novels []indexdtostructs.HomeNovelDto) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/novels_list.templ`, Line: 29, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/novels_list.templ`, Line: 28, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

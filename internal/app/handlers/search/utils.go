@@ -29,6 +29,7 @@ func dbNovelsToSearchDtos(service search.SearchService, dbNovels []repositories.
 		searchDtos = append(searchDtos, searchresutlsdto.SearchResultDto{
 			ID:                   int(novel.ID),
 			Name:                 novel.Title,
+			Slug:                 novel.Slug,
 			CoverImage:           novel.CoverImage,
 			Author:               novel.Author,
 			Status:               status,

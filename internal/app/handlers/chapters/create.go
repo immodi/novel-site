@@ -1,7 +1,8 @@
 package chapters
 
 import (
-	"fmt"
+	"immodi/novel-site/internal/app/handlers"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -12,14 +13,16 @@ func (h *ChapterHandler) CreateChapterWithDefaults(w http.ResponseWriter, r *htt
 	novelIDString := chi.URLParam(r, "novelId")
 	novelID, err := strconv.ParseInt(novelIDString, 10, 64)
 	if err != nil {
-		http.Error(w, "Invalid novel ID", http.StatusBadRequest)
+		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 
 	_, err = h.chapterService.CreateChapterWithDefaults(novelID)
 
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to create chapter: %v", err), http.StatusInternalServerError)
+		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
 		return
 	}
 

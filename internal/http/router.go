@@ -32,9 +32,9 @@ func (router *Router) NewRouter() *chi.Mux {
 func (router *Router) RegisterRoutes() {
 	router.r.Get("/", router.handlers.Home.Index)
 
-	router.r.Get("/novel/{novelName}", router.handlers.Novel.GetNovel)
-	router.r.Get("/novel/{novelName}/chapters", router.handlers.Chapter.GetChaptersDropDown)
-	router.r.Get("/novel/{novelName}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
+	router.r.Get("/novel/{novelSlug}", router.handlers.Novel.GetNovel)
+	router.r.Get("/novel/{novelSlug}/chapters", router.handlers.Chapter.GetChaptersDropDown)
+	router.r.Get("/novel/{novelSlug}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
 
 	router.r.Get("/search/{novelName}", router.handlers.Search.SearchNovel)
 	router.r.Get("/sort/{collection}", router.handlers.Search.SortNovelsByCollection)
@@ -47,6 +47,8 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/login", router.handlers.Auth.LoginHandler)
 	router.r.Get("/register", router.handlers.Auth.RegisterHandler)
 	router.r.Get("/novels", router.redirectToHome())
+
+	router.r.Post("/load-novel", router.handlers.Load.LoadNovel)
 
 	// testing routes, should be disabled in production
 	router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)

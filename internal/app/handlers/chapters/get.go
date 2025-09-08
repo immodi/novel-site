@@ -13,7 +13,7 @@ import (
 )
 
 func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
-	novelName := pkg.SlugToTitle(chi.URLParam(r, "novelName"))
+	novelSlug := pkg.SlugToTitle(chi.URLParam(r, "novelSlug"))
 	chapterNumStr := pkg.SlugToTitle(chi.URLParam(r, "chapterNumber"))
 
 	chapterNum, err := strconv.Atoi(chapterNumStr)
@@ -22,7 +22,7 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbNovel, err := h.chapterService.GetNovelByNameLike(novelName)
+	dbNovel, err := h.chapterService.GetNovelBySlug(novelSlug)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
 		return
@@ -70,9 +70,9 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Request) {
-	novelName := pkg.SlugToTitle(chi.URLParam(r, "novelName"))
+	novelSlug := pkg.TitleToSlug(chi.URLParam(r, "novelSlug"))
 
-	dbNovel, err := h.chapterService.GetNovelByNameLike(novelName)
+	dbNovel, err := h.chapterService.GetNovelBySlug(novelSlug)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
 		return
@@ -86,7 +86,7 @@ func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Requ
 
 	chaptersList := dbChaptersToChapters(dbChapters)
 
-	cmp := dropdown.ChapterDropdown(pkg.TitleToSlug(novelName), chaptersList)
+	cmp := dropdown.ChapterDropdown(novelSlug, chaptersList)
 	templ.Handler(cmp).ServeHTTP(w, r)
 
 }
