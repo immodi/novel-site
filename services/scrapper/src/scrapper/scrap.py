@@ -5,7 +5,7 @@ from scrapper.modules.factories.factory import get_parser, SkipDuplicate
 import argparse
 
 
-def main():
+def scrapper():
     parser = argparse.ArgumentParser(prog="scrapper", description="Novel scraper CLI")
     parser.add_argument("url", help="URL of the novel page to start scraping at")
     parser.add_argument(
@@ -27,7 +27,7 @@ def main():
     args = parser.parse_args()
     list_urls = [
         f"{args.url}?page={i}"
-        for i in range(args.start_page_num, args.total_pages_num + 1)
+        for i in range(args.start_page_num, args.start_page_num + args.total_pages_num)
     ]
 
     parsed = urlparse(args.url)
@@ -35,21 +35,27 @@ def main():
 
     config.BASE_URL = base_url
 
-    print("📥 Fetching novel list...")
-    list_tree = utils.fetch_page(list_urls)  # type: ignore
+    try:
+        print("📥 Fetching novel list...")
+        list_tree = utils.fetch_page(list_urls)  # type: ignore
 
-    parser = get_parser(
-        args.url, SkipDuplicate.CHAPTER, max_chapters_number=args.max_novel_chapters_num
-    )
-    novels = parser.parse_list_of_novels(list_tree)
-    for novel in novels:
-        print(f"📖 Fetching {novel['title']} → {novel['url']}")
-        detail_tree = utils.fetch_page(novel["url"])  # type: ignore
-        _ = parser.parse_novel(detail_tree, novel["url"])
-        _ = parser.parse_chapters(novel["url"], novel["title"], True)
+        parser = get_parser(
+            args.url,
+            SkipDuplicate.CHAPTER,
+            max_chapters_number=args.max_novel_chapters_num,
+        )
+        novels = parser.parse_list_of_novels(list_tree)
+        for novel in novels:
+            print(f"📖 Fetching {novel.title} → {novel.url}")
+            detail_tree = utils.fetch_page(novel.url)  # type: ignore
+            _ = parser.parse_novel(detail_tree, novel.url)
+            _ = parser.parse_chapters(novel.url, novel.title, True)
 
-    print("✅ Finished. All novels saved.")
+        print("✅ Finished. All novels saved.")
+
+    except Exception as e:
+        raise e
 
 
 if __name__ == "__main__":
-    main()
+    scrapper()

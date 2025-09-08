@@ -9,7 +9,7 @@ from scrapper import config
 from typing import List, Union
 from scrapper.datatypes.novel import ChapterData, NovelData, NovelLink
 from lxml import html
-from scrapper.modules.utils.dataclasses.novel_fire_chapter import NovelFireChapter
+from scrapper.datatypes.novel_fire_chapter import NovelFireChapter
 
 
 class NovelFireParser(Parser):
@@ -21,7 +21,6 @@ class NovelFireParser(Parser):
         self, tree: Union[html.HtmlElement, List[html.HtmlElement]]
     ) -> List[NovelLink]:
         novels = []
-
         # Normalize into a list
         trees = tree if isinstance(tree, list) else [tree]
 
@@ -40,7 +39,7 @@ class NovelFireParser(Parser):
                     print(f"Novel {title} already exists. Skipping...")
                     continue
 
-                novels.append({"title": title, "url": url})
+                novels.append(NovelLink(title=title, url=url))
 
         return novels
 
@@ -82,16 +81,16 @@ class NovelFireParser(Parser):
         else:
             description = ""
 
-        novel_data: NovelData = {
-            "title": title or "",
-            "author": author,
-            "genres": genres,
-            "status": status,
-            "tags": tags,
-            "cover_image": cover_image,
-            "description": description,
-            "url": url,
-        }
+        novel_data = NovelData(
+            title= title or "",
+            author= author,
+            genres= genres,
+            status= status,
+            tags= tags,
+            cover_image= cover_image,
+            description= description,
+            url= url,
+        )
 
         saver.save_item(novel_data, f"{config.OUTPUT_DIR}/novels")
         if save_image and cover_image:
@@ -150,11 +149,12 @@ class NovelFireParser(Parser):
                 print(f"Chapter {chapter_data.title} already exists. Skipping...")
                 continue
 
-            chapter: ChapterData = {
-                "title": chapter_data.title,
-                "content": chapter_data.content,
-                "url": chapter_link,
-            }
+            chapter= ChapterData (
+                title= chapter_data.title,
+                content= chapter_data.content,
+                url= chapter_link,
+            )
+
 
             chapters.append(chapter)
 

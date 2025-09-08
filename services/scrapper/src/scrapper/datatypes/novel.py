@@ -1,12 +1,15 @@
-from typing import TypedDict, List
+from typing import List
+from dataclasses import dataclass
 
 
-class NovelLink(TypedDict):
+@dataclass
+class NovelLink:
     title: str
     url: str
 
 
-class NovelData(TypedDict):
+@dataclass
+class NovelData:
     title: str
     author: str
     genres: List[str]
@@ -17,7 +20,8 @@ class NovelData(TypedDict):
     url: str
 
 
-class ChapterData(TypedDict):
+@dataclass
+class ChapterData:
     title: str
     content: str
     url: str

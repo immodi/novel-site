@@ -32,10 +32,10 @@ class NovelBinParser(Parser):
                     continue
 
                 novels.append(
-                    {
-                        "title": title,
-                        "url": urljoin(config.BASE_URL, a.get("href")),
-                    }
+                    NovelLink(
+                        title=title,
+                        url=urljoin(config.BASE_URL, a.get("href")),
+                    )
                 )
 
         return novels
@@ -75,23 +75,23 @@ class NovelBinParser(Parser):
         desc_el = description_tree.cssselect(".desc-text")
         description = safe_text(desc_el[0]) if desc_el else None
 
-        novel_data: NovelData = {
-            "title": title or "",
-            "author": author or "",
-            "genres": genres or [],
-            "status": status or "",
-            "tags": tags or [],
-            "cover_image": img or "",
-            "description": description or "",
-            "url": url or "",
-        }
+        novel_data = NovelData(
+            title = title or "",
+            author = author or "",
+            genres = genres or [],
+            status = status or "",
+            tags = tags or [],
+            cover_image = img or "",
+            description = description or "",
+            url = url or "",
+        ) 
 
         saver.save_item(novel_data, f"{config.OUTPUT_DIR}/novels")
         if save_image:
             helpers.download_image(
-                novel_data["cover_image"],
+                novel_data.cover_image,
                 f"{config.OUTPUT_DIR}/covers",
-                novel_data["title"],
+                novel_data.title,
             )
 
         return novel_data
@@ -127,11 +127,11 @@ class NovelBinParser(Parser):
             chapter_content = scrape_chapter_with_request(chapter_url)  # type: ignore
             # chapter_content = scrape_chapter(chapter_url)  # type: ignore
 
-            chapter: ChapterData = {
-                "title": chapter_title,
-                "content": chapter_content,
-                "url": chapter_url,
-            }
+            chapter= ChapterData(
+                title= chapter_title,
+                content= chapter_content,
+                url= chapter_url,
+            )
             chapters.append(chapter)
 
             if save_per_chapter:
