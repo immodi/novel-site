@@ -10,26 +10,20 @@ import (
 
 templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 	<div class="w-full md:w-2/3 lg:w-3/4">
-		<h1 class="text-3xl font-bold mb-2">{ novel.Name }</h1>
-		<!-- Rating -->
-		<!-- <div class="flex items-center mb-4"> -->
-		<!-- 	<div class="flex items-center justify-center text-yellow-400 mr-2"> -->
-		<!-- 		@StarRating(10) -->
-		<!-- 	</div> -->
-		<!-- 	<span class="text-lg font-semibold">8.8</span> -->
-		<!-- 	<span class="text-gray-400 dark:text-gray-600 ml-2"> -->
-		<!-- 		(21573 ratings) -->
-		<!-- 	</span> -->
-		<!-- </div> -->
-		<br/>
-		<!-- Metadata -->
-		<div class="grid grid-cols-1 gap-4 mb-6 auto-rows-min">
-			<div>
-				<h3 class="font-semibold">Alternative names:</h3>
+		<!-- Title Section -->
+		<div class="mb-8">
+			<h1 class="text-3xl md:text-4xl font-bold mb-3">{ novel.Name }</h1>
+		</div>
+		<!-- Metadata Grid -->
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+			<!-- Alternative Names -->
+			<div class="p-4 rounded-lg border border-[#252525] dark:border-[#ededed]">
+				<h3 class="font-semibold mb-2">Alternative names:</h3>
 				<p>{ novel.Name }</p>
 			</div>
-			<div>
-				<h3 class="font-semibold">Author:</h3>
+			<!-- Author -->
+			<div class="p-4 rounded-lg border border-[#252525] dark:border-[#ededed]">
+				<h3 class="font-semibold mb-2">Author:</h3>
 				<a
 					href={ fmt.Sprintf("/author/%s", novel.AuthorSlug) }
 					class="text-blue-400 dark:text-blue-600 hover:underline"
@@ -37,21 +31,23 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 					{ novel.Author }
 				</a>
 			</div>
-			<div>
-				<h3 class="mb-2 font-semibold">Genre:</h3>
+			<!-- Genre -->
+			<div class="p-4 rounded-lg border border-[#252525] dark:border-[#ededed] md:col-span-2">
+				<h3 class="font-semibold mb-3">Genre:</h3>
 				<div class="flex flex-wrap gap-2">
 					for _, genre := range novel.Genres {
 						<a
 							href={ fmt.Sprintf("/genre/%s", genre.GenreSlug) }
-							class="bg-[#333333] dark:bg-gray-100 hover:bg-[#444] dark:hover:bg-gray-200 border border-[#252525] dark:border-[#ededed] px-3 py-1 rounded-full text-sm transition-colors"
+							class="bg-[#333333] dark:bg-gray-100 hover:bg-[#444] dark:hover:bg-gray-200 border border-[#252525] dark:border-[#ededed] px-3 py-1.5 rounded-full text-sm transition-colors"
 						>
 							{ genre.Genre }
 						</a>
 					}
 				</div>
 			</div>
-			<div class="self-start">
-				<h3 class="font-semibold">Status:</h3>
+			<!-- Status -->
+			<div class="p-4 rounded-lg border border-[#252525] dark:border-[#ededed]">
+				<h3 class="font-semibold mb-2">Status:</h3>
 				{{ var textStyle string }}
 				{{
 	if novel.Status == "Ongoing" {
@@ -68,43 +64,56 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 					{ novel.Status }
 				</a>
 			</div>
-			<div>
-				<h3 class="font-semibold">Publishers:</h3>
+			<!-- Publishers -->
+			<div class="p-4 rounded-lg border border-[#252525] dark:border-[#ededed]">
+				<h3 class="font-semibold mb-2">Publishers:</h3>
 				<p>{ novel.Publisher }</p>
 			</div>
-			<!-- Tags -->
-			if len(novel.Tags) > 0 {
-				<div class="mb-6">
-					<h3 class="font-semibold mb-2">Tags:</h3>
-					<div class="flex flex-wrap gap-2">
-						for _, tag := range novel.Tags {
-							<a
-								href={ fmt.Sprintf("/tag/%s", tag.TagSlug) }
-								class="bg-[#252525] dark:bg-gray-200 hover:bg-[#333] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-3 py-1 rounded-full text-sm transition-colors"
-							>
-								{ tag.Tag }
-							</a>
-						}
-					</div>
-				</div>
-			}
-			<div>
-				<h3 class="font-semibold">Views:</h3>
+			<!-- Views -->
+			<div class="p-4 rounded-lg border border-[#252525] dark:border-[#ededed]">
+				<h3 class="font-semibold mb-2">Views:</h3>
 				<p>{ novel.Views }</p>
 			</div>
+			<!-- Rating Section-->
+			<!-- <div class="flex items-center"> -->
+			<!-- 	<div class="flex items-center justify-center text-yellow-400 mr-2"> -->
+			<!-- 		@StarRating(10) -->
+			<!-- 	</div> -->
+			<!-- 	<span class="text-lg font-semibold">8.8</span> -->
+			<!-- 	<span class="text-gray-400 dark:text-gray-600 ml-2">(21573 ratings)</span> -->
+			<!-- </div> -->
 		</div>
-		<!-- Latest chapter -->
-		<div class="bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] p-4 rounded-lg">
-			<div class="flex justify-between items-center">
+		<!-- Tags Section -->
+		if len(novel.Tags) > 0 {
+			<div class="mb-8">
+				<h3 class="font-semibold mb-3">Tags:</h3>
+				<div class="flex flex-wrap gap-2">
+					for _, tag := range novel.Tags {
+						<a
+							href={ fmt.Sprintf("/tag/%s", tag.TagSlug) }
+							class="bg-[#252525] dark:bg-gray-200 hover:bg-[#333] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-3 py-1.5 rounded-full text-sm transition-colors"
+						>
+							{ tag.Tag }
+						</a>
+					}
+				</div>
+			</div>
+		}
+		<!-- Latest Chapter -->
+		<div class="bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] p-5 rounded-lg">
+			<div class="flex justify-between items-center mb-3">
 				<div class="font-semibold">Latest chapter:</div>
-				<div class="text-gray-400 dark:text-gray-600 text-sm">{ pkg.TimeAgo(novel.LastUpdated) } </div>
+				<div class="text-gray-400 dark:text-gray-600 text-sm">{ pkg.TimeAgo(novel.LastUpdated) }</div>
 			</div>
 			<a
 				href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, novel.TotalChaptersNumber) }
-				class="text-blue-400 dark:text-blue-600 hover:underline font-medium block mt-2"
+				class="text-blue-400 dark:text-blue-600 hover:underline font-medium block mb-1"
 			>
 				{ novel.LastChapterName }
 			</a>
+			<div class="text-gray-400 dark:text-gray-600 text-sm">
+				Chapter { novel.TotalChaptersNumber }
+			</div>
 		</div>
 	</div>
 }

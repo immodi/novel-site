@@ -48,7 +48,7 @@ func ChapterReader(ch chaptersdtostructs.ChapterPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h1><p class=\"text-center text-gray-400 dark:text-gray-600 mb-8\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h1><p class=\"hover:underline focus:underline text-center text-gray-400 dark:text-gray-600 mb-8\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
