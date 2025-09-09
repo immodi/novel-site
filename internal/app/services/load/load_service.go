@@ -28,12 +28,12 @@ func (s *loadService) GetNovelByExactName(name string) (repositories.Novel, erro
 	})
 }
 
-func (s *loadService) AddGenreToNovel(novelID int64, genre string) error {
-	return s.novelService.AddGenreToNovel(novelID, genre)
+func (s *loadService) AddBulkTagsToNovel(novelID int64, tags []string) error {
+	return s.novelService.AddBulkTagsToNovel(novelID, tags)
 }
 
-func (s *loadService) AddTagToNovel(novelID int64, tag string) error {
-	return s.novelService.AddTagToNovel(novelID, tag)
+func (s *loadService) AddBulkGenresToNovel(novelID int64, genres []string) error {
+	return s.novelService.AddBulkGenresToNovel(novelID, genres)
 }
 
 func (s *loadService) DeleteNovel(novelID int64) error {

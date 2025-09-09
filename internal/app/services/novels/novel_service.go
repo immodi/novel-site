@@ -95,6 +95,44 @@ func (s *novelService) AddTagToNovel(novelID int64, tag string) error {
 	return err
 }
 
+func (s *novelService) AddBulkGenresToNovel(novelID int64, genres []string) error {
+	return db.ExecuteTx(s.db, func(ctx context.Context, q *repositories.Queries) error {
+		for _, genre := range genres {
+			if genre == "" {
+				continue
+			}
+			err := q.AddGenreToNovel(ctx, repositories.AddGenreToNovelParams{
+				NovelID:   novelID,
+				Genre:     genre,
+				GenreSlug: pkg.TitleToSlug(genre),
+			})
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
+func (s *novelService) AddBulkTagsToNovel(novelID int64, tags []string) error {
+	return db.ExecuteTx(s.db, func(ctx context.Context, q *repositories.Queries) error {
+		for _, tag := range tags {
+			if tag == "" {
+				continue
+			}
+			err := q.AddTagToNovel(ctx, repositories.AddTagToNovelParams{
+				NovelID: novelID,
+				Tag:     tag,
+				TagSlug: pkg.TitleToSlug(tag),
+			})
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
 func (s *novelService) CreateNovelWithDefaults(title string, isCompleted bool) (repositories.Novel, error) {
 	minYear := 1980
 	maxYear := time.Now().Year()

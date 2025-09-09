@@ -5,6 +5,8 @@ import (
 	"immodi/novel-site/internal/http/utils"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -55,6 +57,7 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)
 	router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
 
+	router.r.Handle("/static/*", router.serveStatic("static"))
 	router.r.NotFound(handlers.NotFoundHandler)
 }
 
@@ -69,5 +72,23 @@ func (router *Router) RegisterHandlers() {
 func (router *Router) redirectToHome() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+}
+
+func (router *Router) serveStatic(dir string) http.HandlerFunc {
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		log.Fatalf("failed to resolve static dir: %v", err)
+	}
+
+	fs := http.StripPrefix("/static/", http.FileServer(http.Dir(absDir)))
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Prevent directory listing
+		if _, err := os.Stat(filepath.Join(absDir, r.URL.Path[len("/static/"):])); os.IsNotExist(err) {
+			http.NotFound(w, r)
+			return
+		}
+		fs.ServeHTTP(w, r)
 	}
 }

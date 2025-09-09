@@ -10,12 +10,13 @@ from scrapper.helpers.helpers import combine_json_objects_to_array
 
 def loader(retry_delay: float = 2.0, max_retries: int = 5):
     novels_dir = Path(config.OUTPUT_DIR) / "novels"
+    covers_dir = Path(config.OUTPUT_DIR) / "covers"
     for json_file in novels_dir.glob("*.json"):
         novel = load_from_json(str(json_file), NovelData)
 
         retries = 0
         while True:
-            resp = send_novel_to_server(novel)
+            resp = send_novel_to_server(novel, f"{covers_dir}/{json_file.stem}")
 
             if resp.success:
                 if resp.novel_id is None:

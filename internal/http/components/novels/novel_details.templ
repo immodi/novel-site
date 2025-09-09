@@ -72,6 +72,22 @@ templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 				<h3 class="font-semibold">Publishers:</h3>
 				<p>{ novel.Publisher }</p>
 			</div>
+			<!-- Tags -->
+			if len(novel.Tags) > 0 {
+				<div class="mb-6">
+					<h3 class="font-semibold mb-2">Tags:</h3>
+					<div class="flex flex-wrap gap-2">
+						for _, tag := range novel.Tags {
+							<a
+								href={ fmt.Sprintf("/tag/%s", tag.TagSlug) }
+								class="bg-[#252525] dark:bg-gray-200 hover:bg-[#333] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-3 py-1 rounded-full text-sm transition-colors"
+							>
+								{ tag.Tag }
+							</a>
+						}
+					</div>
+				</div>
+			}
 			<div>
 				<h3 class="font-semibold">Views:</h3>
 				<p>{ novel.Views }</p>

@@ -8,51 +8,94 @@ import (
 
 templ ChapterListComponent(novel *novelsdtostructs.Novel) {
 	<div id="chapters" class="tab-content mb-8 hidden">
-		<h2 class="text-2xl font-semibold mb-4">Chapters ({ fmt.Sprintf("%d", novel.TotalChaptersNumber) })</h2>
+		<h2 class="text-2xl font-semibold mb-4">
+			Chapters ({ fmt.Sprintf("%d", novel.TotalChaptersNumber) })
+		</h2>
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			for _, chapter := range novel.Chapters {
 				<a
 					href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, chapter.Number) }
-					class="block p-3 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
+					class="block p-3 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] 
+						   hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
 				>
 					<div class="font-medium">{ chapter.Title }</div>
 				</a>
 			}
 		</div>
-		<!-- Pagination -->
-		{{ isPreviousPage := novel.CurrentPage > 1 }}
-		{{ isNextPage := novel.CurrentPage < novel.TotalPages }}
-		<div class="flex justify-center mt-6">
-			<div class="flex space-x-2">
-				if isPreviousPage {
-					<a
-						href={ fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, novel.CurrentPage-1) }
-						class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
-					>
-						Previous
-					</a>
-				}
-				for _, i := range pkg.MakePages(novel.TotalPages) {
-					if i == novel.CurrentPage {
-						<span class="px-4 py-2 bg-blue-600 text-white rounded-lg">{ fmt.Sprintf("%d", i) }</span>
-					} else {
-						<a
-							href={ fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, i) }
-							class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
+		<!-- Compact Pagination -->
+		<div class="flex justify-center mt-6 items-center space-x-2 relative">
+			{{ isNextPage := novel.CurrentPage < novel.TotalPages }} {{ isPreviousPage := novel.CurrentPage > 1 }}
+			<!-- Prev -->
+			if isPreviousPage {
+				<a
+					href={ fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, novel.CurrentPage-1) }
+					class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] 
+						   dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 
+						   rounded-lg transition-colors"
+				>
+					&lt;
+				</a>
+			}
+			<!-- Page numbers -->
+			for _, p := range pkg.MakePagesCompact(novel.CurrentPage, novel.TotalPages) {
+				if p == "…" {
+					<!-- Ellipsis with hover/focus popup -->
+					<div class="relative group">
+						<button
+							type="button"
+							class="cursor-pointer px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] 
+								   dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 
+								   rounded-lg transition-colors"
 						>
-							{ fmt.Sprintf("%d", i) }
-						</a>
-					}
-				}
-				if isNextPage {
+							…
+						</button>
+						<!-- Popup input -->
+						<form
+							method="get"
+							action={ fmt.Sprintf("/novel/%s#chapters", novel.Slug) }
+							class="absolute top-full mt-2 left-1/2 -translate-x-1/2 hidden group-hover:block group-focus-within:block 
+								   bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] 
+								   rounded-lg p-2 shadow-lg"
+						>
+							<input
+								type="number"
+								name="page"
+								min="1"
+								max={ fmt.Sprintf("%d", novel.TotalPages) }
+								placeholder="Page"
+								class="w-16 px-2 py-1 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] 
+									   dark:border-[#ededed] rounded-lg text-center focus:outline-none 
+									   focus:ring-2 focus:ring-blue-600
+									   [appearance:textfield] 
+									   [&::-webkit-outer-spin-button]:appearance-none 
+									   [&::-webkit-inner-spin-button]:appearance-none"
+							/>
+						</form>
+					</div>
+				} else if p == fmt.Sprintf("%d", novel.CurrentPage) {
+					<span class="px-4 py-2 bg-blue-600 text-white rounded-lg">{ p }</span>
+				} else {
 					<a
-						href={ fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, novel.CurrentPage+1) }
-						class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
+						href={ fmt.Sprintf("/novel/%s?page=%s#chapters", novel.Slug, p) }
+						class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] 
+							   dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 
+							   rounded-lg transition-colors"
 					>
-						Next
+						{ p }
 					</a>
 				}
-			</div>
+			}
+			<!-- Next -->
+			if isNextPage {
+				<a
+					href={ fmt.Sprintf("/novel/%s?page=%d#chapters", novel.Slug, novel.CurrentPage+1) }
+					class="px-4 py-2 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] 
+						   dark:border-[#ededed] hover:bg-[#252525] dark:hover:bg-gray-200 
+						   rounded-lg transition-colors"
+				>
+					&gt;
+				</a>
+			}
 		</div>
 	</div>
 }

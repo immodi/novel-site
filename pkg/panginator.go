@@ -1,5 +1,7 @@
 package pkg
 
+import "fmt"
+
 const PAGE_LIMIT = 21
 const SEARCH_PAGE_LIMIT = 8
 
@@ -55,4 +57,41 @@ func AdjustPageNumber(requestedPage, totalChapters, pageLimit int) int {
 	}
 
 	return requestedPage
+}
+
+func MakePagesCompact(current, total int) []string {
+	const (
+		maxSmallPages = 2 // if total pages <= this, show all pages
+		windowSize    = 1 // how many pages to show on each side of current
+	)
+
+	// Small case: show everything
+	if total <= maxSmallPages {
+		pages := []string{}
+		for i := 1; i <= total; i++ {
+			pages = append(pages, fmt.Sprintf("%d", i))
+		}
+		return pages
+	}
+
+	pages := []string{}
+
+	// Sliding window around current
+	start := max(current-windowSize, 1)
+	end := min(current+windowSize, total)
+
+	// Add the window pages
+	for i := start; i <= end; i++ {
+		pages = append(pages, fmt.Sprintf("%d", i))
+	}
+
+	// If there are still pages left after the window, add ellipsis and last page
+	if end < total {
+		if end < total-1 {
+			pages = append(pages, "…")
+		}
+		pages = append(pages, fmt.Sprintf("%d", total))
+	}
+
+	return pages
 }

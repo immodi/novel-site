@@ -7,6 +7,9 @@ data/
 db.db-shm
 db.db-wal
 
+
+media/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

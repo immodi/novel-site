@@ -11,8 +11,8 @@ templ Layout(data *indexdtostructs.MetaDataStruct, content templ.Component) {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-			<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+			<link rel="stylesheet" href="/static/styles/output.css"/>
+			<script src="/static/js/htmx.min.js"></script>
 			<title>{ data.Title }</title>
 			@components.MetaHead(data)
 		</head>
