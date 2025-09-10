@@ -8,6 +8,7 @@ db.db-shm
 db.db-wal
 
 
+.env
 media/
 
 # Byte-compiled / optimized / DLL files

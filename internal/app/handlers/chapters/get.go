@@ -62,10 +62,10 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 		novelStatus = "Ongoing"
 	}
 
-	chapter := BuildChapterPage(dbNovel, dbChapter, prevChapterIntPointer, nextChapterIntPointer)
+	chapter := MapToChapterDto(dbNovel, dbChapter, prevChapterIntPointer, nextChapterIntPointer)
 	metaData := BuildChapterMeta(dbNovel, chapterNum, novelStatus)
 
-	handlers.GenericServiceHandler(w, r, metaData, chapters.ChapterReader(chapter))
+	handlers.GenericHandler(w, r, metaData, chapters.ChapterReader(chapter))
 }
 
 func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +83,7 @@ func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	chaptersList := dbChaptersToChapters(dbChapters)
+	chaptersList := DbChaptersToChaptersMapper(dbChapters)
 
 	cmp := dropdown.ChapterDropdown(novelSlug, chaptersList)
 	templ.Handler(cmp).ServeHTTP(w, r)

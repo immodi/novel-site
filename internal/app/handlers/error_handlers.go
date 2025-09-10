@@ -10,12 +10,12 @@ func ServerErrorHandler(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
-	GenericServiceHandler(w, r, &indexdtostructs.MetaDataStruct{}, errors.InternalServerError())
+	GenericHandler(w, r, &indexdtostructs.MetaDataStruct{}, errors.InternalServerError())
 }
 
 func NotFoundHandler(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
-	GenericServiceHandler(w, r, &indexdtostructs.MetaDataStruct{}, errors.NotFound())
+	GenericHandler(w, r, &indexdtostructs.MetaDataStruct{}, errors.NotFound())
 }

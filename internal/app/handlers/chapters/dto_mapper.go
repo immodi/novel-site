@@ -1,0 +1,31 @@
+package chapters
+
+import (
+	"immodi/novel-site/internal/db/repositories"
+	chaptersdtostructs "immodi/novel-site/internal/http/structs/chapters"
+	novelsdtostructs "immodi/novel-site/internal/http/structs/novels"
+)
+
+func DbChaptersToChaptersMapper(dbChapters []repositories.Chapter) []novelsdtostructs.Chapter {
+	chapters := make([]novelsdtostructs.Chapter, len(dbChapters))
+
+	for i, dbChapter := range dbChapters {
+		chapters[i] = novelsdtostructs.Chapter{
+			Title:  dbChapter.Title,
+			Number: int(dbChapter.ChapterNumber),
+		}
+	}
+
+	return chapters
+}
+
+func MapToChapterDto(dbNovel repositories.Novel, dbChapter repositories.Chapter, prevChapter, nextChapter *int) chaptersdtostructs.ChapterPage {
+	return chaptersdtostructs.ChapterPage{
+		NovelName:      dbNovel.Title,
+		NovelSlug:      dbNovel.Slug,
+		ChapterTitle:   dbChapter.Title,
+		ChapterContent: dbChapter.Content,
+		PrevChapter:    prevChapter,
+		NextChapter:    nextChapter,
+	}
+}

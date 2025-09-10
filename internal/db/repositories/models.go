@@ -38,3 +38,19 @@ type NovelTag struct {
 	Tag     string
 	TagSlug string
 }
+
+type User struct {
+	ID           int64
+	Username     string
+	Email        string
+	PasswordHash string
+	Role         string
+	CreatedAt    string
+	Image        string
+}
+
+type UserBookmark struct {
+	UserID    int64
+	NovelID   int64
+	CreatedAt string
+}

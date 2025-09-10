@@ -2,23 +2,11 @@ package novels
 
 import (
 	"fmt"
+	"immodi/novel-site/internal/app/handlers/auth"
 	"immodi/novel-site/internal/app/services/novels"
-	"immodi/novel-site/internal/db/repositories"
-	indexdtostructs "immodi/novel-site/internal/http/structs/index"
-	novelsdtostructs "immodi/novel-site/internal/http/structs/novels"
-	"immodi/novel-site/pkg"
+	"net/http"
+	"time"
 )
-
-func CastDbChaptersToInfoChapters(dbChapters []repositories.Chapter) []novelsdtostructs.Chapter {
-	var chapters []novelsdtostructs.Chapter
-	for _, dbChapter := range dbChapters {
-		chapters = append(chapters, novelsdtostructs.Chapter{
-			Title:  dbChapter.Title,
-			Number: int(dbChapter.ChapterNumber),
-		})
-	}
-	return chapters
-}
 
 func IncrementNovelViews(service novels.NovelService, novelId int64) {
 	err := service.IncrementNovelViewCount(novelId)
@@ -27,62 +15,76 @@ func IncrementNovelViews(service novels.NovelService, novelId int64) {
 	}
 }
 
-func MapDBNovelToNovel(
-	dbNovel repositories.Novel,
-	genres []repositories.NovelGenre,
-	tags []repositories.NovelTag,
-	novelStatus string,
-	totalChapters int,
-	currentPage int,
-	chapters []novelsdtostructs.Chapter,
-	lastChapter *repositories.Chapter,
-) *novelsdtostructs.Novel {
-	return &novelsdtostructs.Novel{
-		Name:                dbNovel.Title,
-		Description:         dbNovel.Description,
-		Author:              dbNovel.Author,
-		Slug:                dbNovel.Slug,
-		AuthorSlug:          dbNovel.AuthorSlug,
-		Genres:              genres,
-		Views:               pkg.AbbreviateInt(int(dbNovel.ViewCount)),
-		Tags:                tags,
-		Status:              novelStatus,
-		ReleaseYear:         int(dbNovel.ReleaseYear),
-		Publisher:           dbNovel.Publisher,
-		CoverImage:          dbNovel.CoverImage,
-		TotalChaptersNumber: totalChapters,
-		CurrentPage:         currentPage,
-		TotalPages:          pkg.CalculateTotalPages(totalChapters),
-		Chapters:            chapters,
-		LastChapterName:     lastChapter.Title,
-		LastUpdated:         dbNovel.UpdateTime,
-	}
+func IsAuthed(r *http.Request) bool {
+	return r.Context().Value("user_id") != nil
 }
 
-func MapNovelToMetaData(
-	novel novelsdtostructs.Novel,
-	novelStatus string,
-) *indexdtostructs.MetaDataStruct {
-	var genres []string
-	for _, g := range novel.Genres {
-		genres = append(genres, g.Genre)
+func IsNovelBookMarked(r *http.Request, novelId int64, novelService novels.NovelService) bool {
+	var tokenString string
+
+	token, err := r.Cookie("auth_token")
+	if err != nil {
+		return false
 	}
-	return &indexdtostructs.MetaDataStruct{
-		IsRendering:       true,
-		Title:             fmt.Sprintf("%s - Read %s For Free - %s", novel.Name, novel.Name, indexdtostructs.SITE_NAME),
-		Description:       novel.Description,
-		Keywords:          fmt.Sprintf("%s novel 2025, read %s online 2025, free %s novel", novel.Name, novel.Name, novel.Name),
-		OgURL:             fmt.Sprintf("%s/novel/%s", indexdtostructs.DOMAIN, novel.Name),
-		Canonical:         fmt.Sprintf("%s/novel/%s", indexdtostructs.DOMAIN, novel.Name),
-		CoverImage:        novel.CoverImage,
-		Genres:            genres,
-		Author:            novel.Author,
-		Status:            novelStatus,
-		AuthorLink:        fmt.Sprintf("%s/author/%s", indexdtostructs.DOMAIN, novel.Author),
-		NovelName:         novel.Name,
-		ReadURL:           fmt.Sprintf("%s/novel/%s/chapter-1", indexdtostructs.DOMAIN, novel.Name),
-		UpdateTime:        novel.LastUpdated,
-		LatestChapterName: novel.LastChapterName,
-		LatestChapterURL:  fmt.Sprintf("%s/novel/%s/chapter-%d", indexdtostructs.DOMAIN, novel.Name, novel.TotalChaptersNumber),
+	tokenString = token.Value
+
+	userID, err := auth.GetUserIDFromToken(tokenString)
+	if err != nil {
+		return false
 	}
+
+	isNovelBookMarked, err := novelService.IsNovelBookMarked(novelId, userID)
+	if err != nil {
+		return false
+	}
+
+	return isNovelBookMarked
+}
+
+const (
+	successCookieName = "successMessage"
+	errorCookieName   = "errorMessage"
+	flashDuration     = 60 * time.Second
+)
+
+// SetSuccessMessage sets a short-lived cookie with a success message.
+func SetSuccessMessage(w http.ResponseWriter, msg string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     successCookieName,
+		Value:    msg,
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   int(flashDuration.Seconds()),
+		Expires:  time.Now().Add(flashDuration),
+	})
+}
+
+// SetErrorMessage sets a short-lived cookie with an error message.
+func SetErrorMessage(w http.ResponseWriter, msg string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     errorCookieName,
+		Value:    msg,
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   int(flashDuration.Seconds()),
+		Expires:  time.Now().Add(flashDuration),
+	})
+}
+
+// GetAndClearCookie retrieves a cookie value and deletes it immediately.
+func GetAndClearCookie(w http.ResponseWriter, r *http.Request, name string) string {
+	cookie, err := r.Cookie(name)
+	if err != nil {
+		return ""
+	}
+
+	// Clear it (flash behavior)
+	http.SetCookie(w, &http.Cookie{
+		Name:   name,
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	})
+
+	return cookie.Value
 }

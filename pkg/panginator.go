@@ -4,6 +4,7 @@ import "fmt"
 
 const PAGE_LIMIT = 21
 const SEARCH_PAGE_LIMIT = 8
+const PROFILE_PAGE_LIMIT = 6
 
 func MakePages(total int) []int {
 	pages := make([]int, total)

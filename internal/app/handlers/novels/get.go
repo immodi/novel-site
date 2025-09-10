@@ -15,6 +15,8 @@ import (
 func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
 	novelSlug := chi.URLParam(r, "novelSlug")
+	successMsg := GetAndClearCookie(w, r, "successMessage")
+	errorMsg := GetAndClearCookie(w, r, "errorMessage")
 
 	currentPage := 1
 	if pageStr != "" {
@@ -56,7 +58,7 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	chapters := CastDbChaptersToInfoChapters(dbChapters)
+	chapters := DbChaptersToInfoChaptersMapper(dbChapters)
 
 	genres, _ := h.novelService.GetGenres(dbNovel.ID)
 	tags, _ := h.novelService.GetTags(dbNovel.ID)
@@ -68,8 +70,20 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		novelStatus = "Ongoing"
 	}
 
-	novel := MapDBNovelToNovel(dbNovel, genres, tags, novelStatus, totalChapters, currentPage, chapters, &lastChapter)
-	metaData := MapNovelToMetaData(*novel, novelStatus)
-
-	handlers.GenericServiceHandler(w, r, metaData, novelscomponents.NovelInfo(*novel))
+	isNovelBookMarked := IsNovelBookMarked(r, dbNovel.ID, h.novelService)
+	novel := MapToNovel(
+		dbNovel,
+		genres,
+		tags,
+		novelStatus,
+		totalChapters,
+		isNovelBookMarked,
+		currentPage,
+		chapters,
+		&lastChapter,
+		successMsg,
+		errorMsg,
+	)
+	metaData := BuildNovelMeta(*novel, novelStatus)
+	handlers.GenericHandler(w, r, metaData, novelscomponents.NovelInfo(*novel))
 }

@@ -1,11 +1,9 @@
 package index
 
 import (
-	"fmt"
 	"immodi/novel-site/internal/app/services/index"
 	"immodi/novel-site/internal/db/repositories"
 	homenovelsdto "immodi/novel-site/internal/http/structs/index"
-	indexdtostructs "immodi/novel-site/internal/http/structs/index"
 )
 
 func DbNovelToHomeNovelMapper(dbNovels []repositories.Novel, homeService index.HomeService) ([]homenovelsdto.HomeNovelDto, error) {
@@ -64,18 +62,5 @@ func MapToHomeNovelDto(
 		Genres:               dbNovelGenres,
 		LastUpdated:          dbNovel.UpdateTime,
 		ChaptersCount:        int(dbChaptersCount),
-	}
-}
-
-func GetIndexMetaData() *indexdtostructs.MetaDataStruct {
-	return &indexdtostructs.MetaDataStruct{
-		IsRendering: true,
-		Title:       fmt.Sprintf("Read Free Light Novel Online - %s", indexdtostructs.SITE_NAME),
-		Description: "We are offering thousands of free books online read! Read novel updated daily: light novel translations, web novel, chinese novel, japanese novel, korean novel, english novel and other novels online.",
-		Keywords:    "freewebnovel, novellive, novelfull, mtlnovel, novelupdates, webnovel, korean novel, cultivation novel",
-		OgURL:       indexdtostructs.DOMAIN,
-		Canonical:   indexdtostructs.DOMAIN,
-		CoverImage:  fmt.Sprintf("%s/img/cover.jpg", indexdtostructs.DOMAIN),
-		Author:      indexdtostructs.SITE_NAME,
 	}
 }

@@ -22,4 +22,6 @@ type NovelService interface {
 
 	IncrementNovelViewCount(novelID int64) error
 	DeleteNovel(novelID int64) error
+
+	IsNovelBookMarked(novelID int64, userID int64) (bool, error)
 }

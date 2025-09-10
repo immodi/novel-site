@@ -170,3 +170,18 @@ func (s *novelService) DeleteNovel(novelID int64) error {
 		return q.DeleteNovel(ctx, novelID)
 	})
 }
+
+func (s *novelService) IsNovelBookMarked(novelID int64, userID int64) (bool, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (bool, error) {
+		value, err := q.IsNovelBookmarked(ctx, repositories.IsNovelBookmarkedParams{
+			NovelID: novelID,
+			UserID:  userID,
+		})
+
+		if err != nil {
+			return false, err
+		}
+
+		return value == 1, nil
+	})
+}

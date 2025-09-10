@@ -3,35 +3,9 @@ package chapters
 import (
 	"fmt"
 	"immodi/novel-site/internal/db/repositories"
-	chaptersdtostructs "immodi/novel-site/internal/http/structs/chapters"
 	indexdtostructs "immodi/novel-site/internal/http/structs/index"
-	novelsdtostructs "immodi/novel-site/internal/http/structs/novels"
 	"immodi/novel-site/pkg"
 )
-
-func dbChaptersToChapters(dbChapters []repositories.Chapter) []novelsdtostructs.Chapter {
-	chapters := make([]novelsdtostructs.Chapter, len(dbChapters))
-
-	for i, dbChapter := range dbChapters {
-		chapters[i] = novelsdtostructs.Chapter{
-			Title:  dbChapter.Title,
-			Number: int(dbChapter.ChapterNumber),
-		}
-	}
-
-	return chapters
-}
-
-func BuildChapterPage(dbNovel repositories.Novel, dbChapter repositories.Chapter, prevChapter, nextChapter *int) chaptersdtostructs.ChapterPage {
-	return chaptersdtostructs.ChapterPage{
-		NovelName:      dbNovel.Title,
-		NovelSlug:      dbNovel.Slug,
-		ChapterTitle:   dbChapter.Title,
-		ChapterContent: dbChapter.Content,
-		PrevChapter:    prevChapter,
-		NextChapter:    nextChapter,
-	}
-}
 
 func BuildChapterMeta(dbNovel repositories.Novel, chapterNum int, novelStatus string) *indexdtostructs.MetaDataStruct {
 	return &indexdtostructs.MetaDataStruct{

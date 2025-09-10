@@ -7,7 +7,7 @@ import (
 	"immodi/novel-site/pkg"
 )
 
-func dbNovelsToSearchDtos(service search.SearchService, dbNovels []repositories.Novel) []searchresutlsdto.SearchResultDto {
+func DbNovelsToSearchDtosMapper(service search.SearchService, dbNovels []repositories.Novel) []searchresutlsdto.SearchResultDto {
 	var searchDtos []searchresutlsdto.SearchResultDto
 	for _, novel := range dbNovels {
 		status := "Ongoing"

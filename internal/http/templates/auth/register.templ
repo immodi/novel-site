@@ -1,12 +1,24 @@
 package auth
 
-templ Register() {
+import "immodi/novel-site/internal/http/structs/auth"
+import "immodi/novel-site/pkg"
+
+templ Register(dto authdtostructs.RegisterDTO) {
 	<div class="flex flex-col flex-grow items-center justify-center bg-[#121212] dark:bg-white px-4 min-h-screen">
 		<div
 			class="w-full rounded-lg p-8 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] my-10"
 		>
 			<h2 class="text-2xl font-bold text-center mb-8 text-gray-100 dark:text-gray-900">Create Account</h2>
-			<form class="flex flex-col gap-6">
+			<form method="post" action="/register" class="flex flex-col gap-6">
+				if len(dto.Errors) > 0 {
+					<div class="mb-4 p-3 rounded-lg bg-red-600 text-white text-sm">
+						<ul class="list-disc list-inside">
+							for _, err := range dto.Errors {
+								<li>{ pkg.CapitalizeWords(err) }</li>
+							}
+						</ul>
+					</div>
+				}
 				<!-- Username -->
 				<div class="flex flex-col">
 					<label class="text-gray-100 dark:text-gray-800 mb-2 text-sm font-medium" for="username">
@@ -14,7 +26,9 @@ templ Register() {
 					</label>
 					<input
 						id="username"
+						value={ dto.Username }
 						type="text"
+						name="username"
 						class="px-4 py-3 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 placeholder-gray-400 dark:placeholder-gray-500"
 						placeholder="Your username"
 					/>
@@ -26,6 +40,8 @@ templ Register() {
 					</label>
 					<input
 						id="email"
+						name="email"
+						value={ dto.Email }
 						type="email"
 						class="px-4 py-3 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 placeholder-gray-400 dark:placeholder-gray-500"
 						placeholder="you@example.com"
@@ -38,6 +54,7 @@ templ Register() {
 					</label>
 					<input
 						id="password"
+						name="password"
 						type="password"
 						class="px-4 py-3 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 placeholder-gray-400 dark:placeholder-gray-500"
 						placeholder="Enter your password"
@@ -51,6 +68,7 @@ templ Register() {
 					<input
 						id="confirmPassword"
 						type="password"
+						name="confirmPassword"
 						class="px-4 py-3 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 placeholder-gray-400 dark:placeholder-gray-500"
 						placeholder="Confirm your password"
 					/>
@@ -59,7 +77,9 @@ templ Register() {
 				<div class="flex items-center">
 					<input
 						id="terms"
+						checked
 						type="checkbox"
+						name="terms"
 						class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-[#353535] dark:border-gray-300 rounded"
 					/>
 					<label for="terms" class="ml-2 block text-sm text-gray-100 dark:text-gray-800">
@@ -89,43 +109,43 @@ templ Register() {
 				<div class="flex-grow border-t border-[#353535] dark:border-gray-300"></div>
 			</div>
 			<!-- Social Login Buttons -->
-			<div class="grid grid-cols-1 gap-3 mb-6">
-				<button
-					type="button"
-					class="flex gap-1 cursor-pointer items-center justify-center px-4 py-2 bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 rounded-lg border border-[#353535] dark:border-gray-300 hover:bg-[#2a2a2a] dark:hover:bg-gray-300 transition-colors"
-				>
-					<svg
-						width="18px"
-						height="18px"
-						viewBox="-3 0 262 262"
-						xmlns="http://www.w3.org/2000/svg"
-						preserveAspectRatio="xMidYMid"
-						fill="#000000"
-					>
-						<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-						<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-						<g id="SVGRepo_iconCarrier">
-							<path
-								d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
-								fill="#4285F4"
-							></path>
-							<path
-								d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
-								fill="#34A853"
-							></path>
-							<path
-								d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
-								fill="#FBBC05"
-							></path>
-							<path
-								d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
-								fill="#EB4335"
-							></path>
-						</g>
-					</svg>
-					<span>Sign up with Google</span>
-				</button>
-			</div>
+			<!-- <div class="grid grid-cols-1 gap-3 mb-6"> -->
+			<!-- 	<button -->
+			<!-- 		type="button" -->
+			<!-- 		class="flex gap-1 cursor-pointer items-center justify-center px-4 py-2 bg-[#252525] dark:bg-gray-200 text-gray-100 dark:text-gray-800 rounded-lg border border-[#353535] dark:border-gray-300 hover:bg-[#2a2a2a] dark:hover:bg-gray-300 transition-colors" -->
+			<!-- 	> -->
+			<!-- 		<svg -->
+			<!-- 			width="18px" -->
+			<!-- 			height="18px" -->
+			<!-- 			viewBox="-3 0 262 262" -->
+			<!-- 			xmlns="http://www.w3.org/2000/svg" -->
+			<!-- 			preserveAspectRatio="xMidYMid" -->
+			<!-- 			fill="#000000" -->
+			<!-- 		> -->
+			<!-- 			<g id="SVGRepo_bgCarrier" stroke-width="0"></g> -->
+			<!-- 			<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g> -->
+			<!-- 			<g id="SVGRepo_iconCarrier"> -->
+			<!-- 				<path -->
+			<!-- 					d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027" -->
+			<!-- 					fill="#4285F4" -->
+			<!-- 				></path> -->
+			<!-- 				<path -->
+			<!-- 					d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1" -->
+			<!-- 					fill="#34A853" -->
+			<!-- 				></path> -->
+			<!-- 				<path -->
+			<!-- 					d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782" -->
+			<!-- 					fill="#FBBC05" -->
+			<!-- 				></path> -->
+			<!-- 				<path -->
+			<!-- 					d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251" -->
+			<!-- 					fill="#EB4335" -->
+			<!-- 				></path> -->
+			<!-- 			</g> -->
+			<!-- 		</svg> -->
+			<!-- 		<span>Sign up with Google</span> -->
+			<!-- 	</button> -->
+			<!-- </div> -->
 			<!-- Footer Links -->
 			<p class="text-center text-gray-400 dark:text-gray-600 text-sm">
 				Already have an account?

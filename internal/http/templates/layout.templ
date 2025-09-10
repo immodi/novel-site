@@ -5,7 +5,7 @@ import (
 	"immodi/novel-site/internal/http/structs/index"
 )
 
-templ Layout(data *indexdtostructs.MetaDataStruct, content templ.Component) {
+templ Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.LayoutData, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -13,12 +13,12 @@ templ Layout(data *indexdtostructs.MetaDataStruct, content templ.Component) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="stylesheet" href="/static/styles/output.css"/>
 			<script src="/static/js/htmx.min.js"></script>
-			<title>{ data.Title }</title>
-			@components.MetaHead(data)
+			<title>{ metaData.Title }</title>
+			@components.MetaHead(metaData)
 		</head>
 		<body class="min-h-screen flex flex-col">
 			@components.Header(
-				[]string{"Novels", "Login"},
+				data.Headers,
 			)
 			<main class="flex flex-grow">
 				@content

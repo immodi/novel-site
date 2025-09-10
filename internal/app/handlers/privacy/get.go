@@ -8,5 +8,5 @@ import (
 )
 
 func (h *PrivacyHandler) Privacy(w http.ResponseWriter, r *http.Request) {
-	handlers.GenericServiceHandler(w, r, index.GetIndexMetaData(), privacy.Privacy())
+	handlers.GenericHandler(w, r, index.BuildHomeMeta(), privacy.Privacy())
 }

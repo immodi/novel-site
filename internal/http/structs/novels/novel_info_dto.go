@@ -21,4 +21,7 @@ type Novel struct {
 	Chapters            []Chapter
 	LastChapterName     string
 	LastUpdated         string
+	IsNovelBookMarked   bool
+	SuccessMessage      string
+	ErrorMessage        string
 }

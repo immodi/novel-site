@@ -7,12 +7,10 @@ import (
 	"immodi/novel-site/internal/app/services/index"
 	"immodi/novel-site/internal/app/services/load"
 	"immodi/novel-site/internal/app/services/novels"
+	"immodi/novel-site/internal/app/services/profile"
 	"immodi/novel-site/internal/app/services/search"
+	"immodi/novel-site/internal/config"
 	"log"
-)
-
-const (
-	DB_PATH = "db.db"
 )
 
 type Services struct {
@@ -23,10 +21,11 @@ type Services struct {
 	AuthService    auth.AuthService
 	SearchServie   search.SearchService
 	LoadService    load.LoadService
+	ProfileService profile.ProfileService
 }
 
 func RegisterServices() *Services {
-	dbService, err := db.NewDBService(DB_PATH)
+	dbService, err := db.NewDBService(config.DBPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,6 +42,7 @@ func RegisterServices() *Services {
 		AuthService:    auth.New(dbService),
 		SearchServie:   search.NewSearchService(dbService, homeService),
 		LoadService:    load.NewLoadService(dbService, novelService, chapterService),
+		ProfileService: profile.NewProfileService(dbService, novelService),
 	}
 }
 

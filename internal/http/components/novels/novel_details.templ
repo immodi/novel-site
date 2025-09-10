@@ -10,9 +10,79 @@ import (
 
 templ NovelDetailsComponent(novel *novelsdtostructs.Novel) {
 	<div class="w-full md:w-2/3 lg:w-3/4">
+		{{ success := "bg-green-100 dark:bg-green-900 border-green-400 text-green-800 dark:text-green-200" }}
+		{{ failure := "bg-red-100 dark:bg-red-900 border-red-400 text-red-800 dark:text-red-200" }}
 		<!-- Title Section -->
-		<div class="mb-8">
-			<h1 class="text-3xl md:text-4xl font-bold mb-3">{ novel.Name }</h1>
+		{{ var clasStr string = "" }}
+		{{
+	if novel.SuccessMessage != "" {
+		clasStr = success
+	} else {
+		clasStr = failure
+	}
+		}}
+		if novel.SuccessMessage != "" || novel.ErrorMessage != "" {
+			<div class={ "mb-4 p-4 rounded-lg border " + clasStr }>
+				if novel.SuccessMessage != "" {
+					{ novel.SuccessMessage }
+				} else {
+					{ novel.ErrorMessage }
+				}
+			</div>
+		}
+		<!-- Title Section -->
+		<div class=" flex justify-between items-start mb-8">
+			<div class="flex-1">
+				<h1 class="text-3xl md:text-4xl font-bold mb-3">{ novel.Name }</h1>
+			</div>
+			<div class="ml-4">
+				if novel.IsNovelBookMarked {
+					<form method="post" action="/bookmark-remove">
+						<button
+							type="submit"
+							class="cursor-pointer bg-[#333333] dark:bg-gray-100 hover:bg-[#444] dark:hover:bg-gray-200 border border-[#252525] dark:border-[#ededed] px-2 py-2 rounded-lg font-semibold transition-colors"
+						>
+							<input hidden name="slug" value={ novel.Slug }/>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-6 h-6 text-white dark:text-black"
+							>
+								<path
+									d="M4 12.6111L8.92308 17.5L20 6.5"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								></path>
+							</svg>
+						</button>
+					</form>
+				} else {
+					<form method="post" action="/bookmark">
+						<button
+							type="submit"
+							class="cursor-pointer bg-[#333333] dark:bg-gray-100 hover:bg-[#444] dark:hover:bg-gray-200 border border-[#252525] dark:border-[#ededed] px-2 py-2 rounded-lg font-semibold transition-colors"
+						>
+							<input hidden name="slug" value={ novel.Slug }/>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+								class="w-6 h-6 text-white dark:text-black"
+							>
+								<path
+									d="M5 6.2C5 5.07989 5 4.51984 5.21799 4.09202C5.40973 3.71569 5.71569 3.40973 6.09202 3.21799C6.51984 3 7.07989 3 8.2 3H15.8C16.9201 3 17.4802 3 17.908 3.21799C18.2843 3.40973 18.5903 3.71569 18.782 4.09202C19 4.51984 19 5.07989 19 6.2V21L12 16L5 21V6.2Z"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linejoin="round"
+								></path>
+							</svg>
+						</button>
+					</form>
+				}
+			</div>
 		</div>
 		<!-- Metadata Grid -->
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">

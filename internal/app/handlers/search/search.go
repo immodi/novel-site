@@ -35,7 +35,7 @@ func (h *SearchHandler) SearchNovel(w http.ResponseWriter, r *http.Request) {
 		handlers.ServerErrorHandler(w, r)
 		return
 	}
-	searchNovels := dbNovelsToSearchDtos(h.searchService, dbSearchResults)
+	searchNovels := DbNovelsToSearchDtosMapper(h.searchService, dbSearchResults)
 
 	h.GenericSearch(
 		"search",

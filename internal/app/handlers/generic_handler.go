@@ -8,16 +8,24 @@ import (
 	"github.com/a-h/templ"
 )
 
-func GenericServiceHandler(
+func GenericHandler(
 	w http.ResponseWriter,
 	r *http.Request,
 	data *indexdtostructs.MetaDataStruct,
 	cmp templ.Component,
 ) {
-	Render(data, cmp).ServeHTTP(w, r)
+	authHeaderEntry := "Login"
+	_, err := r.Cookie("auth_token")
+	if err == nil {
+		authHeaderEntry = "Profile"
+	}
+
+	headers := []string{"Novels", authHeaderEntry}
+
+	Render(data, &indexdtostructs.LayoutData{Headers: headers}, cmp).ServeHTTP(w, r)
 }
 
-func Render(data *indexdtostructs.MetaDataStruct, cmp templ.Component) http.HandlerFunc {
-	layout := templates.Layout(data, cmp)
+func Render(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.LayoutData, cmp templ.Component) http.HandlerFunc {
+	layout := templates.Layout(metaData, data, cmp)
 	return templ.Handler(layout).ServeHTTP
 }

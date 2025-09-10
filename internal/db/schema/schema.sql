@@ -59,3 +59,32 @@ CREATE INDEX IF NOT EXISTS idx_novel_tags_novel_id ON novel_tags(novel_id);
 CREATE INDEX IF NOT EXISTS idx_novel_tags_tag_slug ON novel_tags(tag_slug);
 CREATE INDEX IF NOT EXISTS idx_novel_genres_novel_id ON novel_genres(novel_id);
 CREATE INDEX IF NOT EXISTS idx_novel_genres_genre_slug ON novel_genres(genre_slug);
+
+-- Table: users
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL, 
+    role TEXT NOT NULL DEFAULT '', 
+    created_at TEXT NOT NULL DEFAULT '',
+    image TEXT NOT NULL DEFAULT 'https://www.citypng.com/public/uploads/preview/white-user-member-guest-icon-png-image-701751695037005zdurfaim0y.png' -- profile image stored as base64 
+);
+
+-- Indexes for quick lookups
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username_lower ON users (LOWER(username));
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_lower ON users (LOWER(email));
+
+-- Table: user_bookmarks (many-to-many between users and novels)
+CREATE TABLE IF NOT EXISTS user_bookmarks (
+    user_id INTEGER NOT NULL,
+    novel_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (user_id, novel_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE
+);
+
+-- Indexes for bookmarks
+CREATE INDEX IF NOT EXISTS idx_user_bookmarks_user_id ON user_bookmarks(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_bookmarks_novel_id ON user_bookmarks(novel_id);

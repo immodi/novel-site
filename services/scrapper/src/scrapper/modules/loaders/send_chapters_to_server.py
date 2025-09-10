@@ -6,7 +6,7 @@ from scrapper.datatypes.load_server_responses import LoadNovelResponse
 
 
 def send_chapters_to_server(
-    file_path: str, novel_id: int, url: str = "http://localhost:3000/load-chapters"
+    file_path: str, novel_id: int, url: str = "http://localhost:3000/load/chapters"
 ) -> LoadNovelResponse:
     path_obj = Path(file_path)
     if not path_obj.exists() or not path_obj.is_file():

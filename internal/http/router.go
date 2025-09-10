@@ -2,6 +2,8 @@ package http
 
 import (
 	"immodi/novel-site/internal/app/handlers"
+	"immodi/novel-site/internal/app/middlewares"
+	"immodi/novel-site/internal/config"
 	"immodi/novel-site/internal/http/utils"
 	"log"
 	"net/http"
@@ -22,8 +24,8 @@ func (router *Router) NewRouter() *chi.Mux {
 	router.r = chi.NewRouter()
 
 	log.Println("Application started at http://localhost:3000")
-	router.r.Use(middleware.Logger)
 
+	router.RegisterMiddlewares()
 	router.RegisterServices()
 	router.RegisterHandlers()
 	router.RegisterRoutes()
@@ -46,19 +48,36 @@ func (router *Router) RegisterRoutes() {
 
 	router.r.Get("/privacy", router.handlers.Privacy.Privacy)
 	router.r.Get("/terms", router.handlers.Terms.Terms)
+
 	router.r.Get("/login", router.handlers.Auth.LoginHandler)
+	router.r.Post("/login", router.handlers.Auth.PostLoginHandler)
+	router.r.Get("/logout", router.handlers.Auth.LogoutHandler)
+
 	router.r.Get("/register", router.handlers.Auth.RegisterHandler)
-	router.r.Get("/novels", router.redirectToHome())
+	router.r.Post("/register", router.handlers.Auth.PostRegisterHandler)
 
-	router.r.Post("/load-novel", router.handlers.Load.LoadNovel)
-	router.r.Post("/load-chapters", router.handlers.Load.LoadChapter)
+	router.r.Post("/load/novel", router.handlers.Load.LoadNovel)
+	router.r.Post("/load/chapters", router.handlers.Load.LoadChapter)
 
-	// testing routes, should be disabled in production
-	router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)
-	router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
+	if !config.IsProduction {
+		router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)
+		router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
+	}
 
 	router.r.Handle("/static/*", router.serveStatic("static"))
+	router.r.Get("/novels", router.redirectToHome())
 	router.r.NotFound(handlers.NotFoundHandler)
+
+	router.r.Group(func(r chi.Router) {
+		r.Use(middlewares.RoleMiddleware("user"))
+
+		r.Get("/profile", router.handlers.Profile.Profile)
+		r.Post("/profile", router.handlers.Profile.UpdateProfile)
+
+		r.Post("/bookmark", router.handlers.Profile.PostBookmark)
+		r.Post("/bookmark-remove", router.handlers.Profile.RemoveBookmark)
+	})
+
 }
 
 func (router *Router) RegisterServices() {
@@ -67,6 +86,10 @@ func (router *Router) RegisterServices() {
 
 func (router *Router) RegisterHandlers() {
 	router.handlers = utils.RegisterHandlers(router.services)
+}
+
+func (router *Router) RegisterMiddlewares() {
+	router.r.Use(middleware.Logger)
 }
 
 func (router *Router) redirectToHome() http.HandlerFunc {

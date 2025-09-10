@@ -147,8 +147,8 @@ func (s *searchService) ListNovelsByAuthor(author string, offset int, limit int)
 		})
 	})
 
-	authorName, err := s.GetAuthorNameBySlug(author)
-	return authorName, novels, err
+	dbAuthor, err := s.GetAuthorNameBySlug(author)
+	return dbAuthor, novels, err
 }
 
 func (s *searchService) ListNovelsByTag(tag string, offset int, limit int) (string, []repositories.Novel, error) {
@@ -160,8 +160,8 @@ func (s *searchService) ListNovelsByTag(tag string, offset int, limit int) (stri
 		})
 	})
 
-	tagName, err := s.GetTagBySlug(tag)
-	return tagName.Tag, novels, err
+	dbTag, err := s.GetTagBySlug(tag)
+	return dbTag.Tag, novels, err
 }
 
 func (s *searchService) ListNovelsByGenre(genre string, offset int, limit int) (string, []repositories.Novel, error) {

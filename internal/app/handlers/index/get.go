@@ -33,5 +33,5 @@ func (h *HomeHandler) Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	completedNovels, err := DbNovelToHomeNovelMapper(dbCompletedNovels, h.homeService)
-	handlers.GenericServiceHandler(w, r, GetIndexMetaData(), index.Index(hotNovels, newestNovels, completedNovels))
+	handlers.GenericHandler(w, r, BuildHomeMeta(), index.Index(hotNovels, newestNovels, completedNovels))
 }

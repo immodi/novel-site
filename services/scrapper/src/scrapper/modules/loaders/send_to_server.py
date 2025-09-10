@@ -7,7 +7,7 @@ from scrapper.datatypes.load_server_responses import LoadNovelResponse
 def send_novel_to_server(
     novel: NovelData,
     image_path: str,
-    url: str = "http://localhost:3000/load-novel",
+    url: str = "http://localhost:3000/load/novel",
     timeout: int = 10,
 ) -> LoadNovelResponse:
     try:
