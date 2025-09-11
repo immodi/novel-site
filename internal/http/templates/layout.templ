@@ -31,46 +31,141 @@ templ Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Lay
 
 templ DarkModeScript() {
 	<script>
-    function applyTheme(isLight) {
-        document.querySelectorAll("[class*='dark:'], [class*='off:']").forEach(el => {
-            let classAttr = el.getAttribute("class") || "";
-            const classes = classAttr.trim().split(/\s+/);
+    // function applyTheme(isLight) {
+    //     document.querySelectorAll("[class*='dark:'], [class*='off:']").forEach(el => {
+    //         let classAttr = el.getAttribute("class") || "";
+    //         const classes = classAttr.trim().split(/\s+/);
+    //
+    //         const newClasses = classes.map(c => {
+    //             if (c.startsWith("dark:")) {
+    //                 return isLight ? c : c.replace("dark:", "off:");
+    //             }
+    //             if (c.startsWith("off:")) {
+    //                 return isLight ? c.replace("off:", "dark:") : c;
+    //             }
+    //             return c;
+    //         }).join(" ");
+    //
+    //         el.setAttribute("class", newClasses);
+    //     });
+    //
+    //     // Icon switching
+    //     const sun = document.getElementById("sun-icon");
+    //     const moon = document.getElementById("moon-icon");
+    //     if (isLight) {
+    //         sun.classList.remove("opacity-0", "scale-75");
+    //         moon.classList.add("opacity-0", "scale-75");
+    //     } else {
+    //         moon.classList.remove("opacity-0", "scale-75");
+    //         sun.classList.add("opacity-0", "scale-75");
+    //     }
+    // }
+    //
+    // // Load from localStorage
+    // let isLight = localStorage.getItem("theme") === "light";
+    // applyTheme(isLight);
+    //
+    // document.querySelector("#toggleDark").addEventListener("click", () => {
+    //     console.log(isLight)
+    //
+    //     isLight = !isLight;
+    //     localStorage.setItem("theme", isLight ? "light" : "dark");
+    //     applyTheme(isLight);
+    // });
+
+
+
+    (function () {
+        // Utility: process a single element (store original classes once)
+        function processElement(el, isLight) {
+            if (!el || el.nodeType !== 1) return;
+            // Save original classes once so swaps are deterministic
+            if (!el.dataset.origClass) {
+                el.dataset.origClass = el.getAttribute("class") || "";
+            }
+            const orig = el.dataset.origClass;
+            const classes = orig.trim().split(/\s+/).filter(Boolean);
 
             const newClasses = classes.map(c => {
                 if (c.startsWith("dark:")) {
-                    return isLight ? c : c.replace("dark:", "off:");
+                    // In light mode => turn dark: -> off: (deactivate dark variant)
+                    // In dark mode  => keep as dark:
+                    return isLight ? c.replace(/^dark:/, "off:") : c;
                 }
                 if (c.startsWith("off:")) {
-                    return isLight ? c.replace("off:", "dark:") : c;
+                    // In light mode => turn off: -> dark: (activate the light variant in your scheme)
+                    // In dark mode  => keep as off:
+                    return isLight ? c.replace(/^off:/, "dark:") : c;
                 }
                 return c;
             }).join(" ");
 
-            el.setAttribute("class", newClasses);
+            // Only set the class attr if it changed (micro-optimization)
+            if (el.getAttribute("class") !== newClasses) {
+                el.setAttribute("class", newClasses);
+            }
+        }
+
+        // Apply to all matching elements (idempotent thanks to dataset.origClass)
+        function applyTheme(isLight) {
+            document.querySelectorAll("[class*='dark:'], [class*='off:']").forEach(el => {
+                processElement(el, isLight);
+            });
+
+            // Icon switching (keeps your original approach)
+            const sun = document.getElementById("sun-icon");
+            const moon = document.getElementById("moon-icon");
+            if (sun && moon) {
+                if (isLight) {
+                    sun.classList.remove("opacity-0", "scale-75");
+                    moon.classList.add("opacity-0", "scale-75");
+                } else {
+                    moon.classList.remove("opacity-0", "scale-75");
+                    sun.classList.add("opacity-0", "scale-75");
+                }
+            }
+        }
+
+        // Read preference
+        let isLight = localStorage.getItem("theme") === "light";
+
+        // Initial apply
+        applyTheme(isLight);
+
+        // Toggle button
+        const toggler = document.querySelector("#toggleDark");
+        if (toggler) {
+            toggler.addEventListener("click", () => {
+                isLight = !isLight;
+                localStorage.setItem("theme", isLight ? "light" : "dark");
+                applyTheme(isLight);
+            });
+        }
+
+        // Re-apply after HTMX swaps (simple and reliable)
+        document.body.addEventListener("htmx:afterSwap", (evt) => {
+            // If you want, you can narrow by target: if (evt.detail.target.id === 'comments') ...
+            applyTheme(isLight);
         });
 
-        // Icon switching
-        const sun = document.getElementById("sun-icon");
-        const moon = document.getElementById("moon-icon");
-        if (isLight) {
-            sun.classList.remove("opacity-0", "scale-75");
-            moon.classList.add("opacity-0", "scale-75");
-        } else {
-            moon.classList.remove("opacity-0", "scale-75");
-            sun.classList.add("opacity-0", "scale-75");
-        }
-    }
+        // MutationObserver fallback: process newly-added nodes only
+        const observer = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                for (const node of m.addedNodes) {
+                    if (node.nodeType !== 1) continue;
+                    // If the added node itself has classes we care about
+                    if ((node.getAttribute && /(^|\s)(dark:|off:)/.test(node.getAttribute("class") || ""))) {
+                        processElement(node, isLight);
+                    }
+                    // Also process descendants
+                    node.querySelectorAll && node.querySelectorAll("[class*='dark:'], [class*='off:']").forEach(el => {
+                        processElement(el, isLight);
+                    });
+                }
+            }
+        });
 
-    // Load from localStorage
-    let isLight = localStorage.getItem("theme") === "light";
-    applyTheme(isLight);
-
-    document.querySelector("#toggleDark").addEventListener("click", () => {
-        console.log(isLight)
-
-        isLight = !isLight;
-        localStorage.setItem("theme", isLight ? "light" : "dark");
-        applyTheme(isLight);
-    });
+        observer.observe(document.documentElement || document.body, {childList: true, subtree: true});
+    })();
 </script>
 }

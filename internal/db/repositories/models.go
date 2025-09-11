@@ -4,12 +4,32 @@
 
 package repositories
 
+import (
+	"database/sql"
+)
+
 type Chapter struct {
 	ID            int64
 	NovelID       int64
 	ChapterNumber int64
 	Title         string
 	Content       string
+}
+
+type Comment struct {
+	ID        int64
+	NovelID   int64
+	UserID    int64
+	ParentID  sql.NullInt64
+	Content   string
+	CreatedAt string
+}
+
+type CommentReaction struct {
+	UserID    int64
+	CommentID int64
+	Reaction  string
+	CreatedAt string
 }
 
 type Novel struct {

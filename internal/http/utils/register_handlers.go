@@ -3,6 +3,7 @@ package utils
 import (
 	"immodi/novel-site/internal/app/handlers/auth"
 	"immodi/novel-site/internal/app/handlers/chapters"
+	"immodi/novel-site/internal/app/handlers/comments"
 	"immodi/novel-site/internal/app/handlers/index"
 	"immodi/novel-site/internal/app/handlers/load"
 	"immodi/novel-site/internal/app/handlers/novels"
@@ -22,6 +23,7 @@ type Handlers struct {
 	Search  *search.SearchHandler
 	Load    *load.LoadHandler
 	Profile *profile.ProfileHandler
+	Comment *comments.CommentHandler
 }
 
 func RegisterHandlers(svcs *Services) *Handlers {
@@ -35,5 +37,6 @@ func RegisterHandlers(svcs *Services) *Handlers {
 		Privacy: privacy.NewPrivacyHandler(),
 		Load:    load.NewLoadHandler(svcs.LoadService),
 		Profile: profile.NewProfileHandler(svcs.ProfileService, svcs.HomeService),
+		Comment: comments.NewCommentHandler(svcs.CommentService, svcs.ProfileService),
 	}
 }

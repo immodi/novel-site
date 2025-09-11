@@ -1,10 +1,267 @@
 package components
 
-templ CommentsComponent() {
+import (
+	"fmt"
+	"immodi/novel-site/internal/http/structs/comments"
+	"immodi/novel-site/pkg"
+)
+
+templ BeforeLoadingComments(novelID int, redirect bool) {
 	<div id="comments" class="tab-content hidden">
-		<h2 class="text-2xl font-semibold mb-4">Comments</h2>
-		<div class="bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] p-6 rounded-lg text-center">
-			<p class="text-gray-400 dark:text-gray-600">Comments functionality would be implemented here</p>
+		<div class="flex items-center justify-center">
+			<button
+				id="load-comments-btn"
+				hx-get={ fmt.Sprintf("/comment?novelID=%d", novelID) }
+				hx-target="#comments"
+				hx-swap="outerHTML"
+				hx-trigger="click"
+				class="px-6 py-3 rounded-xl font-medium transition-colors
+				       bg-[#333333] dark:bg-gray-200 
+				       text-white dark:text-black
+				       border border-[#252525] dark:border-[#ededed]
+				       hover:bg-[#444] dark:hover:bg-gray-300
+				       shadow-md cursor-pointer
+				       focus:outline-none focus:ring-2 focus:ring-blue-400"
+			>
+				Load Comments
+			</button>
+		</div>
+		if redirect {
+			<script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("load-comments-btn");
+            if (btn) {
+                htmx.trigger(btn, "click");
+            }
+        });
+    </script>
+		}
+	</div>
+}
+
+templ CommentsComponent(comments []commentsdtostructs.CommentDTO, currentUserID int, novelID int) {
+	<div id="comments" class="tab-content">
+		<h2 class="text-2xl font-semibold mb-6">Comments ({ len(comments) })</h2>
+		<!-- Top-level Comment Form -->
+		<div class="bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] p-5 rounded-lg mb-8">
+			<h3 class="font-medium mb-4">Leave a comment</h3>
+			<form method="POST" action="/comment">
+				<input type="hidden" name="novelID" value={ fmt.Sprintf("%d", novelID) }/>
+				<textarea
+					name="content"
+					placeholder="Write your comment here..."
+					class="resize-none w-full resize-none bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 mb-4 text-white dark:text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+					rows="4"
+					required
+				></textarea>
+				<button
+					type="submit"
+					class="cursor-pointer bg-[#333333] dark:bg-gray-200 hover:bg-[#444] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-5 py-2.5 rounded-lg font-medium transition-colors cursor-pointer"
+				>
+					Post Comment
+				</button>
+			</form>
+		</div>
+		<!-- Comments List -->
+		<div class="space-y-6">
+			for _, comment := range comments {
+				@CommentItem(comment, 0, currentUserID, novelID)
+			}
 		</div>
 	</div>
+}
+
+templ CommentItem(comment commentsdtostructs.CommentDTO, depth int, currentUserID int, novelID int) {
+	{{ isReplyClass := "bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] p-5 rounded-lg" }}
+	{{
+if depth > 0 {
+	isReplyClass = "ml-4 md:ml-10 bg-[#252525] dark:bg-gray-200 border border-[#333] dark:border-gray-300 p-4 rounded-lg"
+}
+	}}
+	<div class={ isReplyClass } id={ fmt.Sprintf("comment-%d", comment.ID) }>
+		<div class="flex items-start mb-4">
+			<img
+				loading="lazy"
+				src={ comment.PictureURL }
+				alt={ comment.UserName }
+				class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover mr-3"
+			/>
+			<div class="flex-1">
+				<div class="font-semibold text-sm md:text-base">{ comment.UserName }</div>
+				<div class="text-gray-400 dark:text-gray-600 text-xs md:text-sm">{ pkg.TimeAgo(comment.CreatedAt) }</div>
+			</div>
+		</div>
+		<!-- Content -->
+		<div id={ fmt.Sprintf("comment-content-%d", comment.ID) }>
+			<p class="mb-4 text-sm md:text-base">{ comment.Content }</p>
+		</div>
+		<!-- Actions -->
+		<div class="flex items-center text-sm">
+			<button
+				class="flex items-center text-gray-400 dark:text-gray-600 hover:text-blue-400 dark:hover:text-blue-600 mr-4 cursor-pointer"
+				type="button"
+			>
+				<svg class="w-4 h-4 md:w-5 md:h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905a3.61 3.61 0 01-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+					></path>
+				</svg>
+				<span class="text-xs md:text-sm">{ comment.Likes }</span>
+			</button>
+			<button
+				class="flex items-center text-gray-400 dark:text-gray-600 hover:text-blue-400 dark:hover:text-blue-600 mr-4 cursor-pointer"
+				type="button"
+			>
+				<svg class="w-4 h-4 md:w-5 md:h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"
+					></path>
+				</svg>
+				<span class="text-xs md:text-sm">{ comment.Dislikes }</span>
+			</button>
+			<!-- Reply Button -->
+			<button
+				type="button"
+				class="text-gray-400 dark:text-gray-600 hover:text-blue-400 dark:hover:text-blue-600 mr-4 cursor-pointer text-xs md:text-sm"
+				onclick={ toggleReplyForm(comment.ID) }
+			>
+				Reply
+			</button>
+			<!-- Edit Button (only for comment owner) -->
+			if comment.UserID == currentUserID {
+				<button
+					type="button"
+					class="text-gray-400 dark:text-gray-600 hover:text-blue-400 dark:hover:text-blue-600 cursor-pointer text-xs md:text-sm"
+					onclick={ toggleEditForm(comment.ID) }
+				>
+					Edit
+				</button>
+			}
+		</div>
+		<!-- Reply Form -->
+		<div id={ fmt.Sprintf("reply-form-%d", comment.ID) } class="reply-form hidden mt-4">
+			<form method="POST" action="/comment">
+				<input type="hidden" name="parentCommentID" value={ fmt.Sprintf("%d", comment.ID) }/>
+				<input type="hidden" name="novelID" value={ fmt.Sprintf("%d", novelID) }/>
+				<textarea
+					name="content"
+					placeholder="Write your reply here..."
+					class="resize-none w-full bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 text-white dark:text-black focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm md:text-base"
+					rows="3"
+					required
+				></textarea>
+				<div class="flex gap-2 mt-2">
+					<button
+						type="submit"
+						class="bg-[#333333] dark:bg-gray-200 hover:bg-[#444] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors cursor-pointer text-xs md:text-sm"
+					>
+						Post Reply
+					</button>
+					<button
+						type="button"
+						class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors cursor-pointer text-xs md:text-sm"
+						onclick={ toggleReplyForm(comment.ID) }
+					>
+						Cancel
+					</button>
+				</div>
+			</form>
+		</div>
+		<!-- Edit Form (only for comment owner) -->
+		if comment.UserID == currentUserID {
+			<div id={ fmt.Sprintf("edit-form-%d", comment.ID) } class="edit-form hidden mt-4">
+				<form method="POST" action="/comment/edit">
+					<input type="hidden" name="commentID" value={ fmt.Sprintf("%d", comment.ID) }/>
+					<input type="hidden" name="novelID" value={ fmt.Sprintf("%d", novelID) }/>
+					<textarea
+						name="content"
+						class="resize-none w-full bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 text-white dark:text-black focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm md:text-base"
+						rows="3"
+						required
+					>{ comment.Content }</textarea>
+					<div class="flex gap-2 mt-2">
+						<button
+							type="submit"
+							class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors cursor-pointer text-xs md:text-sm"
+						>
+							Save Changes
+						</button>
+						<button
+							type="button"
+							class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors cursor-pointer text-xs md:text-sm"
+							onclick={ toggleEditForm(comment.ID) }
+						>
+							Cancel
+						</button>
+					</div>
+				</form>
+			</div>
+		}
+		<!-- Nested replies -->
+		if len(comment.Replies) > 0 {
+			<div class="mt-6 space-y-4 border-l-2 border-[#333] dark:border-gray-300 pl-2 md:pl-4">
+				for _, reply := range comment.Replies {
+					@CommentItem(reply, depth+1, currentUserID, novelID)
+				}
+			</div>
+		}
+	</div>
+}
+
+script toggleReplyForm(commentID int) {
+// Hide all edit forms first to avoid conflicts
+document.querySelectorAll('.edit-form').forEach(f => f.classList.add('hidden'));
+
+// Select all reply forms
+const forms = document.querySelectorAll('.reply-form');
+const targetId = 'reply-form-' + commentID;
+const target = document.getElementById(targetId);
+if (!target) return;
+
+// Was the target hidden before hiding all?
+const wasHidden = target.classList.contains('hidden');
+
+// Hide all reply forms
+forms.forEach(f => f.classList.add('hidden'));
+
+// If it was hidden, show it (toggle behavior)
+if (wasHidden) {
+target.classList.remove('hidden');
+const ta = target.querySelector('textarea');
+if (ta) ta.focus();
+}
+}
+
+script toggleEditForm(commentID int) {
+// Hide all reply forms first to avoid conflicts
+document.querySelectorAll('.reply-form').forEach(f => f.classList.add('hidden'));
+
+// Select all edit forms
+const forms = document.querySelectorAll('.edit-form');
+const targetId = 'edit-form-' + commentID;
+const target = document.getElementById(targetId);
+if (!target) return;
+
+// Was the target hidden before hiding all?
+const wasHidden = target.classList.contains('hidden');
+
+// Hide all edit forms
+forms.forEach(f => f.classList.add('hidden'));
+
+// If it was hidden, show it (toggle behavior)
+if (wasHidden) {
+target.classList.remove('hidden');
+const ta = target.querySelector('textarea');
+if (ta) {
+ta.focus();
+// Move cursor to the end of the text
+ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+}
 }

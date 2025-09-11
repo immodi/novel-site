@@ -5,23 +5,24 @@ import (
 	"immodi/novel-site/internal/http/structs/novels"
 )
 
-templ NovelInfo(novel novelsdtostructs.Novel) {
+templ NovelInfo(novel *novelsdtostructs.Novel, redirect bool) {
 	<div class="w-full px-4 py-8 bg-[#121212] dark:bg-white text-gray-100 dark:text-gray-900">
 		<!-- Header section with novel info -->
 		<div class="flex flex-col md:flex-row gap-8 mb-8">
 			<!-- Cover image and actions -->
-			@components.CoverImageComponent(&novel)
+			@components.CoverImageComponent(novel)
 			<!-- Novel details -->
-			@components.NovelDetailsComponent(&novel)
+			@components.NovelDetailsComponent(novel)
 		</div>
 		<!-- Tabs navigation -->
 		@components.NavigationComponent()
 		<!-- Description section -->
-		@components.DescriptionComponent(&novel)
+		@components.DescriptionComponent(novel)
 		<!-- Chapters section -->
-		@components.ChapterListComponent(&novel)
+		@components.ChapterListComponent(novel)
 		<!-- Comments section -->
-		@components.CommentsComponent()
+		<!-- @components.CommentsComponent(comments, 1, 1) -->
+		@components.BeforeLoadingComments(novel.ID, redirect)
 		<!-- Tab Navigation JavaScript -->
 		@NovelInfoStyles()
 		@TabSwitchScript()
@@ -47,21 +48,13 @@ templ NovelInfoStyles() {
 templ TabSwitchScript() {
 	<script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Get all tab links and tab content
         const tabLinks = document.querySelectorAll('.tab-link');
-        const tabContents = document.querySelectorAll('.tab-content');
 
-        // Function to switch tabs
         function switchTab(tabName) {
-            // Hide all tab contents
-            tabContents.forEach(tab => {
-                tab.classList.add('hidden');
-            });
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(tabName)?.classList.remove('hidden');
 
-            // Show the selected tab content
-            document.getElementById(tabName).classList.remove('hidden');
-
-            // Update active tab style
             tabLinks.forEach(link => {
                 if (link.getAttribute('data-tab') === tabName) {
                     link.classList.add('text-blue-400', 'dark:text-blue-600', 'border-blue-400', 'dark:border-blue-600');
@@ -72,26 +65,32 @@ templ TabSwitchScript() {
                 }
             });
 
-            // Update URL hash
             window.location.hash = tabName;
         }
 
-        // Add click event listeners to tab links
         tabLinks.forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
-                const tabName = this.getAttribute('data-tab');
-                switchTab(tabName);
+                switchTab(this.getAttribute('data-tab'));
             });
         });
 
-        // Check if there's a hash in the URL and switch to that tab
         if (window.location.hash) {
             const tabName = window.location.hash.substring(1);
             if (['description', 'chapters', 'comments'].includes(tabName)) {
                 switchTab(tabName);
             }
         }
+
+        // 👇 Restore correct tab after HTMX swap
+        document.body.addEventListener("htmx:afterSwap", function () {
+            if (window.location.hash) {
+                const tabName = window.location.hash.substring(1);
+                if (['description', 'chapters', 'comments'].includes(tabName)) {
+                    switchTab(tabName);
+                }
+            }
+        });
     });
 </script>
 }

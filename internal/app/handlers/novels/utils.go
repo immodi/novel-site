@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"immodi/novel-site/internal/app/handlers/auth"
 	"immodi/novel-site/internal/app/services/novels"
+	"immodi/novel-site/internal/config"
 	"net/http"
 	"time"
 )
@@ -20,16 +21,8 @@ func IsAuthed(r *http.Request) bool {
 }
 
 func IsNovelBookMarked(r *http.Request, novelId int64, novelService novels.NovelService) bool {
-	var tokenString string
-
-	token, err := r.Cookie("auth_token")
-	if err != nil {
-		return false
-	}
-	tokenString = token.Value
-
-	userID, err := auth.GetUserIDFromToken(tokenString)
-	if err != nil {
+	userID := IsAuthedUser(r)
+	if userID == 0 {
 		return false
 	}
 
@@ -39,6 +32,23 @@ func IsNovelBookMarked(r *http.Request, novelId int64, novelService novels.Novel
 	}
 
 	return isNovelBookMarked
+}
+
+func IsAuthedUser(r *http.Request) int64 {
+	var tokenString string
+
+	token, err := r.Cookie("auth_token")
+	if err != nil {
+		return 0
+	}
+	tokenString = token.Value
+
+	userID, err := auth.GetUserIDFromToken(tokenString)
+	if err != nil {
+		return 0
+	}
+
+	return userID
 }
 
 const (
@@ -54,6 +64,7 @@ func SetSuccessMessage(w http.ResponseWriter, msg string) {
 		Value:    msg,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   config.IsProduction,
 		MaxAge:   int(flashDuration.Seconds()),
 		Expires:  time.Now().Add(flashDuration),
 	})

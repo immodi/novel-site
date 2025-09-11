@@ -7,7 +7,7 @@ import (
 )
 
 func BuildNovelMeta(
-	novel novelsdtostructs.Novel,
+	novel *novelsdtostructs.Novel,
 	novelStatus string,
 ) *indexdtostructs.MetaDataStruct {
 	var genres []string

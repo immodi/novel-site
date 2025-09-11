@@ -3,6 +3,7 @@ package utils
 import (
 	"immodi/novel-site/internal/app/services/auth"
 	"immodi/novel-site/internal/app/services/chapters"
+	comments "immodi/novel-site/internal/app/services/comments"
 	"immodi/novel-site/internal/app/services/db"
 	"immodi/novel-site/internal/app/services/index"
 	"immodi/novel-site/internal/app/services/load"
@@ -22,6 +23,7 @@ type Services struct {
 	SearchServie   search.SearchService
 	LoadService    load.LoadService
 	ProfileService profile.ProfileService
+	CommentService comments.CommentService
 }
 
 func RegisterServices() *Services {
@@ -33,6 +35,7 @@ func RegisterServices() *Services {
 	homeService := index.NewHomeService(dbService)
 	novelService := novels.New(dbService)
 	chapterService := chapters.New(dbService, novelService)
+	profileSerivce := profile.NewProfileService(dbService, novelService)
 
 	return &Services{
 		DB:             dbService,
@@ -42,7 +45,8 @@ func RegisterServices() *Services {
 		AuthService:    auth.New(dbService),
 		SearchServie:   search.NewSearchService(dbService, homeService),
 		LoadService:    load.NewLoadService(dbService, novelService, chapterService),
-		ProfileService: profile.NewProfileService(dbService, novelService),
+		ProfileService: profileSerivce,
+		CommentService: comments.NewCommentService(dbService),
 	}
 }
 

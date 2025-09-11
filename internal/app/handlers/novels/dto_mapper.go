@@ -31,6 +31,7 @@ func MapToNovel(
 	errorMessage string,
 ) *novelsdtostructs.Novel {
 	return &novelsdtostructs.Novel{
+		ID:                  int(dbNovel.ID),
 		Name:                dbNovel.Title,
 		Description:         dbNovel.Description,
 		Author:              dbNovel.Author,

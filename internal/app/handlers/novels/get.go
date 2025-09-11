@@ -2,6 +2,7 @@ package novels
 
 import (
 	"immodi/novel-site/internal/app/handlers"
+	"immodi/novel-site/internal/app/handlers/comments"
 	"immodi/novel-site/internal/db/repositories"
 	novelscomponents "immodi/novel-site/internal/http/templates/novels"
 	"immodi/novel-site/pkg"
@@ -84,6 +85,13 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		successMsg,
 		errorMsg,
 	)
-	metaData := BuildNovelMeta(*novel, novelStatus)
-	handlers.GenericHandler(w, r, metaData, novelscomponents.NovelInfo(*novel))
+
+	var isRedirect bool = false
+	isRedirectStr := GetAndClearCookie(w, r, comments.CommentRedirectCookie)
+	if isRedirectStr != "" {
+		isRedirect = true
+	}
+
+	metaData := BuildNovelMeta(novel, novelStatus)
+	handlers.GenericHandler(w, r, metaData, novelscomponents.NovelInfo(novel, isRedirect))
 }

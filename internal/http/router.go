@@ -40,6 +40,8 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/novel/{novelSlug}/chapters", router.handlers.Chapter.GetChaptersDropDown)
 	router.r.Get("/novel/{novelSlug}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
 
+	router.r.Get("/comment", router.handlers.Comment.Comments)
+
 	router.r.Get("/search/{novelName}", router.handlers.Search.SearchNovel)
 	router.r.Get("/sort/{collection}", router.handlers.Search.SortNovelsByCollection)
 	router.r.Get("/genre/{genre}", router.handlers.Search.SortNovelsByGenres)
@@ -76,6 +78,9 @@ func (router *Router) RegisterRoutes() {
 
 		r.Post("/bookmark", router.handlers.Profile.PostBookmark)
 		r.Post("/bookmark-remove", router.handlers.Profile.RemoveBookmark)
+
+		r.Post("/comment", router.handlers.Comment.PostComment)
+		r.Post("/comment/edit", router.handlers.Comment.EditComment)
 	})
 
 }

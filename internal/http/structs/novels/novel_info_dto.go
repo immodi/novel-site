@@ -3,6 +3,7 @@ package novelsdtostructs
 import "immodi/novel-site/internal/db/repositories"
 
 type Novel struct {
+	ID                  int
 	Name                string
 	Slug                string
 	Description         string

@@ -13,7 +13,7 @@ import (
 	"immodi/novel-site/internal/http/structs/novels"
 )
 
-func NovelInfo(novel novelsdtostructs.Novel) templ.Component {
+func NovelInfo(novel *novelsdtostructs.Novel, redirect bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -38,7 +38,7 @@ func NovelInfo(novel novelsdtostructs.Novel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.CoverImageComponent(&novel).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.CoverImageComponent(novel).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -46,7 +46,7 @@ func NovelInfo(novel novelsdtostructs.Novel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.NovelDetailsComponent(&novel).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.NovelDetailsComponent(novel).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -62,7 +62,7 @@ func NovelInfo(novel novelsdtostructs.Novel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.DescriptionComponent(&novel).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.DescriptionComponent(novel).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,15 +70,15 @@ func NovelInfo(novel novelsdtostructs.Novel) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.ChapterListComponent(&novel).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.ChapterListComponent(novel).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<!-- Comments section -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<!-- Comments section --><!-- @components.CommentsComponent(comments, 1, 1) -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.CommentsComponent().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.BeforeLoadingComments(novel.ID, redirect).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -152,7 +152,7 @@ func TabSwitchScript() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n    document.addEventListener('DOMContentLoaded', function () {\n        // Get all tab links and tab content\n        const tabLinks = document.querySelectorAll('.tab-link');\n        const tabContents = document.querySelectorAll('.tab-content');\n\n        // Function to switch tabs\n        function switchTab(tabName) {\n            // Hide all tab contents\n            tabContents.forEach(tab => {\n                tab.classList.add('hidden');\n            });\n\n            // Show the selected tab content\n            document.getElementById(tabName).classList.remove('hidden');\n\n            // Update active tab style\n            tabLinks.forEach(link => {\n                if (link.getAttribute('data-tab') === tabName) {\n                    link.classList.add('text-blue-400', 'dark:text-blue-600', 'border-blue-400', 'dark:border-blue-600');\n                    link.classList.remove('text-gray-400', 'dark:text-gray-600', 'border-transparent');\n                } else {\n                    link.classList.remove('text-blue-400', 'dark:text-blue-600', 'border-blue-400', 'dark:border-blue-600');\n                    link.classList.add('text-gray-400', 'dark:text-gray-600', 'border-transparent');\n                }\n            });\n\n            // Update URL hash\n            window.location.hash = tabName;\n        }\n\n        // Add click event listeners to tab links\n        tabLinks.forEach(link => {\n            link.addEventListener('click', function (e) {\n                e.preventDefault();\n                const tabName = this.getAttribute('data-tab');\n                switchTab(tabName);\n            });\n        });\n\n        // Check if there's a hash in the URL and switch to that tab\n        if (window.location.hash) {\n            const tabName = window.location.hash.substring(1);\n            if (['description', 'chapters', 'comments'].includes(tabName)) {\n                switchTab(tabName);\n            }\n        }\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n    document.addEventListener('DOMContentLoaded', function () {\n        const tabLinks = document.querySelectorAll('.tab-link');\n\n        function switchTab(tabName) {\n            const tabContents = document.querySelectorAll('.tab-content');\n            tabContents.forEach(tab => tab.classList.add('hidden'));\n            document.getElementById(tabName)?.classList.remove('hidden');\n\n            tabLinks.forEach(link => {\n                if (link.getAttribute('data-tab') === tabName) {\n                    link.classList.add('text-blue-400', 'dark:text-blue-600', 'border-blue-400', 'dark:border-blue-600');\n                    link.classList.remove('text-gray-400', 'dark:text-gray-600', 'border-transparent');\n                } else {\n                    link.classList.remove('text-blue-400', 'dark:text-blue-600', 'border-blue-400', 'dark:border-blue-600');\n                    link.classList.add('text-gray-400', 'dark:text-gray-600', 'border-transparent');\n                }\n            });\n\n            window.location.hash = tabName;\n        }\n\n        tabLinks.forEach(link => {\n            link.addEventListener('click', function (e) {\n                e.preventDefault();\n                switchTab(this.getAttribute('data-tab'));\n            });\n        });\n\n        if (window.location.hash) {\n            const tabName = window.location.hash.substring(1);\n            if (['description', 'chapters', 'comments'].includes(tabName)) {\n                switchTab(tabName);\n            }\n        }\n\n        // 👇 Restore correct tab after HTMX swap\n        document.body.addEventListener(\"htmx:afterSwap\", function () {\n            if (window.location.hash) {\n                const tabName = window.location.hash.substring(1);\n                if (['description', 'chapters', 'comments'].includes(tabName)) {\n                    switchTab(tabName);\n                }\n            }\n        });\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

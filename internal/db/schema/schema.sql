@@ -88,3 +88,39 @@ CREATE TABLE IF NOT EXISTS user_bookmarks (
 -- Indexes for bookmarks
 CREATE INDEX IF NOT EXISTS idx_user_bookmarks_user_id ON user_bookmarks(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_bookmarks_novel_id ON user_bookmarks(novel_id);
+
+
+-- Table: comments
+CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    novel_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    parent_id INTEGER, -- nullable for top-level comments
+    content TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT '',
+    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
+);
+
+-- Indexes for efficient comment lookups
+CREATE INDEX IF NOT EXISTS idx_comments_novel_id ON comments(novel_id);
+CREATE INDEX IF NOT EXISTS idx_comments_user_id ON comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_comments_parent_id ON comments(parent_id);
+
+
+-- Table: comment_reactions
+CREATE TABLE IF NOT EXISTS comment_reactions (
+    user_id INTEGER NOT NULL,
+    comment_id INTEGER NOT NULL,
+    reaction TEXT NOT NULL CHECK(reaction IN ('like', 'dislike')),
+    created_at TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (user_id, comment_id), -- one reaction per user per comment
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE
+);
+
+-- Indexes for quick reaction lookups
+CREATE INDEX IF NOT EXISTS idx_comment_reactions_user_id ON comment_reactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_comment_reactions_comment_id ON comment_reactions(comment_id);
+
