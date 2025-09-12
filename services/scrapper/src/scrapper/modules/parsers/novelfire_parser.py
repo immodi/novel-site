@@ -182,6 +182,75 @@ class NovelFireParser(Parser):
 
         return chapters
 
+    def update_novel(self, novel_name: str, last_chapter_url: str) -> List[ChapterData]:
+        chapters: List[ChapterData] = []
+        if not last_chapter_url:
+            print("No last chapter found.")
+            return chapters
+
+        current_url = last_chapter_url
+
+        while True:
+            # 1. request the page
+            tree: html.HtmlElement = utils.fetch_page(current_url)  # type: ignore
+
+            # 2. get the "nextchap" element
+            next_el = tree.cssselect(".nextchap")
+            if not next_el:
+                print(f"No .nextchap element found at {current_url}")
+                break
+
+            next_btn = next_el[0]
+
+            # 3. if it has 'isDisabled' class, stop
+            classes = next_btn.get("class", "")
+            if "isDisabled" in classes.split():
+                print("Reached the final chapter.")
+                break
+
+            # 4. follow the next link
+            next_href = next_btn.get("href")
+            if not next_href:
+                print(f"No href found for next chapter at {current_url}")
+                break
+
+            # Make sure the href is absolute if needed
+            if next_href.startswith("/"):
+                # adjust base if needed; assuming same site as current_url
+                base = current_url.split("/chapter-")[0]
+                next_href = base.rstrip("/") + next_href
+
+            current_url = next_href
+
+            # 5. scrape chapter content
+            chapter_data = scrape_chapter_with_request(current_url)  # type: ignore
+
+            # skip duplicates if configured
+            if self.skip_duplicates == SkipDuplicate.CHAPTER and self.chapter_exists(
+                chapter_data.title, utils.slugify(novel_name)
+            ):
+                print(f"Chapter {chapter_data.title} already exists. Skipping...")
+                continue
+
+            chapter = ChapterData(
+                title=chapter_data.title,
+                content=chapter_data.content,
+                url=current_url,
+            )
+            chapters.append(chapter)
+
+            # save each chapter immediately
+            saver.save_item(
+                chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
+            )
+
+            print(
+                f"--> Fetched {chapter_data.title} of length "
+                f"{utils.bold_green(len(chapter_data.content))} from url {current_url}."
+            )
+
+        return chapters
+
 
 @browser(output=None, headless=False, max_retry=10)
 def scrape_chapter(driver: Driver, url: str) -> NovelFireChapter:

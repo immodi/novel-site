@@ -18,6 +18,7 @@ dependencies = [
 [project.scripts]
 scrapper = "scrapper.scrap:scrapper"
 loader = "scrapper.load:loader"
+updater = "scrapper.update:update"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/scrapper"]

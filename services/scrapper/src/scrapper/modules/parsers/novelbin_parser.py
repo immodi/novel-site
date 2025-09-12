@@ -159,6 +159,9 @@ class NovelBinParser(Parser):
 
         return chapters
 
+    def update_novel(self, novel_name: str, last_chapter_url: str) -> List[ChapterData]:
+        return []
+
 
 @browser(output=None, headless=False, max_retry=10)
 def scrape_chapter(driver: Driver, url: str) -> str:

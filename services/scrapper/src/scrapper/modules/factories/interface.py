@@ -18,14 +18,38 @@ class SkipDuplicate(Enum):
 
 
 class Parser(Protocol):
+    """
+    takes either a list OR one html document(s) and parsers them into a list of links for each individual novel page
+    """
+
     def parse_list_of_novels(
         self, tree: Union[html.HtmlElement, List[html.HtmlElement]]
     ) -> List[NovelLink]: ...
+
+    """
+    takes an html document of the web novel and extract the data
+    """
+
     def parse_novel(
         self, tree: html.HtmlElement, url: str, save_image: bool = True
     ) -> NovelData: ...
+
+    """
+    Fetch chapters using the first link and navigating via #next_chap button
+    """
+
     def parse_chapters(
         self, url: str, novel_name: str, save_per_chapter: bool
+    ) -> List[ChapterData]: ...
+
+    """
+    Starting from the last stored chapter, keep following the 'nextchap' link
+    until the link has the 'isDisabled' class. For each chapter page,
+    fetch and save a ChapterData object.
+    """
+
+    def update_novel(
+        self, novel_name: str, last_chapter_url: str
     ) -> List[ChapterData]: ...
 
     def novel_exists(self, title: str) -> bool:
