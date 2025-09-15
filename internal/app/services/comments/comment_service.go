@@ -3,6 +3,7 @@ package commments
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"immodi/novel-site/internal/app/services/db"
 	"immodi/novel-site/internal/db/repositories"
@@ -18,13 +19,36 @@ func NewCommentService(db *db.DBService) CommentService {
 	return &commentService{db: db}
 }
 
-func (c *commentService) AddOrUpdateReaction(userID int, commentID int, reaction c_sql.UserReaction) error {
-	return db.Execute(c.db, func(ctx context.Context, q *repositories.Queries) error {
-		return q.UpsertReaction(ctx, repositories.UpsertReactionParams{
+func (c *commentService) AddOrUpdateOrRemoveReaction(
+	userID int,
+	commentID int,
+	reaction c_sql.UserReaction,
+) error {
+	return db.ExecuteTx(c.db, func(ctx context.Context, q *repositories.Queries) error {
+		_, err := q.DeleteReactionIfSame(ctx, repositories.DeleteReactionIfSameParams{
 			UserID:    int64(userID),
 			CommentID: int64(commentID),
 			Reaction:  string(reaction),
 		})
+
+		switch {
+		case err == nil:
+			// A row was deleted -> reaction removed, nothing else to do.
+			return nil
+
+		case errors.Is(err, sql.ErrNoRows):
+			// Nothing deleted -> user is changing or adding reaction, so upsert.
+			return q.UpsertReaction(ctx, repositories.UpsertReactionParams{
+				UserID:      int64(userID),
+				CommentID:   int64(commentID),
+				Reaction:    string(reaction),
+				LastUpdated: pkg.GetCurrentTimeRFC3339(),
+			})
+
+		default:
+			// Any other database error
+			return err
+		}
 	})
 }
 
@@ -50,11 +74,11 @@ func (c *commentService) CreateComment(novelID int, userID int, parentID *int, c
 		}
 
 		return q.CreateComment(ctx, repositories.CreateCommentParams{
-			NovelID:   int64(novelID),
-			UserID:    int64(userID),
-			Content:   content,
-			ParentID:  parent,
-			CreatedAt: pkg.GetCurrentTimeRFC3339(),
+			NovelID:     int64(novelID),
+			UserID:      int64(userID),
+			Content:     content,
+			ParentID:    parent,
+			LastUpdated: pkg.GetCurrentTimeRFC3339(),
 		})
 	})
 }
@@ -62,9 +86,9 @@ func (c *commentService) CreateComment(novelID int, userID int, parentID *int, c
 func (c *commentService) UpdateComment(commentID int, content string) (repositories.Comment, error) {
 	return db.ExecuteWithResult(c.db, func(ctx context.Context, q *repositories.Queries) (repositories.Comment, error) {
 		return q.UpdateComment(ctx, repositories.UpdateCommentParams{
-			ID:        int64(commentID),
-			Content:   content,
-			CreatedAt: pkg.GetCurrentTimeRFC3339(),
+			ID:          int64(commentID),
+			Content:     content,
+			LastUpdated: pkg.GetCurrentTimeRFC3339(),
 		})
 	})
 }

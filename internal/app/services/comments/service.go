@@ -16,7 +16,7 @@ type CommentService interface {
 	DeleteComment(commentID, userID int) error
 
 	// Reactions
-	AddOrUpdateReaction(userID, commentID int, reaction sql.UserReaction) error
+	AddOrUpdateOrRemoveReaction(userID, commentID int, reaction sql.UserReaction) error
 	RemoveReaction(userID, commentID int) error
 	GetUserReaction(userID, commentID int) (string, error)
 	GetUserReactionForComments(userID int, commentIDs []int64) ([]repositories.GetUserReactionsForCommentsRow, error)

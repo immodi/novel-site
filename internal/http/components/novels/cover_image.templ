@@ -8,7 +8,12 @@ import (
 templ CoverImageComponent(novel *novelsdtostructs.Novel) {
 	<div class="w-full md:w-1/3 lg:w-1/4">
 		<div class="w-full flex justify-center items-center relative mb-4">
-			<img src={ novel.CoverImage } alt={ novel.Name } class="lg:w-full md:w-full w-1/2 rounded-lg shadow-lg"/>
+			<img
+				loading="lazy"
+				src={ novel.CoverImage }
+				alt={ novel.Name }
+				class="lg:w-full md:w-full w-1/2 rounded-lg shadow-lg"
+			/>
 		</div>
 		<div class="flex flex-col gap-2">
 			<a

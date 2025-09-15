@@ -8,24 +8,34 @@ import (
 	"log"
 )
 
-func DbCommentsToCommentDtoMapper(comments []repositories.GetCommentsByNovelRow, service comments.CommentService) []commentsdtostructs.CommentDTO {
-	var commentDtos []commentsdtostructs.CommentDTO
-	if len(comments) == 0 {
-		return commentDtos
+func DbCommentsToCommentDtoMapper(
+	comments []repositories.GetCommentsByNovelRow,
+	commentsReactions []repositories.GetUserReactionsForCommentsRow,
+	userID int,
+	service comments.CommentService,
+) []commentsdtostructs.CommentDTO {
+
+	// Build a quick lookup: comment_id -> reaction
+	reactionMap := make(map[int64]string, len(commentsReactions))
+	for _, r := range commentsReactions {
+		reactionMap[r.CommentID] = r.Reaction
 	}
 
-	// Track IDs that are replies (so we don't add them as top-level later)
-	isReply := make(map[int64]bool, len(comments))
+	var dtos []commentsdtostructs.CommentDTO
+	if len(comments) == 0 {
+		return dtos
+	}
 
-	// Cache replies we fetched to avoid refetching where possible:
+	// Track which comments are replies
+	isReply := make(map[int64]bool, len(comments))
+	// Cache replies for each comment
 	repliesCache := make(map[int64][]repositories.GetRepliesByCommentRow, len(comments))
 
-	// Pre-fetch direct replies for every item in the input slice and mark reply IDs
 	for _, c := range comments {
 		replRows, err := service.GetCommentReplies(sql.NullInt64{Int64: c.ID, Valid: true})
 		if err != nil {
-			log.Println(err.Error(), "pre-caching replies - continuing")
-			replRows = []repositories.GetRepliesByCommentRow{}
+			log.Println(err)
+			replRows = nil
 		}
 		repliesCache[c.ID] = replRows
 		for _, r := range replRows {
@@ -33,71 +43,63 @@ func DbCommentsToCommentDtoMapper(comments []repositories.GetCommentsByNovelRow,
 		}
 	}
 
-	// Recursive builder for reply rows (re-uses cache, falls back to service)
+	// Recursive helper to build replies
 	var buildReplyDTO func(r repositories.GetRepliesByCommentRow) commentsdtostructs.CommentDTO
 	buildReplyDTO = func(r repositories.GetRepliesByCommentRow) commentsdtostructs.CommentDTO {
-		// mark as reply (defensive)
-		isReply[r.ID] = true
-
-		// get nested replies from cache or fetch
-		nestedRows, ok := repliesCache[r.ID]
-		if !ok {
-			var err error
-			nestedRows, err = service.GetCommentReplies(sql.NullInt64{Int64: r.ID, Valid: true})
-			if err != nil {
-				log.Println(err.Error(), "fetching nested replies")
-				nestedRows = []repositories.GetRepliesByCommentRow{}
-			}
-			repliesCache[r.ID] = nestedRows
-			for _, nr := range nestedRows {
-				isReply[nr.ID] = true
-			}
-		}
-
-		nestedDtos := make([]commentsdtostructs.CommentDTO, 0, len(nestedRows))
+		nestedRows := repliesCache[r.ID]
+		var nestedDtos []commentsdtostructs.CommentDTO
 		for _, nr := range nestedRows {
 			nestedDtos = append(nestedDtos, buildReplyDTO(nr))
 		}
 
+		var userReaction *string
+		if react, ok := reactionMap[r.ID]; ok {
+			userReaction = &react
+		}
+
 		return commentsdtostructs.CommentDTO{
-			ID:         int(r.ID),
-			Content:    r.Content,
-			CreatedAt:  r.CreatedAt,
-			UserID:     int(r.UserID),
-			PictureURL: r.PictureUrl,
-			UserName:   r.Username,
-			Likes:      int(r.Likes),
-			Dislikes:   int(r.Dislikes),
-			Replies:    nestedDtos,
+			ID:           int(r.ID),
+			Content:      r.Content,
+			LastUpdated:  r.LastUpdated,
+			UserID:       int(r.UserID),
+			PictureURL:   r.PictureUrl,
+			UserName:     r.Username,
+			Likes:        int(r.Likes),
+			Dislikes:     int(r.Dislikes),
+			Replies:      nestedDtos,
+			UserReaction: userReaction,
 		}
 	}
 
-	// Build top-level DTOs, skipping any rows that are actually replies
+	// Top-level comments only
 	for _, c := range comments {
 		if isReply[c.ID] {
-			// This row is a reply to some other comment, skip as a top-level item
 			continue
 		}
 
-		// get direct replies (from cache)
-		replRows := repliesCache[c.ID]
-		replyDtos := make([]commentsdtostructs.CommentDTO, 0, len(replRows))
-		for _, r := range replRows {
+		var replyDtos []commentsdtostructs.CommentDTO
+		for _, r := range repliesCache[c.ID] {
 			replyDtos = append(replyDtos, buildReplyDTO(r))
 		}
 
-		commentDtos = append(commentDtos, commentsdtostructs.CommentDTO{
-			ID:         int(c.ID),
-			Content:    c.Content,
-			CreatedAt:  c.CreatedAt,
-			UserID:     int(c.UserID),
-			PictureURL: c.PictureUrl,
-			UserName:   c.Username,
-			Likes:      int(c.Likes),
-			Dislikes:   int(c.Dislikes),
-			Replies:    replyDtos,
+		var userReaction *string
+		if react, ok := reactionMap[c.ID]; ok {
+			userReaction = &react
+		}
+
+		dtos = append(dtos, commentsdtostructs.CommentDTO{
+			ID:           int(c.ID),
+			Content:      c.Content,
+			LastUpdated:  c.LastUpdated,
+			UserID:       int(c.UserID),
+			PictureURL:   c.PictureUrl,
+			UserName:     c.Username,
+			Likes:        int(c.Likes),
+			Dislikes:     int(c.Dislikes),
+			Replies:      replyDtos,
+			UserReaction: userReaction,
 		})
 	}
 
-	return commentDtos
+	return dtos
 }

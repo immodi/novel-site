@@ -22,8 +22,19 @@ func (h *CommentHandler) Comments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dbComments, err := h.commentService.GetCommentsByNovel(novelID)
+	if err != nil {
+		handlers.ServerErrorHandler(w, r)
+		log.Println(err.Error())
+		return
+	}
 
-	comments := DbCommentsToCommentDtoMapper(dbComments, h.commentService)
+	commentsIDs := make([]int64, len(dbComments))
+	for i, c := range dbComments {
+		commentsIDs[i] = c.ID
+	}
+
+	dbCommentsReactions, err := h.commentService.GetUserReactionForComments(int(userID), commentsIDs)
+	comments := DbCommentsToCommentDtoMapper(dbComments, dbCommentsReactions, int(userID), h.commentService)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)
 		log.Println(err.Error())

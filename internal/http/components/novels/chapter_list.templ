@@ -16,9 +16,12 @@ templ ChapterListComponent(novel *novelsdtostructs.Novel) {
 				<a
 					href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, chapter.Number) }
 					class="block p-3 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] 
-						   hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
+                       hover:bg-[#252525] dark:hover:bg-gray-200 rounded-lg transition-colors"
 				>
-					<div class="font-medium">{ chapter.Title }</div>
+					<div class="flex justify-between items-center">
+						<span class="font-medium">{ chapter.Title }</span>
+						<span class="text-xs text-gray-400 dark:text-gray-600">{ chapter.ReleaseDate }</span>
+					</div>
 				</a>
 			}
 		</div>

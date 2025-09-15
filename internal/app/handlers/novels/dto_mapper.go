@@ -10,8 +10,9 @@ func DbChaptersToInfoChaptersMapper(dbChapters []repositories.Chapter) []novelsd
 	var chapters []novelsdtostructs.Chapter
 	for _, dbChapter := range dbChapters {
 		chapters = append(chapters, novelsdtostructs.Chapter{
-			Title:  dbChapter.Title,
-			Number: int(dbChapter.ChapterNumber),
+			Title:       dbChapter.Title,
+			ReleaseDate: pkg.TimeAgo(dbChapter.ReleaseDate),
+			Number:      int(dbChapter.ChapterNumber),
 		})
 	}
 	return chapters

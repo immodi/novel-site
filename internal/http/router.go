@@ -84,6 +84,7 @@ func (router *Router) RegisterRoutes() {
 
 		r.Post("/comment", router.handlers.Comment.PostComment)
 		r.Post("/comment/edit", router.handlers.Comment.EditComment)
+		r.Post("/comment/reaction", router.handlers.Comment.PostReact)
 	})
 
 }

@@ -64,6 +64,7 @@ func (s *chapterService) CreateChapterWithDefaults(novelID int64) (repositories.
 			Title:         fmt.Sprintf("Chapter %d", count+1),
 			ChapterNumber: count + 1,
 			Content:       pkg.LoremText(40),
+			ReleaseDate:   pkg.GetCurrentTimeRFC3339(),
 		})
 	})
 }

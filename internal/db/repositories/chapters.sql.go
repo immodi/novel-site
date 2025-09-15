@@ -23,11 +23,11 @@ func (q *Queries) CountChaptersByNovel(ctx context.Context, novelID int64) (int6
 
 const createChapter = `-- name: CreateChapter :one
 INSERT INTO chapters (
-    novel_id, chapter_number, title, content
+    novel_id, chapter_number, title, content, release_date
 ) VALUES (
-    ?, ?, ?, ?
+    ?, ?, ?, ?, ?
 )
-RETURNING id, novel_id, chapter_number, title, content
+RETURNING id, novel_id, chapter_number, title, content, release_date
 `
 
 type CreateChapterParams struct {
@@ -35,6 +35,7 @@ type CreateChapterParams struct {
 	ChapterNumber int64
 	Title         string
 	Content       string
+	ReleaseDate   string
 }
 
 func (q *Queries) CreateChapter(ctx context.Context, arg CreateChapterParams) (Chapter, error) {
@@ -43,6 +44,7 @@ func (q *Queries) CreateChapter(ctx context.Context, arg CreateChapterParams) (C
 		arg.ChapterNumber,
 		arg.Title,
 		arg.Content,
+		arg.ReleaseDate,
 	)
 	var i Chapter
 	err := row.Scan(
@@ -51,6 +53,7 @@ func (q *Queries) CreateChapter(ctx context.Context, arg CreateChapterParams) (C
 		&i.ChapterNumber,
 		&i.Title,
 		&i.Content,
+		&i.ReleaseDate,
 	)
 	return i, err
 }
@@ -65,7 +68,7 @@ func (q *Queries) DeleteChapter(ctx context.Context, id int64) error {
 }
 
 const getChapterByID = `-- name: GetChapterByID :one
-SELECT id, novel_id, chapter_number, title, content FROM chapters
+SELECT id, novel_id, chapter_number, title, content, release_date FROM chapters
 WHERE id = ? LIMIT 1
 `
 
@@ -78,12 +81,13 @@ func (q *Queries) GetChapterByID(ctx context.Context, id int64) (Chapter, error)
 		&i.ChapterNumber,
 		&i.Title,
 		&i.Content,
+		&i.ReleaseDate,
 	)
 	return i, err
 }
 
 const getChapterByNumber = `-- name: GetChapterByNumber :one
-SELECT id, novel_id, chapter_number, title, content FROM chapters
+SELECT id, novel_id, chapter_number, title, content, release_date FROM chapters
 WHERE novel_id = ? AND chapter_number = ?
 LIMIT 1
 `
@@ -102,12 +106,13 @@ func (q *Queries) GetChapterByNumber(ctx context.Context, arg GetChapterByNumber
 		&i.ChapterNumber,
 		&i.Title,
 		&i.Content,
+		&i.ReleaseDate,
 	)
 	return i, err
 }
 
 const getLatestChapterByNovel = `-- name: GetLatestChapterByNovel :one
-SELECT id, novel_id, chapter_number, title, content
+SELECT id, novel_id, chapter_number, title, content, release_date
 FROM chapters
 WHERE novel_id = ?
 ORDER BY chapter_number DESC
@@ -123,6 +128,7 @@ func (q *Queries) GetLatestChapterByNovel(ctx context.Context, novelID int64) (C
 		&i.ChapterNumber,
 		&i.Title,
 		&i.Content,
+		&i.ReleaseDate,
 	)
 	return i, err
 }
@@ -141,7 +147,7 @@ func (q *Queries) GetNextChapterNumber(ctx context.Context, novelID int64) (int6
 }
 
 const listChaptersByNovel = `-- name: ListChaptersByNovel :many
-SELECT id, novel_id, chapter_number, title, content FROM chapters
+SELECT id, novel_id, chapter_number, title, content, release_date FROM chapters
 WHERE novel_id = ?
 ORDER BY chapter_number ASC
 `
@@ -161,6 +167,7 @@ func (q *Queries) ListChaptersByNovel(ctx context.Context, novelID int64) ([]Cha
 			&i.ChapterNumber,
 			&i.Title,
 			&i.Content,
+			&i.ReleaseDate,
 		); err != nil {
 			return nil, err
 		}
@@ -176,7 +183,7 @@ func (q *Queries) ListChaptersByNovel(ctx context.Context, novelID int64) ([]Cha
 }
 
 const listChaptersByNovelPaginated = `-- name: ListChaptersByNovelPaginated :many
-SELECT id, novel_id, chapter_number, title, content FROM chapters
+SELECT id, novel_id, chapter_number, title, content, release_date FROM chapters
 WHERE novel_id = ?
 ORDER BY chapter_number ASC
 LIMIT ? OFFSET ?
@@ -203,6 +210,7 @@ func (q *Queries) ListChaptersByNovelPaginated(ctx context.Context, arg ListChap
 			&i.ChapterNumber,
 			&i.Title,
 			&i.Content,
+			&i.ReleaseDate,
 		); err != nil {
 			return nil, err
 		}
@@ -221,7 +229,7 @@ const updateChapterNumber = `-- name: UpdateChapterNumber :one
 UPDATE chapters
 SET chapter_number = ?
 WHERE id = ?
-RETURNING id, novel_id, chapter_number, title, content
+RETURNING id, novel_id, chapter_number, title, content, release_date
 `
 
 type UpdateChapterNumberParams struct {
@@ -238,6 +246,7 @@ func (q *Queries) UpdateChapterNumber(ctx context.Context, arg UpdateChapterNumb
 		&i.ChapterNumber,
 		&i.Title,
 		&i.Content,
+		&i.ReleaseDate,
 	)
 	return i, err
 }

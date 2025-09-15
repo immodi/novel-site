@@ -3,7 +3,7 @@ SELECT * FROM comments WHERE id = ?;
 
 -- name: CreateComment :one
 INSERT INTO comments (
-    novel_id, user_id, parent_id, content, created_at
+    novel_id, user_id, parent_id, content, last_updated
 ) VALUES (
     ?, ?, ?, ?, ?
 )
@@ -13,7 +13,7 @@ RETURNING *;
 UPDATE comments
 SET 
     content = ?, 
-    created_at = ?
+    last_updated = ?
 WHERE id = ?
 RETURNING *;
 
@@ -27,7 +27,7 @@ SELECT c.*,
 FROM comments c
 JOIN users u ON u.id = c.user_id
 WHERE c.novel_id = ?
-ORDER BY c.created_at ASC;
+ORDER BY c.last_updated ASC;
 
 -- name: GetRepliesByComment :many
 SELECT c.*,
@@ -38,7 +38,7 @@ SELECT c.*,
 FROM comments c
 JOIN users u ON u.id = c.user_id
 WHERE c.parent_id = ?
-ORDER BY c.created_at ASC;
+ORDER BY c.last_updated ASC;
 
 -- name: DeleteComment :exec
 DELETE FROM comments WHERE id = ? AND user_id = ?;
@@ -47,13 +47,17 @@ DELETE FROM comments WHERE id = ? AND user_id = ?;
 -- USER REACTIONS
 ---------------------------------------
 
+-- name: DeleteReactionIfSame :one
+DELETE FROM comment_reactions
+WHERE user_id = ? AND comment_id = ? AND reaction = ?
+RETURNING 1;
+
 -- name: UpsertReaction :exec
-INSERT INTO comment_reactions (user_id, comment_id, reaction, created_at)
-VALUES (?, ?, ?, datetime('now'))
+INSERT INTO comment_reactions (user_id, comment_id, reaction, last_updated)
+VALUES (?, ?, ?, ?)
 ON CONFLICT(user_id, comment_id) DO UPDATE
 SET reaction = excluded.reaction,
-    created_at = datetime('now');
--- RETURNING *;
+    last_updated = excluded.last_updated;
 
 -- name: RemoveReaction :exec
 DELETE FROM comment_reactions

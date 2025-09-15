@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS chapters (
     chapter_number INTEGER NOT NULL,
     title TEXT NOT NULL,
     content TEXT NOT NULL DEFAULT '',
+    release_date TEXT NOT NULL DEFAULT '',
     FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE,
     UNIQUE(novel_id, chapter_number)
 );
@@ -97,7 +98,7 @@ CREATE TABLE IF NOT EXISTS comments (
     user_id INTEGER NOT NULL,
     parent_id INTEGER, -- nullable for top-level comments
     content TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT '',
+    last_updated TEXT NOT NULL DEFAULT '',
     FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
@@ -114,7 +115,7 @@ CREATE TABLE IF NOT EXISTS comment_reactions (
     user_id INTEGER NOT NULL,
     comment_id INTEGER NOT NULL,
     reaction TEXT NOT NULL CHECK(reaction IN ('like', 'dislike')),
-    created_at TEXT NOT NULL DEFAULT '',
+    last_updated TEXT NOT NULL DEFAULT '',
     PRIMARY KEY (user_id, comment_id), -- one reaction per user per comment
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE

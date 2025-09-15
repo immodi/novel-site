@@ -1,6 +1,7 @@
 package novelsdtostructs
 
 type Chapter struct {
-	Title  string
-	Number int
+	Title       string
+	ReleaseDate string
+	Number      int
 }

@@ -33,19 +33,19 @@ func (q *Queries) CountReactions(ctx context.Context, commentID int64) (CountRea
 
 const createComment = `-- name: CreateComment :one
 INSERT INTO comments (
-    novel_id, user_id, parent_id, content, created_at
+    novel_id, user_id, parent_id, content, last_updated
 ) VALUES (
     ?, ?, ?, ?, ?
 )
-RETURNING id, novel_id, user_id, parent_id, content, created_at
+RETURNING id, novel_id, user_id, parent_id, content, last_updated
 `
 
 type CreateCommentParams struct {
-	NovelID   int64
-	UserID    int64
-	ParentID  sql.NullInt64
-	Content   string
-	CreatedAt string
+	NovelID     int64
+	UserID      int64
+	ParentID    sql.NullInt64
+	Content     string
+	LastUpdated string
 }
 
 func (q *Queries) CreateComment(ctx context.Context, arg CreateCommentParams) (Comment, error) {
@@ -54,7 +54,7 @@ func (q *Queries) CreateComment(ctx context.Context, arg CreateCommentParams) (C
 		arg.UserID,
 		arg.ParentID,
 		arg.Content,
-		arg.CreatedAt,
+		arg.LastUpdated,
 	)
 	var i Comment
 	err := row.Scan(
@@ -63,7 +63,7 @@ func (q *Queries) CreateComment(ctx context.Context, arg CreateCommentParams) (C
 		&i.UserID,
 		&i.ParentID,
 		&i.Content,
-		&i.CreatedAt,
+		&i.LastUpdated,
 	)
 	return i, err
 }
@@ -82,8 +82,31 @@ func (q *Queries) DeleteComment(ctx context.Context, arg DeleteCommentParams) er
 	return err
 }
 
+const deleteReactionIfSame = `-- name: DeleteReactionIfSame :one
+
+DELETE FROM comment_reactions
+WHERE user_id = ? AND comment_id = ? AND reaction = ?
+RETURNING 1
+`
+
+type DeleteReactionIfSameParams struct {
+	UserID    int64
+	CommentID int64
+	Reaction  string
+}
+
+// -------------------------------------
+// USER REACTIONS
+// -------------------------------------
+func (q *Queries) DeleteReactionIfSame(ctx context.Context, arg DeleteReactionIfSameParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, deleteReactionIfSame, arg.UserID, arg.CommentID, arg.Reaction)
+	var column_1 int64
+	err := row.Scan(&column_1)
+	return column_1, err
+}
+
 const getCommentById = `-- name: GetCommentById :one
-SELECT id, novel_id, user_id, parent_id, content, created_at FROM comments WHERE id = ?
+SELECT id, novel_id, user_id, parent_id, content, last_updated FROM comments WHERE id = ?
 `
 
 func (q *Queries) GetCommentById(ctx context.Context, id int64) (Comment, error) {
@@ -95,13 +118,13 @@ func (q *Queries) GetCommentById(ctx context.Context, id int64) (Comment, error)
 		&i.UserID,
 		&i.ParentID,
 		&i.Content,
-		&i.CreatedAt,
+		&i.LastUpdated,
 	)
 	return i, err
 }
 
 const getCommentsByNovel = `-- name: GetCommentsByNovel :many
-SELECT c.id, c.novel_id, c.user_id, c.parent_id, c.content, c.created_at,
+SELECT c.id, c.novel_id, c.user_id, c.parent_id, c.content, c.last_updated,
        u.username,
        u.image AS picture_url,
        (SELECT COUNT(*) FROM comment_reactions r WHERE r.comment_id = c.id AND r.reaction = 'like') AS likes,
@@ -109,20 +132,20 @@ SELECT c.id, c.novel_id, c.user_id, c.parent_id, c.content, c.created_at,
 FROM comments c
 JOIN users u ON u.id = c.user_id
 WHERE c.novel_id = ?
-ORDER BY c.created_at ASC
+ORDER BY c.last_updated ASC
 `
 
 type GetCommentsByNovelRow struct {
-	ID         int64
-	NovelID    int64
-	UserID     int64
-	ParentID   sql.NullInt64
-	Content    string
-	CreatedAt  string
-	Username   string
-	PictureUrl string
-	Likes      int64
-	Dislikes   int64
+	ID          int64
+	NovelID     int64
+	UserID      int64
+	ParentID    sql.NullInt64
+	Content     string
+	LastUpdated string
+	Username    string
+	PictureUrl  string
+	Likes       int64
+	Dislikes    int64
 }
 
 func (q *Queries) GetCommentsByNovel(ctx context.Context, novelID int64) ([]GetCommentsByNovelRow, error) {
@@ -140,7 +163,7 @@ func (q *Queries) GetCommentsByNovel(ctx context.Context, novelID int64) ([]GetC
 			&i.UserID,
 			&i.ParentID,
 			&i.Content,
-			&i.CreatedAt,
+			&i.LastUpdated,
 			&i.Username,
 			&i.PictureUrl,
 			&i.Likes,
@@ -160,7 +183,7 @@ func (q *Queries) GetCommentsByNovel(ctx context.Context, novelID int64) ([]GetC
 }
 
 const getRepliesByComment = `-- name: GetRepliesByComment :many
-SELECT c.id, c.novel_id, c.user_id, c.parent_id, c.content, c.created_at,
+SELECT c.id, c.novel_id, c.user_id, c.parent_id, c.content, c.last_updated,
        u.username,
        u.image AS picture_url,
        (SELECT COUNT(*) FROM comment_reactions r WHERE r.comment_id = c.id AND r.reaction = 'like') AS likes,
@@ -168,20 +191,20 @@ SELECT c.id, c.novel_id, c.user_id, c.parent_id, c.content, c.created_at,
 FROM comments c
 JOIN users u ON u.id = c.user_id
 WHERE c.parent_id = ?
-ORDER BY c.created_at ASC
+ORDER BY c.last_updated ASC
 `
 
 type GetRepliesByCommentRow struct {
-	ID         int64
-	NovelID    int64
-	UserID     int64
-	ParentID   sql.NullInt64
-	Content    string
-	CreatedAt  string
-	Username   string
-	PictureUrl string
-	Likes      int64
-	Dislikes   int64
+	ID          int64
+	NovelID     int64
+	UserID      int64
+	ParentID    sql.NullInt64
+	Content     string
+	LastUpdated string
+	Username    string
+	PictureUrl  string
+	Likes       int64
+	Dislikes    int64
 }
 
 func (q *Queries) GetRepliesByComment(ctx context.Context, parentID sql.NullInt64) ([]GetRepliesByCommentRow, error) {
@@ -199,7 +222,7 @@ func (q *Queries) GetRepliesByComment(ctx context.Context, parentID sql.NullInt6
 			&i.UserID,
 			&i.ParentID,
 			&i.Content,
-			&i.CreatedAt,
+			&i.LastUpdated,
 			&i.Username,
 			&i.PictureUrl,
 			&i.Likes,
@@ -289,7 +312,6 @@ func (q *Queries) GetUserReactionsForComments(ctx context.Context, arg GetUserRe
 }
 
 const removeReaction = `-- name: RemoveReaction :exec
-
 DELETE FROM comment_reactions
 WHERE user_id = ? AND comment_id = ?
 `
@@ -299,7 +321,6 @@ type RemoveReactionParams struct {
 	CommentID int64
 }
 
-// RETURNING *;
 func (q *Queries) RemoveReaction(ctx context.Context, arg RemoveReactionParams) error {
 	_, err := q.db.ExecContext(ctx, removeReaction, arg.UserID, arg.CommentID)
 	return err
@@ -309,19 +330,19 @@ const updateComment = `-- name: UpdateComment :one
 UPDATE comments
 SET 
     content = ?, 
-    created_at = ?
+    last_updated = ?
 WHERE id = ?
-RETURNING id, novel_id, user_id, parent_id, content, created_at
+RETURNING id, novel_id, user_id, parent_id, content, last_updated
 `
 
 type UpdateCommentParams struct {
-	Content   string
-	CreatedAt string
-	ID        int64
+	Content     string
+	LastUpdated string
+	ID          int64
 }
 
 func (q *Queries) UpdateComment(ctx context.Context, arg UpdateCommentParams) (Comment, error) {
-	row := q.db.QueryRowContext(ctx, updateComment, arg.Content, arg.CreatedAt, arg.ID)
+	row := q.db.QueryRowContext(ctx, updateComment, arg.Content, arg.LastUpdated, arg.ID)
 	var i Comment
 	err := row.Scan(
 		&i.ID,
@@ -329,30 +350,32 @@ func (q *Queries) UpdateComment(ctx context.Context, arg UpdateCommentParams) (C
 		&i.UserID,
 		&i.ParentID,
 		&i.Content,
-		&i.CreatedAt,
+		&i.LastUpdated,
 	)
 	return i, err
 }
 
 const upsertReaction = `-- name: UpsertReaction :exec
-
-INSERT INTO comment_reactions (user_id, comment_id, reaction, created_at)
-VALUES (?, ?, ?, datetime('now'))
+INSERT INTO comment_reactions (user_id, comment_id, reaction, last_updated)
+VALUES (?, ?, ?, ?)
 ON CONFLICT(user_id, comment_id) DO UPDATE
 SET reaction = excluded.reaction,
-    created_at = datetime('now')
+    last_updated = excluded.last_updated
 `
 
 type UpsertReactionParams struct {
-	UserID    int64
-	CommentID int64
-	Reaction  string
+	UserID      int64
+	CommentID   int64
+	Reaction    string
+	LastUpdated string
 }
 
-// -------------------------------------
-// USER REACTIONS
-// -------------------------------------
 func (q *Queries) UpsertReaction(ctx context.Context, arg UpsertReactionParams) error {
-	_, err := q.db.ExecContext(ctx, upsertReaction, arg.UserID, arg.CommentID, arg.Reaction)
+	_, err := q.db.ExecContext(ctx, upsertReaction,
+		arg.UserID,
+		arg.CommentID,
+		arg.Reaction,
+		arg.LastUpdated,
+	)
 	return err
 }

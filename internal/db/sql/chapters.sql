@@ -1,8 +1,8 @@
 -- name: CreateChapter :one
 INSERT INTO chapters (
-    novel_id, chapter_number, title, content
+    novel_id, chapter_number, title, content, release_date
 ) VALUES (
-    ?, ?, ?, ?
+    ?, ?, ?, ?, ?
 )
 RETURNING *;
 
