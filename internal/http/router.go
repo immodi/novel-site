@@ -60,6 +60,9 @@ func (router *Router) RegisterRoutes() {
 
 	router.r.Post("/load/novel", router.handlers.Load.LoadNovel)
 	router.r.Post("/load/chapters", router.handlers.Load.LoadChapter)
+	router.r.Post("/load/last-chapter/id", router.handlers.Load.GetLastChapterById)
+	router.r.Post("/load/last-chapter/name", router.handlers.Load.GetLastChapterByName)
+	router.r.Post("/load/append-chapters", router.handlers.Load.AppendChapters)
 
 	if !config.IsProduction {
 		router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)

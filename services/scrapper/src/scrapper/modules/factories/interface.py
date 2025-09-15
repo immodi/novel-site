@@ -1,4 +1,4 @@
-from typing import Protocol, List, Union
+from typing import Protocol, List, Union, Tuple
 from lxml import html
 from scrapper import config
 from scrapper.helpers import utils
@@ -50,7 +50,7 @@ class Parser(Protocol):
 
     def update_novel(
         self, novel_name: str, last_chapter_url: str
-    ) -> List[ChapterData]: ...
+    ) -> Tuple[str, List[ChapterData]]: ...
 
     def novel_exists(self, title: str) -> bool:
         """Check if a novel JSON file already exists in DATA_DIR"""

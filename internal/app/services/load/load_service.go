@@ -28,6 +28,16 @@ func (s *loadService) GetNovelByExactName(name string) (repositories.Novel, erro
 	})
 }
 
+func (s *loadService) GetNovelById(id int64) (repositories.Novel, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (repositories.Novel, error) {
+		return q.GetNovelByID(ctx, id)
+	})
+}
+
+func (s *loadService) GetLastNovelChapter(novelID int64) (repositories.Chapter, error) {
+	return s.novelService.GetLastChapter(novelID)
+}
+
 func (s *loadService) AddBulkTagsToNovel(novelID int64, tags []string) error {
 	return s.novelService.AddBulkTagsToNovel(novelID, tags)
 }

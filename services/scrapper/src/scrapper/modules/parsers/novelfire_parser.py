@@ -11,6 +11,7 @@ from typing import List, Union
 from scrapper.datatypes.novel import ChapterData, NovelData, NovelLink
 from lxml import html
 from scrapper.datatypes.novel_fire_chapter import NovelFireChapter
+from typing import Tuple
 
 
 class NovelFireParser(Parser):
@@ -182,13 +183,16 @@ class NovelFireParser(Parser):
 
         return chapters
 
-    def update_novel(self, novel_name: str, last_chapter_url: str) -> List[ChapterData]:
+    def update_novel(
+        self, novel_name: str, last_chapter_url: str
+    ) -> Tuple[str, List[ChapterData]]:
         chapters: List[ChapterData] = []
         if not last_chapter_url:
             print("No last chapter found.")
-            return chapters
+            return "", chapters
 
         current_url = last_chapter_url
+        save_dir = f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}/updates"
 
         while True:
             # 1. request the page
@@ -240,16 +244,14 @@ class NovelFireParser(Parser):
             chapters.append(chapter)
 
             # save each chapter immediately
-            saver.save_item(
-                chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
-            )
+            saver.save_item(chapter, save_dir)
 
             print(
                 f"--> Fetched {chapter_data.title} of length "
                 f"{utils.bold_green(len(chapter_data.content))} from url {current_url}."
             )
 
-        return chapters
+        return save_dir, chapters
 
 
 @browser(output=None, headless=False, max_retry=10)

@@ -5,7 +5,9 @@ from scrapper.datatypes.novel import NovelData
 from scrapper.modules.loaders.load_from_json import load_from_json
 from scrapper.modules.loaders.send_chapters_to_server import send_chapters_to_server
 from scrapper.modules.loaders.send_to_server import send_novel_to_server
-from scrapper.helpers.helpers import combine_json_objects_to_array
+from scrapper.helpers.combine_json_objects_into_array import (
+    combine_json_objects_to_array,
+)
 
 
 def loader(retry_delay: float = 2.0, max_retries: int = 5):

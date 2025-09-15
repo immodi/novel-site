@@ -4,7 +4,9 @@ from scrapper.modules.parsers.novelfire_parser import NovelFireParser
 
 
 def get_parser(
-    url: str, skip_duplicates: SkipDuplicate, max_chapters_number: int
+    url: str,
+    skip_duplicates: SkipDuplicate = SkipDuplicate.NONE,
+    max_chapters_number: int = 500,
 ) -> Parser:
     """
     Returns the appropriate parser based on config.LIST_TREE content.

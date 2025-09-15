@@ -7,7 +7,7 @@ from scrapper.helpers import utils, saver, helpers
 from scrapper.modules.factories.factory import Parser, SkipDuplicate
 from scrapper.helpers.utils import safe_text
 from scrapper import config
-from typing import List, Union
+from typing import List, Tuple, Union
 from scrapper.datatypes.novel import ChapterData, NovelData, NovelLink
 from lxml import html
 
@@ -159,8 +159,10 @@ class NovelBinParser(Parser):
 
         return chapters
 
-    def update_novel(self, novel_name: str, last_chapter_url: str) -> List[ChapterData]:
-        return []
+    def update_novel(
+        self, novel_name: str, last_chapter_url: str
+    ) -> Tuple[str, List[ChapterData]]:
+        return "", []
 
 
 @browser(output=None, headless=False, max_retry=10)
