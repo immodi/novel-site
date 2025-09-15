@@ -1,7 +1,6 @@
 package components
 
 import (
-	"fmt"
 	index "immodi/novel-site/internal/http/structs/index"
 	"strings"
 )
@@ -68,7 +67,7 @@ templ Header(navLinks []string) {
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
-							class="h-6 w-6"
+							class="h-6 w-6 text-white dark:text-black"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"
@@ -88,33 +87,57 @@ templ Header(navLinks []string) {
 						class="md:hidden cursor-pointer w-6 h-5 flex flex-col justify-between items-center"
 						onclick="openMenu()"
 					>
-						<span class="block w-6 h-0.5 bg-white dark:bg-black rounded"></span>
-						<span class="block w-6 h-0.5 bg-white dark:bg-black rounded"></span>
-						<span class="block w-6 h-0.5 bg-white dark:bg-black rounded"></span>
+						<span
+							class="block w-6 h-0.5 bg-white dark:bg-black rounded transition-transform duration-300"
+						></span>
+						<span class="block w-6 h-0.5 bg-white dark:bg-black rounded transition-opacity duration-300"></span>
+						<span
+							class="block w-6 h-0.5 bg-white dark:bg-black rounded transition-transform duration-300"
+						></span>
 					</button>
 				</div>
 			</div>
 		</div>
 	</header>
-	<!-- Mobile Menu Overlay -->
+	<!-- Mobile Menu Overlay - Redesigned -->
 	<div
 		id="mobileMenu"
-		class="fixed top-0 right-0 w-screen h-screen bg-[#121212] dark:bg-white text-white dark:text-black z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col"
+		class="fixed top-0 right-0 w-full h-full bg-[#121212] dark:bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden"
 	>
-		<!-- Close Button - Fixed position with proper z-index -->
-		<div class="flex w-full border-b border-[#252525] dark:border-[#ededed] p-4 gap-4">
-			<!-- Search Bar in Mobile Menu -->
-			<div class="flex-1">
-				<form method="GET" action="/search" class="relative w-full" onsubmit="return handleSearch(event, this)">
+		<!-- Menu Content Container -->
+		<div class="flex flex-col h-full overflow-y-auto bg-[#121212] dark:bg-white">
+			<!-- Header with Close Button -->
+			<div class="flex justify-between items-center p-5 border-b border-[#252525] dark:border-[#e5e5e5]">
+				<h2 class="text-xl font-semibold text-white dark:text-black">Menu</h2>
+				<button
+					id="closeMenu"
+					class="p-2 rounded-full bg-[#252525] dark:bg-gray-200 hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors duration-200"
+					onclick="closeMenu()"
+					aria-label="Close menu"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6 text-white dark:text-black"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+			<!-- Search Bar -->
+			<div class="p-5 border-b border-[#252525] dark:border-[#e5e5e5]">
+				<form method="GET" action="/search" class="relative" onsubmit="return handleSearch(event, this)">
 					<input
 						type="text"
 						name="q"
 						placeholder="Search novels..."
-						class="w-full px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-white dark:text-black border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500"
+						class="w-full px-4 py-3 rounded-lg bg-[#252525] dark:bg-gray-200 text-white dark:text-black border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500"
 					/>
 					<button
 						type="submit"
-						class="absolute right-2 top-2 p-1 text-gray-400 dark:text-gray-600 hover:text-blue-500 dark:hover:text-blue-600 cursor-pointer"
+						class="absolute right-3 top-3 p-1 text-gray-400 dark:text-gray-600 hover:text-blue-500 dark:hover:text-blue-600 cursor-pointer"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -133,24 +156,22 @@ templ Header(navLinks []string) {
 					</button>
 				</form>
 			</div>
-			<button
-				id="closeMenu"
-				class="shrink-0 text-3xl cursor-pointer z-60 bg-[#252525] dark:bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center"
-				onclick="closeMenu()"
-			>
-				<span class="text-white dark:text-black">✕</span>
-			</button>
-		</div>
-		<!-- Links -->
-		<div class="flex flex-col items-center justify-center h-full space-y-8 text-2xl pt-8">
-			for _, link := range navLinks {
-				<a href={ fmt.Sprintf("/%s", strings.ToLower(link)) } class="relative pb-1 group" onclick="closeMenu()">
-					{ link }
-					<span
-						class="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-blue-600 transition-all duration-200 group-hover:w-full"
-					></span>
-				</a>
-			}
+			<!-- Navigation Links -->
+			<nav class="flex-1 p-5">
+				<ul class="space-y-4">
+					for _, link := range navLinks {
+						<li>
+							<a
+								href={ "/" + strings.ToLower(link) }
+								class="block py-3 px-4 rounded-lg hover:bg-[#252525] text-white dark:text-black dark:hover:bg-gray-100 dark:hover:text-black transition-colors duration-200 text-lg font-medium"
+								onclick="closeMenu()"
+							>
+								{ link }
+							</a>
+						</li>
+					}
+				</ul>
+			</nav>
 		</div>
 	</div>
 	<script>
@@ -183,6 +204,19 @@ templ Header(navLinks []string) {
         return false;
     }
 
+    // Close menu when clicking outside
+    document.getElementById('mobileMenu').addEventListener('click', function (e) {
+        if (e.target.id === 'mobileMenu') {
+            closeMenu();
+        }
+    });
+
+    // Close menu with Escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeMenu();
+        }
+    });
 </script>
 }
 
