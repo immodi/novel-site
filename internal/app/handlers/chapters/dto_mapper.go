@@ -25,6 +25,7 @@ func MapToChapterDto(dbNovel repositories.Novel, dbChapter repositories.Chapter,
 		NovelSlug:      dbNovel.Slug,
 		ChapterTitle:   dbChapter.Title,
 		ChapterContent: dbChapter.Content,
+		ChapterID:      int(dbChapter.ID),
 		PrevChapter:    prevChapter,
 		NextChapter:    nextChapter,
 	}

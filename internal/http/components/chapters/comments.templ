@@ -1,4 +1,4 @@
-package components
+package chapters
 
 import (
 	"fmt"
@@ -6,13 +6,12 @@ import (
 	"immodi/novel-site/pkg"
 )
 
-templ BeforeLoadingComments(novelID int, redirect bool) {
-	<div id="comments" class="tab-content hidden">
+templ BeforeLoadingChapterComments(chapterID int, redirect bool) {
+	<div id="comments" class="flex items-center justify-center py-8">
 		<div class="flex items-center justify-center">
 			<button
 				id="load-comments-btn"
-				hx-get={ fmt.Sprintf("/comments?novelID=%d", novelID) }
-				hx-target="#comments"
+				hx-get={ fmt.Sprintf("/chapter-comments?chapterID=%d", chapterID) }
 				hx-target="#comments"
 				hx-swap="outerHTML"
 				hx-trigger="click"
@@ -116,24 +115,24 @@ templ BeforeLoadingComments(novelID int, redirect bool) {
 	</div>
 }
 
-templ CommentsComponent(comments []commentsdtostructs.CommentDTO, currentUserID int, novelID int) {
-	<div id="comments" class="tab-content">
+templ ChapterCommentsComponent(comments []commentsdtostructs.CommentDTO, currentUserID int, chapterID int) {
+	<div id="comments" class="text-gray-200 dark:text-gray-800">
 		<h2 class="text-2xl font-semibold text-white dark:text-black mb-6">Comments ({ len(comments) })</h2>
 		<!-- Top-level Comment Form -->
 		<div class="bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] p-5 rounded-lg mb-8">
 			<h3 class="font-medium mb-4 text-gray-200 dark:text-gray-800">Leave a comment</h3>
-			<form method="POST" action="/comment">
-				<input type="hidden" name="novelID" value={ fmt.Sprintf("%d", novelID) }/>
+			<form method="POST" action="/chapter-comments">
+				<input type="hidden" name="chapterID" value={ fmt.Sprintf("%d", chapterID) }/>
 				<textarea
 					name="content"
 					placeholder="Write your comment here..."
-					class="resize-none w-full resize-none bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 mb-4 text-white dark:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
+					class="resize-none w-full resize-none bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 mb-4 text-white dark:text-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
 					rows="4"
 					required
 				></textarea>
 				<button
 					type="submit"
-					class="cursor-pointer bg-[#333333] dark:bg-gray-200 hover:bg-[#444] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-5 py-2.5 rounded-lg font-medium transition-colors cursor-pointer text-white dark:text-gray-900"
+					class="cursor-pointer bg-[#333333] dark:bg-gray-200 hover:bg-[#444] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-5 py-2.5 rounded-lg font-medium transition-colors text-white dark:text-gray-900"
 				>
 					Post Comment
 				</button>
@@ -142,13 +141,13 @@ templ CommentsComponent(comments []commentsdtostructs.CommentDTO, currentUserID 
 		<!-- Comments List -->
 		<div class="space-y-6">
 			for _, comment := range comments {
-				@CommentItem(comment, 0, currentUserID, novelID)
+				@ChapterCommentItem(comment, 0, currentUserID, chapterID)
 			}
 		</div>
 	</div>
 }
 
-templ CommentItem(comment commentsdtostructs.CommentDTO, depth int, currentUserID int, novelID int) {
+templ ChapterCommentItem(comment commentsdtostructs.CommentDTO, depth int, currentUserID int, chapterID int) {
 	{{ isReplyClass := "bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] p-5 rounded-lg" }}
 	{{
 if depth > 0 {
@@ -164,19 +163,19 @@ if depth > 0 {
 				class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover mr-3"
 			/>
 			<div class="flex-1">
-				<div class="font-semibold text-sm md:text-base">{ comment.UserName }</div>
+				<div class="font-semibold text-sm md:text-base text-gray-200 dark:text-gray-800">{ comment.UserName }</div>
 				<div class="text-gray-400 dark:text-gray-600 text-xs md:text-sm">{ pkg.TimeAgo(comment.LastUpdated) }</div>
 			</div>
 		</div>
 		<!-- Content -->
 		<div id={ fmt.Sprintf("comment-content-%d", comment.ID) }>
-			<p class="mb-4 text-sm md:text-base">{ comment.Content }</p>
+			<p class="mb-4 text-sm md:text-base text-gray-200 dark:text-gray-800">{ comment.Content }</p>
 		</div>
 		<!-- Actions -->
 		<div class="flex items-center text-sm">
 			<!-- Like -->
-			<form method="POST" action="/comment/reaction" class="inline-flex items-center mr-4">
-				<input type="hidden" name="novelID" value={ fmt.Sprintf("%d", novelID) }/>
+			<form method="POST" action="/chapter-comments/reaction" class="inline-flex items-center mr-4">
+				<input type="hidden" name="chapterID" value={ fmt.Sprintf("%d", chapterID) }/>
 				<input type="hidden" name="commentID" value={ fmt.Sprintf("%d", comment.ID) }/>
 				<input type="hidden" name="reaction" value="like"/>
 				<button
@@ -201,8 +200,8 @@ if depth > 0 {
 				</button>
 			</form>
 			<!-- Dislike -->
-			<form method="POST" action="/comment/reaction" class="inline-flex items-center mr-4">
-				<input type="hidden" name="novelID" value={ fmt.Sprintf("%d", novelID) }/>
+			<form method="POST" action="/chapter-comments/reaction" class="inline-flex items-center mr-4">
+				<input type="hidden" name="chapterID" value={ fmt.Sprintf("%d", chapterID) }/>
 				<input type="hidden" name="commentID" value={ fmt.Sprintf("%d", comment.ID) }/>
 				<input type="hidden" name="reaction" value="dislike"/>
 				<button
@@ -247,20 +246,20 @@ if depth > 0 {
 		</div>
 		<!-- Reply Form -->
 		<div id={ fmt.Sprintf("reply-form-%d", comment.ID) } class="reply-form hidden mt-4">
-			<form method="POST" action="/comment">
+			<form method="POST" action="/chapter-comments">
 				<input type="hidden" name="parentCommentID" value={ fmt.Sprintf("%d", comment.ID) }/>
-				<input type="hidden" name="novelID" value={ fmt.Sprintf("%d", novelID) }/>
+				<input type="hidden" name="chapterID" value={ fmt.Sprintf("%d", chapterID) }/>
 				<textarea
 					name="content"
 					placeholder="Write your reply here..."
-					class="resize-none w-full bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 text-white dark:text-black focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm md:text-base"
+					class="resize-none w-full bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 text-white dark:text-gray-900 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm md:text-base"
 					rows="3"
 					required
 				></textarea>
 				<div class="flex gap-2 mt-2">
 					<button
 						type="submit"
-						class="cursor-pointer bg-[#333333] dark:bg-gray-200 hover:bg-[#444] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors text-xs md:text-sm"
+						class="cursor-pointer bg-[#333333] dark:bg-gray-200 hover:bg-[#444] dark:hover:bg-gray-300 border border-[#252525] dark:border-[#ededed] px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium transition-colors text-white dark:text-gray-900 text-xs md:text-sm"
 					>
 						Post Reply
 					</button>
@@ -277,12 +276,12 @@ if depth > 0 {
 		<!-- Edit Form (only for comment owner) -->
 		if comment.UserID == currentUserID {
 			<div id={ fmt.Sprintf("edit-form-%d", comment.ID) } class="edit-form hidden mt-4">
-				<form method="POST" action="/comment/edit">
+				<form method="POST" action="/chapter-comments/edit">
 					<input type="hidden" name="commentID" value={ fmt.Sprintf("%d", comment.ID) }/>
-					<input type="hidden" name="novelID" value={ fmt.Sprintf("%d", novelID) }/>
+					<input type="hidden" name="chapterID" value={ fmt.Sprintf("%d", chapterID) }/>
 					<textarea
 						name="content"
-						class="resize-none w-full bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 text-white dark:text-black focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm md:text-base"
+						class="resize-none w-full bg-[#252525] dark:bg-white border border-[#333] dark:border-gray-300 rounded-lg p-4 text-white dark:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm md:text-base"
 						rows="3"
 						required
 					>{ comment.Content }</textarea>
@@ -308,7 +307,7 @@ if depth > 0 {
 		if len(comment.Replies) > 0 {
 			<div class="mt-6 space-y-4 border-l-2 border-[#333] dark:border-gray-300 pl-2 md:pl-4">
 				for _, reply := range comment.Replies {
-					@CommentItem(reply, depth+1, currentUserID, novelID)
+					@ChapterCommentItem(reply, depth+1, currentUserID, chapterID)
 				}
 			</div>
 		}
@@ -316,22 +315,13 @@ if depth > 0 {
 }
 
 script toggleReplyForm(commentID int) {
-// Hide all edit forms first to avoid conflicts
 document.querySelectorAll('.edit-form').forEach(f => f.classList.add('hidden'));
-
-// Select all reply forms
 const forms = document.querySelectorAll('.reply-form');
 const targetId = 'reply-form-' + commentID;
 const target = document.getElementById(targetId);
 if (!target) return;
-
-// Was the target hidden before hiding all?
 const wasHidden = target.classList.contains('hidden');
-
-// Hide all reply forms
 forms.forEach(f => f.classList.add('hidden'));
-
-// If it was hidden, show it (toggle behavior)
 if (wasHidden) {
 target.classList.remove('hidden');
 const ta = target.querySelector('textarea');
@@ -340,28 +330,18 @@ if (ta) ta.focus();
 }
 
 script toggleEditForm(commentID int) {
-// Hide all reply forms first to avoid conflicts
 document.querySelectorAll('.reply-form').forEach(f => f.classList.add('hidden'));
-
-// Select all edit forms
 const forms = document.querySelectorAll('.edit-form');
 const targetId = 'edit-form-' + commentID;
 const target = document.getElementById(targetId);
 if (!target) return;
-
-// Was the target hidden before hiding all?
 const wasHidden = target.classList.contains('hidden');
-
-// Hide all edit forms
 forms.forEach(f => f.classList.add('hidden'));
-
-// If it was hidden, show it (toggle behavior)
 if (wasHidden) {
 target.classList.remove('hidden');
 const ta = target.querySelector('textarea');
 if (ta) {
 ta.focus();
-// Move cursor to the end of the text
 ta.setSelectionRange(ta.value.length, ta.value.length);
 }
 }

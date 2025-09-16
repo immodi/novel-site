@@ -2,6 +2,7 @@ package utils
 
 import (
 	"immodi/novel-site/internal/app/services/auth"
+	chaptercomments "immodi/novel-site/internal/app/services/chapter_comments"
 	"immodi/novel-site/internal/app/services/chapters"
 	comments "immodi/novel-site/internal/app/services/comments"
 	"immodi/novel-site/internal/app/services/db"
@@ -15,15 +16,16 @@ import (
 )
 
 type Services struct {
-	DB             *db.DBService
-	NovelService   novels.NovelService
-	ChapterService chapters.ChapterService
-	HomeService    index.HomeService
-	AuthService    auth.AuthService
-	SearchServie   search.SearchService
-	LoadService    load.LoadService
-	ProfileService profile.ProfileService
-	CommentService comments.CommentService
+	DB                    *db.DBService
+	NovelService          novels.NovelService
+	ChapterService        chapters.ChapterService
+	HomeService           index.HomeService
+	AuthService           auth.AuthService
+	SearchServie          search.SearchService
+	LoadService           load.LoadService
+	ProfileService        profile.ProfileService
+	CommentService        comments.CommentService
+	ChapterCommentService chaptercomments.ChapterCommentService
 }
 
 func RegisterServices() *Services {
@@ -38,15 +40,16 @@ func RegisterServices() *Services {
 	profileSerivce := profile.NewProfileService(dbService, novelService)
 
 	return &Services{
-		DB:             dbService,
-		HomeService:    homeService,
-		NovelService:   novelService,
-		ChapterService: chapterService,
-		AuthService:    auth.New(dbService),
-		SearchServie:   search.NewSearchService(dbService, homeService),
-		LoadService:    load.NewLoadService(dbService, novelService, chapterService),
-		ProfileService: profileSerivce,
-		CommentService: comments.NewCommentService(dbService),
+		DB:                    dbService,
+		HomeService:           homeService,
+		NovelService:          novelService,
+		ChapterService:        chapterService,
+		AuthService:           auth.New(dbService),
+		SearchServie:          search.NewSearchService(dbService, homeService),
+		LoadService:           load.NewLoadService(dbService, novelService, chapterService),
+		ProfileService:        profileSerivce,
+		CommentService:        comments.NewCommentService(dbService),
+		ChapterCommentService: chaptercomments.NewChapterCommentService(dbService),
 	}
 }
 

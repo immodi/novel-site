@@ -8,10 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	index "immodi/novel-site/internal/http/structs/index"
-	"strings"
-)
+import "strings"
 
 func Header(navLinks []string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -34,56 +31,43 @@ func Header(navLinks []string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"w-full flex justify-between items-center bg-[#121212] dark:bg-white border-b border-[#252525] dark:border-[#ededed] text-white dark:text-black px-6 py-4\"><!-- Logo --><a href=\"/\" class=\"text-3xl font-bold flex justify-center items-center\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(index.SITE_NAME)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 13, Col: 91}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</a><!-- Navigation Links and Right Side Controls --><div class=\"flex w-auto gap-6 h-full\"><!-- Desktop Search Bar - Moved to left after logo --><form method=\"GET\" action=\"/search\" class=\"hidden md:flex relative ml-6\" onsubmit=\"return handleSearch(event, this)\"><input type=\"text\" name=\"q\" placeholder=\"Search novels...\" class=\"w-48 px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-white dark:text-black border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-300 focus:w-64\"> <button type=\"submit\" class=\"absolute right-2 top-2 p-1 text-gray-400 dark:text-gray-600 hover:text-blue-500 dark:hover:text-blue-600 cursor-pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></form><div class=\"flex items-center justify-end w-fit h-full\"><nav class=\"hidden md:flex items-center justify-center space-x-8 text-lg mt-2 mr-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"w-full flex justify-between items-center bg-[#121212] dark:bg-white border-b border-[#252525] dark:border-[#ededed] text-white dark:text-black px-6\"><!-- Logo --><a href=\"/\" class=\"relative flex-shrink-0 block w-[6rem] h-[5rem]\"><img src=\"/static/media/logo/logo.png\" loading=\"lazy\" class=\"absolute -left-2 md:left-0 top-1/2 -translate-y-1/2 h-20 w-auto object-contain transform scale-200 origin-left\" alt=\"Site logo\"></a><!-- Navigation Links and Right Side Controls --><div class=\"flex w-auto gap-6 h-full\"><!-- Desktop Search Bar - Moved to left after logo --><form method=\"GET\" action=\"/search\" class=\"hidden md:flex relative ml-6\" onsubmit=\"return handleSearch(event, this)\"><input type=\"text\" name=\"q\" placeholder=\"Search novels...\" class=\"w-48 px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-white dark:text-black border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-300 focus:w-64\"> <button type=\"submit\" class=\"absolute right-2 top-2 p-1 text-gray-400 dark:text-gray-600 hover:text-blue-500 dark:hover:text-blue-600 cursor-pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></form><div class=\"flex items-center justify-end w-fit h-full\"><nav class=\"hidden md:flex items-center justify-center space-x-8 text-lg mt-2 mr-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, link := range navLinks {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 templ.SafeURL
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs("/" + strings.ToLower(link))
+			var templ_7745c5c3_Var2 templ.SafeURL
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs("/" + strings.ToLower(link))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 52, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 56, Col: 43}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"relative pb-1 group\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(link)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 57, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" class=\"relative pb-1 group\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(link)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 53, Col: 13}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " <span class=\"absolute left-0 -bottom-0.5 h-0.5 w-0 bg-blue-600 transition-all duration-200 group-hover:w-full\"></span></a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " <span class=\"absolute left-0 -bottom-0.5 h-0.5 w-0 bg-blue-600 transition-all duration-200 group-hover:w-full\"></span></a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</nav><!-- Right Side Controls --><div class=\"flex items-center space-x-4\"><!-- Search Icon (Mobile) - Now opens the side menu --><button id=\"mobileSearchToggle\" class=\"md:hidden text-white dark:text-black cursor-pointer\" onclick=\"openMenu()\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6 text-white dark:text-black\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</nav><!-- Right Side Controls --><div class=\"flex items-center space-x-4\"><!-- Search Icon (Mobile) - Now opens the side menu --><button id=\"mobileSearchToggle\" class=\"md:hidden text-white dark:text-black cursor-pointer\" onclick=\"openMenu()\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6 text-white dark:text-black\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -91,43 +75,43 @@ func Header(navLinks []string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<!-- Mobile Hamburger --><button id=\"menuToggle\" class=\"md:hidden cursor-pointer w-6 h-5 flex flex-col justify-between items-center\" onclick=\"openMenu()\"><span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded transition-transform duration-300\"></span> <span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded transition-opacity duration-300\"></span> <span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded transition-transform duration-300\"></span></button></div></div></div></header><!-- Mobile Menu Overlay - Redesigned --><div id=\"mobileMenu\" class=\"fixed top-0 right-0 w-full h-full bg-[#121212] dark:bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden\"><!-- Menu Content Container --><div class=\"flex flex-col h-full overflow-y-auto bg-[#121212] dark:bg-white\"><!-- Header with Close Button --><div class=\"flex justify-between items-center p-5 border-b border-[#252525] dark:border-[#e5e5e5]\"><h2 class=\"text-xl font-semibold text-white dark:text-black\">Menu</h2><button id=\"closeMenu\" class=\"p-2 rounded-full bg-[#252525] dark:bg-gray-200 hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors duration-200\" onclick=\"closeMenu()\" aria-label=\"Close menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6 text-white dark:text-black\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><!-- Search Bar --><div class=\"p-5 border-b border-[#252525] dark:border-[#e5e5e5]\"><form method=\"GET\" action=\"/search\" class=\"relative\" onsubmit=\"return handleSearch(event, this)\"><input type=\"text\" name=\"q\" placeholder=\"Search novels...\" class=\"w-full px-4 py-3 rounded-lg bg-[#252525] dark:bg-gray-200 text-white dark:text-black border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500\"> <button type=\"submit\" class=\"absolute right-3 top-3 p-1 text-gray-400 dark:text-gray-600 hover:text-blue-500 dark:hover:text-blue-600 cursor-pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></form></div><!-- Navigation Links --><nav class=\"flex-1 p-5\"><ul class=\"space-y-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<!-- Mobile Hamburger --><button id=\"menuToggle\" class=\"md:hidden cursor-pointer w-6 h-5 flex flex-col justify-between items-center\" onclick=\"openMenu()\"><span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded transition-transform duration-300\"></span> <span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded transition-opacity duration-300\"></span> <span class=\"block w-6 h-0.5 bg-white dark:bg-black rounded transition-transform duration-300\"></span></button></div></div></div></header><!-- Mobile Menu Overlay - Redesigned --><div id=\"mobileMenu\" class=\"fixed top-0 right-0 w-full h-full bg-[#121212] dark:bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden\"><!-- Menu Content Container --><div class=\"flex flex-col h-full overflow-y-auto bg-[#121212] dark:bg-white\"><!-- Header with Close Button --><div class=\"flex justify-between items-center p-5 border-b border-[#252525] dark:border-[#e5e5e5]\"><h2 class=\"text-xl font-semibold text-white dark:text-black\">Menu</h2><button id=\"closeMenu\" class=\"p-2 rounded-full bg-[#252525] dark:bg-gray-200 hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors duration-200\" onclick=\"closeMenu()\" aria-label=\"Close menu\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6 text-white dark:text-black\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><!-- Search Bar --><div class=\"p-5 border-b border-[#252525] dark:border-[#e5e5e5]\"><form method=\"GET\" action=\"/search\" class=\"relative\" onsubmit=\"return handleSearch(event, this)\"><input type=\"text\" name=\"q\" placeholder=\"Search novels...\" class=\"w-full px-4 py-3 rounded-lg bg-[#252525] dark:bg-gray-200 text-white dark:text-black border border-[#353535] dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400 dark:placeholder-gray-500\"> <button type=\"submit\" class=\"absolute right-3 top-3 p-1 text-gray-400 dark:text-gray-600 hover:text-blue-500 dark:hover:text-blue-600 cursor-pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></form></div><!-- Navigation Links --><nav class=\"flex-1 p-5\"><ul class=\"space-y-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, link := range navLinks {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<li><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<li><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var5 templ.SafeURL
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs("/" + strings.ToLower(link))
+			var templ_7745c5c3_Var4 templ.SafeURL
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs("/" + strings.ToLower(link))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 165, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 169, Col: 42}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"block py-3 px-4 rounded-lg hover:bg-[#252525] text-white dark:text-black dark:hover:bg-gray-100 dark:hover:text-black transition-colors duration-200 text-lg font-medium\" onclick=\"closeMenu()\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(link)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 173, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"block py-3 px-4 rounded-lg hover:bg-[#252525] text-white dark:text-black dark:hover:bg-gray-100 dark:hover:text-black transition-colors duration-200 text-lg font-medium\" onclick=\"closeMenu()\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(link)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/header.templ`, Line: 169, Col: 14}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</a></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</a></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</ul></nav></div></div><script>\n    // Menu functions\n    function openMenu() {\n        const menu = document.getElementById(\"mobileMenu\");\n        menu.classList.remove(\"translate-x-full\");\n        menu.classList.add(\"translate-x-0\");\n        document.body.classList.add(\"overflow-hidden\");\n    }\n\n    function closeMenu() {\n        const menu = document.getElementById(\"mobileMenu\");\n        menu.classList.add(\"translate-x-full\");\n        menu.classList.remove(\"translate-x-0\");\n        document.body.classList.remove(\"overflow-hidden\");\n    }\n\n    // Search form handler\n    function handleSearch(event, form) {\n        event.preventDefault();\n        const searchInput = form.querySelector('input[name=\"q\"]');\n        const searchTerm = searchInput.value.trim();\n\n        if (searchTerm) {\n            const formattedTerm = searchTerm.toLowerCase().replace(/\\s+/g, '-');\n            window.location.href = `/search/${formattedTerm}`;\n        }\n\n        return false;\n    }\n\n    // Close menu when clicking outside\n    document.getElementById('mobileMenu').addEventListener('click', function (e) {\n        if (e.target.id === 'mobileMenu') {\n            closeMenu();\n        }\n    });\n\n    // Close menu with Escape key\n    document.addEventListener('keydown', function (e) {\n        if (e.key === 'Escape') {\n            closeMenu();\n        }\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</ul></nav></div></div><script>\n    // Menu functions\n    function openMenu() {\n        const menu = document.getElementById(\"mobileMenu\");\n        menu.classList.remove(\"translate-x-full\");\n        menu.classList.add(\"translate-x-0\");\n        document.body.classList.add(\"overflow-hidden\");\n    }\n\n    function closeMenu() {\n        const menu = document.getElementById(\"mobileMenu\");\n        menu.classList.add(\"translate-x-full\");\n        menu.classList.remove(\"translate-x-0\");\n        document.body.classList.remove(\"overflow-hidden\");\n    }\n\n    // Search form handler\n    function handleSearch(event, form) {\n        event.preventDefault();\n        const searchInput = form.querySelector('input[name=\"q\"]');\n        const searchTerm = searchInput.value.trim();\n\n        if (searchTerm) {\n            const formattedTerm = searchTerm.toLowerCase().replace(/\\s+/g, '-');\n            window.location.href = `/search/${formattedTerm}`;\n        }\n\n        return false;\n    }\n\n    // Close menu when clicking outside\n    document.getElementById('mobileMenu').addEventListener('click', function (e) {\n        if (e.target.id === 'mobileMenu') {\n            closeMenu();\n        }\n    });\n\n    // Close menu with Escape key\n    document.addEventListener('keydown', function (e) {\n        if (e.key === 'Escape') {\n            closeMenu();\n        }\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -151,12 +135,12 @@ func ThemeToggle() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<button id=\"toggleDark\" class=\"md:top-[1px] relative w-8 h-8 cursor-pointer rounded-full \n               hover:bg-gray-800 dark:hover:bg-gray-100 \n               transition-colors duration-200 focus:outline-none \n               focus:ring-2 focus:ring-gray-600 dark:focus:ring-gray-300\" aria-label=\"Toggle theme\"><!-- Sun Icon (Light Mode) --><svg id=\"sun-icon\" class=\"absolute inset-0 w-6 h-6 m-auto text-white dark:text-black \n                   transition-all duration-300 ease-in-out opacity-0 scale-75\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"5\"></circle> <path d=\"M12 1v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8l1.4 1.4M1 12h2m18 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4\"></path></svg><!-- Moon Icon (Dark Mode) --><svg id=\"moon-icon\" class=\"absolute inset-0 w-6 h-6 m-auto text-white dark:text-black \n                   transition-all duration-300 ease-in-out\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"></path></svg></button>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<button id=\"toggleDark\" class=\"md:top-[1px] relative w-8 h-8 cursor-pointer rounded-full \n               hover:bg-gray-800 dark:hover:bg-gray-100 \n               transition-colors duration-200 focus:outline-none \n               focus:ring-2 focus:ring-gray-600 dark:focus:ring-gray-300\" aria-label=\"Toggle theme\"><!-- Sun Icon (Light Mode) --><svg id=\"sun-icon\" class=\"absolute inset-0 w-6 h-6 m-auto text-white dark:text-black \n                   transition-all duration-300 ease-in-out opacity-0 scale-75\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"5\"></circle> <path d=\"M12 1v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8l1.4 1.4M1 12h2m18 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4\"></path></svg><!-- Moon Icon (Dark Mode) --><svg id=\"moon-icon\" class=\"absolute inset-0 w-6 h-6 m-auto text-white dark:text-black \n                   transition-all duration-300 ease-in-out\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\" stroke-width=\"2\"><path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"></path></svg></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

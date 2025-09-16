@@ -12,10 +12,10 @@ const CommentRedirectCookie = "comment_redirect"
 
 var commentRedirectDuration = 5 * time.Second // short-lived
 
-func SetCommentRedirect(w http.ResponseWriter, novelID int) {
+func SetCommentRedirect(w http.ResponseWriter, id int) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     CommentRedirectCookie,
-		Value:    strconv.Itoa(novelID),
+		Value:    strconv.Itoa(id),
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   config.IsProduction,

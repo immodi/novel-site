@@ -125,3 +125,36 @@ CREATE TABLE IF NOT EXISTS comment_reactions (
 CREATE INDEX IF NOT EXISTS idx_comment_reactions_user_id ON comment_reactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_comment_reactions_comment_id ON comment_reactions(comment_id);
 
+-- Table: chapter_comments
+CREATE TABLE IF NOT EXISTS chapter_comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chapter_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    parent_id INTEGER, -- nullable for top-level comments
+    content TEXT NOT NULL,
+    last_updated TEXT NOT NULL DEFAULT '',
+    FOREIGN KEY (chapter_id) REFERENCES chapters(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES chapter_comments(id) ON DELETE CASCADE
+);
+
+-- Indexes for efficient chapter comment lookups
+CREATE INDEX IF NOT EXISTS idx_chapter_comments_chapter_id ON chapter_comments(chapter_id);
+CREATE INDEX IF NOT EXISTS idx_chapter_comments_user_id   ON chapter_comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_chapter_comments_parent_id ON chapter_comments(parent_id);
+
+
+-- Table: chapter_comment_reactions
+CREATE TABLE IF NOT EXISTS chapter_comment_reactions (
+    user_id INTEGER NOT NULL,
+    comment_id INTEGER NOT NULL,
+    reaction TEXT NOT NULL CHECK(reaction IN ('like', 'dislike')),
+    last_updated TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (user_id, comment_id), -- one reaction per user per chapter comment
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES chapter_comments(id) ON DELETE CASCADE
+);
+
+-- Indexes for quick chapter comment reaction lookups
+CREATE INDEX IF NOT EXISTS idx_chapter_comment_reactions_user_id    ON chapter_comment_reactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_chapter_comment_reactions_comment_id ON chapter_comment_reactions(comment_id);

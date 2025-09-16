@@ -17,6 +17,22 @@ type Chapter struct {
 	ReleaseDate   string
 }
 
+type ChapterComment struct {
+	ID          int64
+	ChapterID   int64
+	UserID      int64
+	ParentID    sql.NullInt64
+	Content     string
+	LastUpdated string
+}
+
+type ChapterCommentReaction struct {
+	UserID      int64
+	CommentID   int64
+	Reaction    string
+	LastUpdated string
+}
+
 type Comment struct {
 	ID          int64
 	NovelID     int64

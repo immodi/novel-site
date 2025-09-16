@@ -16,8 +16,8 @@ import (
 func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
 	novelSlug := chi.URLParam(r, "novelSlug")
-	successMsg := GetAndClearCookie(w, r, "successMessage")
-	errorMsg := GetAndClearCookie(w, r, "errorMessage")
+	successMsg := pkg.GetAndClearCookie(w, r, "successMessage")
+	errorMsg := pkg.GetAndClearCookie(w, r, "errorMessage")
 
 	currentPage := 1
 	if pageStr != "" {
@@ -87,7 +87,7 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 	)
 
 	var isRedirect bool = false
-	isRedirectStr := GetAndClearCookie(w, r, comments.CommentRedirectCookie)
+	isRedirectStr := pkg.GetAndClearCookie(w, r, comments.CommentRedirectCookie)
 	if isRedirectStr != "" {
 		isRedirect = true
 	}

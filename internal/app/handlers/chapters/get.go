@@ -2,8 +2,10 @@ package chapters
 
 import (
 	"immodi/novel-site/internal/app/handlers"
+	"immodi/novel-site/internal/app/handlers/comments"
 	dropdown "immodi/novel-site/internal/http/components/chapters"
 	"immodi/novel-site/internal/http/templates/chapters"
+	"immodi/novel-site/pkg"
 	"net/http"
 	"strconv"
 
@@ -62,10 +64,16 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 		novelStatus = "Ongoing"
 	}
 
+	var isRedirect bool = false
+	isRedirectStr := pkg.GetAndClearCookie(w, r, comments.CommentRedirectCookie)
+	if isRedirectStr != "" {
+		isRedirect = true
+	}
+
 	chapter := MapToChapterDto(dbNovel, dbChapter, prevChapterIntPointer, nextChapterIntPointer)
 	metaData := BuildChapterMeta(dbNovel, chapterNum, novelStatus)
 
-	handlers.GenericHandler(w, r, metaData, chapters.ChapterReader(chapter))
+	handlers.GenericHandler(w, r, metaData, chapters.ChapterReader(&chapter, isRedirect))
 }
 
 func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Request) {

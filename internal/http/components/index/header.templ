@@ -1,16 +1,20 @@
 package components
 
-import (
-	index "immodi/novel-site/internal/http/structs/index"
-	"strings"
-)
+import "strings"
 
 templ Header(navLinks []string) {
 	<header
-		class="w-full flex justify-between items-center bg-[#121212] dark:bg-white border-b border-[#252525] dark:border-[#ededed] text-white dark:text-black px-6 py-4"
+		class="w-full flex justify-between items-center bg-[#121212] dark:bg-white border-b border-[#252525] dark:border-[#ededed] text-white dark:text-black px-6"
 	>
 		<!-- Logo -->
-		<a href="/" class="text-3xl font-bold flex justify-center items-center">{ index.SITE_NAME }</a>
+		<a href="/" class="relative flex-shrink-0 block w-[6rem] h-[5rem]">
+			<img
+				src="/static/media/logo/logo.png"
+				loading="lazy"
+				class="absolute -left-2 md:left-0 top-1/2 -translate-y-1/2 h-20 w-auto object-contain transform scale-200 origin-left"
+				alt="Site logo"
+			/>
+		</a>
 		<!-- Navigation Links and Right Side Controls -->
 		<div class="flex w-auto gap-6 h-full">
 			<!-- Desktop Search Bar - Moved to left after logo -->
