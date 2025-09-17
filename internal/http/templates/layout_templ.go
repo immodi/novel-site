@@ -11,6 +11,8 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	components "immodi/novel-site/internal/http/components/index"
 	"immodi/novel-site/internal/http/structs/index"
+	"strconv"
+	"time"
 )
 
 func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.LayoutData, content templ.Component) templ.Component {
@@ -34,20 +36,33 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" href=\"/static/styles/output.css\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/static/logo/logo_icon.svg\"><script src=\"/static/js/htmx.min.js\"></script><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(metaData.Title)
+		var templ_7745c5c3_Var2 templ.SafeURL
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs("/static/styles/output.css?v=" + strconv.FormatInt(time.Now().UTC().Unix(), 10))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 17, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 16, Col: 112}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/static/logo/logo_icon.svg\"><script src=\"/static/js/htmx.min.js\"></script><title>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(metaData.Title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 19, Col: 26}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +70,7 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</head><body class=\"min-h-screen flex flex-col\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</head><body class=\"min-h-screen flex flex-col\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -65,7 +80,7 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<main class=\"flex flex-grow\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<main class=\"flex flex-grow\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -73,7 +88,7 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -85,7 +100,7 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -109,12 +124,12 @@ func DarkModeScript() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script>\n    // function applyTheme(isLight) {\n    //     document.querySelectorAll(\"[class*='dark:'], [class*='off:']\").forEach(el => {\n    //         let classAttr = el.getAttribute(\"class\") || \"\";\n    //         const classes = classAttr.trim().split(/\\s+/);\n    //\n    //         const newClasses = classes.map(c => {\n    //             if (c.startsWith(\"dark:\")) {\n    //                 return isLight ? c : c.replace(\"dark:\", \"off:\");\n    //             }\n    //             if (c.startsWith(\"off:\")) {\n    //                 return isLight ? c.replace(\"off:\", \"dark:\") : c;\n    //             }\n    //             return c;\n    //         }).join(\" \");\n    //\n    //         el.setAttribute(\"class\", newClasses);\n    //     });\n    //\n    //     // Icon switching\n    //     const sun = document.getElementById(\"sun-icon\");\n    //     const moon = document.getElementById(\"moon-icon\");\n    //     if (isLight) {\n    //         sun.classList.remove(\"opacity-0\", \"scale-75\");\n    //         moon.classList.add(\"opacity-0\", \"scale-75\");\n    //     } else {\n    //         moon.classList.remove(\"opacity-0\", \"scale-75\");\n    //         sun.classList.add(\"opacity-0\", \"scale-75\");\n    //     }\n    // }\n    //\n    // // Load from localStorage\n    // let isLight = localStorage.getItem(\"theme\") === \"light\";\n    // applyTheme(isLight);\n    //\n    // document.querySelector(\"#toggleDark\").addEventListener(\"click\", () => {\n    //     console.log(isLight)\n    //\n    //     isLight = !isLight;\n    //     localStorage.setItem(\"theme\", isLight ? \"light\" : \"dark\");\n    //     applyTheme(isLight);\n    // });\n\n\n\n    (function () {\n        // Utility: process a single element (store original classes once)\n        function processElement(el, isLight) {\n            if (!el || el.nodeType !== 1) return;\n            // Save original classes once so swaps are deterministic\n            if (!el.dataset.origClass) {\n                el.dataset.origClass = el.getAttribute(\"class\") || \"\";\n            }\n            const orig = el.dataset.origClass;\n            const classes = orig.trim().split(/\\s+/).filter(Boolean);\n\n            const newClasses = classes.map(c => {\n                if (c.startsWith(\"dark:\")) {\n                    // In light mode => turn dark: -> off: (deactivate dark variant)\n                    // In dark mode  => keep as dark:\n                    return isLight ? c.replace(/^dark:/, \"off:\") : c;\n                }\n                if (c.startsWith(\"off:\")) {\n                    // In light mode => turn off: -> dark: (activate the light variant in your scheme)\n                    // In dark mode  => keep as off:\n                    return isLight ? c.replace(/^off:/, \"dark:\") : c;\n                }\n                return c;\n            }).join(\" \");\n\n            // Only set the class attr if it changed (micro-optimization)\n            if (el.getAttribute(\"class\") !== newClasses) {\n                el.setAttribute(\"class\", newClasses);\n            }\n        }\n\n        // Apply to all matching elements (idempotent thanks to dataset.origClass)\n        function applyTheme(isLight) {\n            document.querySelectorAll(\"[class*='dark:'], [class*='off:']\").forEach(el => {\n                processElement(el, isLight);\n            });\n\n            // Icon switching (keeps your original approach)\n            const sun = document.getElementById(\"sun-icon\");\n            const moon = document.getElementById(\"moon-icon\");\n            if (sun && moon) {\n                if (isLight) {\n                    sun.classList.remove(\"opacity-0\", \"scale-75\");\n                    moon.classList.add(\"opacity-0\", \"scale-75\");\n                } else {\n                    moon.classList.remove(\"opacity-0\", \"scale-75\");\n                    sun.classList.add(\"opacity-0\", \"scale-75\");\n                }\n            }\n        }\n\n        // Read preference\n        let isLight = localStorage.getItem(\"theme\") === \"light\";\n\n        // Initial apply\n        applyTheme(isLight);\n\n        // Toggle button\n        const toggler = document.querySelector(\"#toggleDark\");\n        if (toggler) {\n            toggler.addEventListener(\"click\", () => {\n                isLight = !isLight;\n                localStorage.setItem(\"theme\", isLight ? \"light\" : \"dark\");\n                applyTheme(isLight);\n            });\n        }\n\n        // Re-apply after HTMX swaps (simple and reliable)\n        document.body.addEventListener(\"htmx:afterSwap\", (evt) => {\n            // If you want, you can narrow by target: if (evt.detail.target.id === 'comments') ...\n            applyTheme(isLight);\n        });\n\n        // MutationObserver fallback: process newly-added nodes only\n        const observer = new MutationObserver(mutations => {\n            for (const m of mutations) {\n                for (const node of m.addedNodes) {\n                    if (node.nodeType !== 1) continue;\n                    // If the added node itself has classes we care about\n                    if ((node.getAttribute && /(^|\\s)(dark:|off:)/.test(node.getAttribute(\"class\") || \"\"))) {\n                        processElement(node, isLight);\n                    }\n                    // Also process descendants\n                    node.querySelectorAll && node.querySelectorAll(\"[class*='dark:'], [class*='off:']\").forEach(el => {\n                        processElement(el, isLight);\n                    });\n                }\n            }\n        });\n\n        observer.observe(document.documentElement || document.body, {childList: true, subtree: true});\n    })();\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<script>\n    // function applyTheme(isLight) {\n    //     document.querySelectorAll(\"[class*='dark:'], [class*='off:']\").forEach(el => {\n    //         let classAttr = el.getAttribute(\"class\") || \"\";\n    //         const classes = classAttr.trim().split(/\\s+/);\n    //\n    //         const newClasses = classes.map(c => {\n    //             if (c.startsWith(\"dark:\")) {\n    //                 return isLight ? c : c.replace(\"dark:\", \"off:\");\n    //             }\n    //             if (c.startsWith(\"off:\")) {\n    //                 return isLight ? c.replace(\"off:\", \"dark:\") : c;\n    //             }\n    //             return c;\n    //         }).join(\" \");\n    //\n    //         el.setAttribute(\"class\", newClasses);\n    //     });\n    //\n    //     // Icon switching\n    //     const sun = document.getElementById(\"sun-icon\");\n    //     const moon = document.getElementById(\"moon-icon\");\n    //     if (isLight) {\n    //         sun.classList.remove(\"opacity-0\", \"scale-75\");\n    //         moon.classList.add(\"opacity-0\", \"scale-75\");\n    //     } else {\n    //         moon.classList.remove(\"opacity-0\", \"scale-75\");\n    //         sun.classList.add(\"opacity-0\", \"scale-75\");\n    //     }\n    // }\n    //\n    // // Load from localStorage\n    // let isLight = localStorage.getItem(\"theme\") === \"light\";\n    // applyTheme(isLight);\n    //\n    // document.querySelector(\"#toggleDark\").addEventListener(\"click\", () => {\n    //     console.log(isLight)\n    //\n    //     isLight = !isLight;\n    //     localStorage.setItem(\"theme\", isLight ? \"light\" : \"dark\");\n    //     applyTheme(isLight);\n    // });\n\n\n\n    (function () {\n        // Utility: process a single element (store original classes once)\n        function processElement(el, isLight) {\n            if (!el || el.nodeType !== 1) return;\n            // Save original classes once so swaps are deterministic\n            if (!el.dataset.origClass) {\n                el.dataset.origClass = el.getAttribute(\"class\") || \"\";\n            }\n            const orig = el.dataset.origClass;\n            const classes = orig.trim().split(/\\s+/).filter(Boolean);\n\n            const newClasses = classes.map(c => {\n                if (c.startsWith(\"dark:\")) {\n                    // In light mode => turn dark: -> off: (deactivate dark variant)\n                    // In dark mode  => keep as dark:\n                    return isLight ? c.replace(/^dark:/, \"off:\") : c;\n                }\n                if (c.startsWith(\"off:\")) {\n                    // In light mode => turn off: -> dark: (activate the light variant in your scheme)\n                    // In dark mode  => keep as off:\n                    return isLight ? c.replace(/^off:/, \"dark:\") : c;\n                }\n                return c;\n            }).join(\" \");\n\n            // Only set the class attr if it changed (micro-optimization)\n            if (el.getAttribute(\"class\") !== newClasses) {\n                el.setAttribute(\"class\", newClasses);\n            }\n        }\n\n        // Apply to all matching elements (idempotent thanks to dataset.origClass)\n        function applyTheme(isLight) {\n            document.querySelectorAll(\"[class*='dark:'], [class*='off:']\").forEach(el => {\n                processElement(el, isLight);\n            });\n\n            // Icon switching (keeps your original approach)\n            const sun = document.getElementById(\"sun-icon\");\n            const moon = document.getElementById(\"moon-icon\");\n            if (sun && moon) {\n                if (isLight) {\n                    sun.classList.remove(\"opacity-0\", \"scale-75\");\n                    moon.classList.add(\"opacity-0\", \"scale-75\");\n                } else {\n                    moon.classList.remove(\"opacity-0\", \"scale-75\");\n                    sun.classList.add(\"opacity-0\", \"scale-75\");\n                }\n            }\n        }\n\n        // Read preference\n        let isLight = localStorage.getItem(\"theme\") === \"light\";\n\n        // Initial apply\n        applyTheme(isLight);\n\n        // Toggle button\n        const toggler = document.querySelector(\"#toggleDark\");\n        if (toggler) {\n            toggler.addEventListener(\"click\", () => {\n                isLight = !isLight;\n                localStorage.setItem(\"theme\", isLight ? \"light\" : \"dark\");\n                applyTheme(isLight);\n            });\n        }\n\n        // Re-apply after HTMX swaps (simple and reliable)\n        document.body.addEventListener(\"htmx:afterSwap\", (evt) => {\n            // If you want, you can narrow by target: if (evt.detail.target.id === 'comments') ...\n            applyTheme(isLight);\n        });\n\n        // MutationObserver fallback: process newly-added nodes only\n        const observer = new MutationObserver(mutations => {\n            for (const m of mutations) {\n                for (const node of m.addedNodes) {\n                    if (node.nodeType !== 1) continue;\n                    // If the added node itself has classes we care about\n                    if ((node.getAttribute && /(^|\\s)(dark:|off:)/.test(node.getAttribute(\"class\") || \"\"))) {\n                        processElement(node, isLight);\n                    }\n                    // Also process descendants\n                    node.querySelectorAll && node.querySelectorAll(\"[class*='dark:'], [class*='off:']\").forEach(el => {\n                        processElement(el, isLight);\n                    });\n                }\n            }\n        });\n\n        observer.observe(document.documentElement || document.body, {childList: true, subtree: true});\n    })();\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
