@@ -123,10 +123,15 @@ func (router *Router) serveStatic(dir string) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Prevent directory listing
-		if _, err := os.Stat(filepath.Join(absDir, r.URL.Path[len("/static/"):])); os.IsNotExist(err) {
+		filePath := filepath.Join(absDir, r.URL.Path[len("/static/"):])
+		if info, err := os.Stat(filePath); os.IsNotExist(err) || info.IsDir() {
 			http.NotFound(w, r)
 			return
 		}
+
+		// Set Cache-Control header: 1 week
+		w.Header().Set("Cache-Control", "public, max-age=604800") // 604800 seconds = 7 days
+
 		fs.ServeHTTP(w, r)
 	}
 }

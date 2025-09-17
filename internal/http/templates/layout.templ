@@ -3,6 +3,7 @@ package templates
 import (
 	components "immodi/novel-site/internal/http/components/index"
 	"immodi/novel-site/internal/http/structs/index"
+	"immodi/novel-site/pkg"
 )
 
 templ Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.LayoutData, content templ.Component) {
@@ -11,8 +12,9 @@ templ Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Lay
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<link rel="stylesheet" href="/static/styles/output.css"/>
-			<link rel="icon" type="image/svg+xml" href="/static/logo/logo_icon.svg"/>
+			<!-- <link rel="stylesheet" href="/static/styles/output.css"/> -->
+			<link rel="stylesheet" href={ "/static/styles/output.css?v=" + pkg.HashCSS() }/>
+			<link rel=" icon" type="image/svg+xml" href="/static/logo/logo_icon.svg"/>
 			<script src="/static/js/htmx.min.js"></script>
 			<title>{ metaData.Title }</title>
 			@components.MetaHead(metaData)
