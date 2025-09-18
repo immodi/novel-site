@@ -74,6 +74,6 @@ templ MetaHead(s *indexdtostructs.MetaDataStruct) {
 		if s.LatestChapterURL != "" {
 			<meta property="og:novel:lastest_chapter_url" content={ s.LatestChapterURL }/>
 		}
-		<link rel="sitemap" type="application/xml" title="Sitemap" href={ indexdtostructs.DOMAIN + "/static/sitemap.xml" }/>
+		<link rel="sitemap" type="application/xml" title="Sitemap" href={ indexdtostructs.DOMAIN + "/sitemap.xml" }/>
 	}
 }

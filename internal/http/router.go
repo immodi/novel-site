@@ -70,11 +70,6 @@ func (router *Router) RegisterRoutes() {
 		router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
 	}
 
-	router.r.Handle("/static/*", router.serveStatic("static"))
-	router.r.Get("/robots.txt", router.serveRobotsTxt())
-	router.r.Get("/novels", router.redirectToHome())
-	router.r.NotFound(handlers.NotFoundHandler)
-
 	router.r.Group(func(r chi.Router) {
 		r.Use(middlewares.RoleMiddleware("user"))
 
@@ -93,6 +88,12 @@ func (router *Router) RegisterRoutes() {
 		r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
 
 	})
+
+	router.r.Handle("/static/*", router.serveStatic("static"))
+	router.r.Get("/robots.txt", router.serveStaticAsset("robots.txt"))
+	router.r.Get("/sitemap.xml", router.serveStaticAsset("sitemap.xml"))
+	router.r.Get("/novels", router.redirectToHome())
+	router.r.NotFound(handlers.NotFoundHandler)
 
 }
 
@@ -137,10 +138,10 @@ func (router *Router) serveStatic(dir string) http.HandlerFunc {
 	}
 }
 
-func (router *Router) serveRobotsTxt() http.HandlerFunc {
+func (router *Router) serveStaticAsset(assetName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Absolute path to the robots.txt file in your static folder
-		filePath := filepath.Join("static", "robots.txt") // adjust if needed
+		filePath := filepath.Join("static", assetName) // adjust if needed
 		info, err := os.Stat(filePath)
 		if os.IsNotExist(err) || info.IsDir() {
 			http.NotFound(w, r)
