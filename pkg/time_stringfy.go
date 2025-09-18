@@ -27,6 +27,15 @@ func GetDateFromRFCStr(rfc3339Str string) (string, error) {
 	return t.Format("1/2/2006"), nil
 }
 
+// GetDateFromRFCStrDash converts an RFC3339 datetime string to a human-readable date with dashes
+func GetDateFromRFCStrDash(rfc3339Str string) (string, error) {
+	t, err := time.Parse(time.RFC3339, rfc3339Str)
+	if err != nil {
+		return "", err
+	}
+	return t.Format("2006-01-02"), nil
+}
+
 // TimeAgo returns a human-readable relative time string (e.g. "a few minutes ago")
 func TimeAgo(rfc3339Str string) string {
 	t, err := time.Parse(time.RFC3339, rfc3339Str)

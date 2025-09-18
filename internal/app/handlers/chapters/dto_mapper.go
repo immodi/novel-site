@@ -19,11 +19,12 @@ func DbChaptersToChaptersMapper(dbChapters []repositories.Chapter) []novelsdtost
 	return chapters
 }
 
-func MapToChapterDto(dbNovel repositories.Novel, dbChapter repositories.Chapter, prevChapter, nextChapter *int) chaptersdtostructs.ChapterPage {
+func MapToChapterDto(dbNovel *repositories.Novel, dbChapter *repositories.Chapter, prevChapter, nextChapter *int) chaptersdtostructs.ChapterPage {
 	return chaptersdtostructs.ChapterPage{
 		NovelName:      dbNovel.Title,
 		NovelSlug:      dbNovel.Slug,
 		ChapterTitle:   dbChapter.Title,
+		ChapterNumber:  int(dbChapter.ChapterNumber),
 		ChapterContent: dbChapter.Content,
 		ChapterID:      int(dbChapter.ID),
 		PrevChapter:    prevChapter,

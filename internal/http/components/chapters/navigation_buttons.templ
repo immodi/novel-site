@@ -87,11 +87,10 @@ templ NavigationButtons(ch *chaptersdtostructs.ChapterPage) {
 				id={ fmt.Sprintf("chapter-select-%s", id) }
 				name="chapter"
 				class="chapter-select w-full px-4 py-2 bg-transparent text-gray-100 dark:text-gray-800 font-medium appearance-none cursor-pointer focus:outline-none pr-8"
-				hx-get={ fmt.Sprintf("/novel/%s/chapters", ch.NovelSlug) }
+				hx-get={ fmt.Sprintf("/novel/%s/chapters?chapterNumber=%d", ch.NovelSlug, ch.ChapterNumber) }
 				hx-target={ fmt.Sprintf("#chapters-list-%s", id) }
 				hx-trigger="focus once"
 				hx-swap="innerHTML"
-				onchange="if (this.value) window.location.href = this.value"
 			>
 				<option disabled selected>Jump To Chapter</option>
 				<optgroup id={ fmt.Sprintf("chapters-list-%s", id) } label="Chapters"></optgroup>
@@ -219,6 +218,34 @@ templ NavigationButtons(ch *chaptersdtostructs.ChapterPage) {
 }
 
 templ NavigationButtonScript(id string) {
+	<script>
+    (function () {
+        const selectId = "chapter-select-{{ id }}";
+
+        function mountChapterSelect() {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+
+            select.addEventListener("change", function () {
+                const selectedUrl = new URL(this.value, window.location.origin).pathname;
+
+                if (selectedUrl !== window.location.pathname) {
+                    window.location.href = this.value;
+                }
+            });
+        }
+
+        // Mount initially
+        mountChapterSelect();
+
+        // Re-mount after HTMX swap
+        document.body.addEventListener("htmx:afterSwap", function (evt) {
+            if (evt.target.querySelector && evt.target.querySelector(`#${selectId}`)) {
+                mountChapterSelect();
+            }
+        });
+    })();
+</script>
 	<script>
     (function () {
         function initNavigationButtons() {

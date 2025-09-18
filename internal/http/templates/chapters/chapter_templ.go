@@ -82,7 +82,7 @@ func ChapterReader(ch *chaptersdtostructs.ChapterPage, isRedirect bool) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<!-- Content --><div id=\"chapter-content\" class=\"whitespace-pre-wrap prose prose-invert dark:prose max-w-none mb-8 w-full leading-relaxed text-gray-200 dark:text-gray-800 rounded-lg p-6 bg-[#1a1a1a] dark:bg-gray-100 border border-[#252525] dark:border-[#ededed] space-y-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<!-- Content --><div id=\"chapter-content\" class=\"whitespace-pre-wrap prose prose-invert dark:prose max-w-none mb-8 w-full leading-relaxed text-gray-200 dark:text-gray-800 rounded-lg space-y-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -82,9 +82,9 @@ func NavigationButtons(ch *chaptersdtostructs.ChapterPage) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/novel/%s/chapters", ch.NovelSlug))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/novel/%s/chapters?chapterNumber=%d", ch.NovelSlug, ch.ChapterNumber))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 90, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 90, Col: 95}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -103,14 +103,14 @@ func NavigationButtons(ch *chaptersdtostructs.ChapterPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-trigger=\"focus once\" hx-swap=\"innerHTML\" onchange=\"if (this.value) window.location.href = this.value\"><option disabled selected>Jump To Chapter</option> <optgroup id=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" hx-trigger=\"focus once\" hx-swap=\"innerHTML\"><option disabled selected>Jump To Chapter</option> <optgroup id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("chapters-list-%s", id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 97, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 96, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -128,7 +128,7 @@ func NavigationButtons(ch *chaptersdtostructs.ChapterPage) templ.Component {
 			var templ_7745c5c3_Var7 templ.SafeURL
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", ch.NovelSlug, *ch.NextChapter))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 154, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 153, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -177,19 +177,31 @@ func NavigationButtonScript(id string) templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<script>\n    (function () {\n        function initNavigationButtons() {\n            // ---------- Settings Dropdown ----------\n            document.querySelectorAll(\".settings-button\").forEach(btn => {\n                const dropdown = btn.nextElementSibling; // assumes dropdown is immediately after button\n                if (!dropdown) return;\n\n                // Avoid adding duplicate listeners\n                if (btn.dataset.listenerAdded) return;\n                btn.dataset.listenerAdded = \"true\";\n\n                btn.addEventListener(\"click\", e => {\n                    e.stopPropagation();\n                    dropdown.classList.toggle(\"hidden\");\n\n                    // ---------- Flip logic ----------\n                    const rect = dropdown.getBoundingClientRect();\n                    const btnRect = btn.getBoundingClientRect();\n                    const spaceBelow = window.innerHeight - btnRect.bottom;\n                    const spaceAbove = btnRect.top;\n\n                    if (!dropdown.classList.contains(\"hidden\")) {\n                        if (spaceBelow < rect.height && spaceAbove > rect.height) {\n                            // Open upwards\n                            dropdown.style.top = \"auto\";\n                            dropdown.style.bottom = \"100%\";\n                            dropdown.style.marginTop = \"0\";\n                            dropdown.style.marginBottom = \"0.5rem\";\n                        } else {\n                            // Open downwards\n                            dropdown.style.bottom = \"auto\";\n                            dropdown.style.top = \"100%\";\n                            dropdown.style.marginBottom = \"0\";\n                            dropdown.style.marginTop = \"0.5rem\";\n                        }\n                    }\n                });\n            });\n\n            // Close dropdowns when clicking outside\n            document.addEventListener(\"click\", event => {\n                document.querySelectorAll(\".settings-dropdown\").forEach(dd => {\n                    if (!dd.classList.contains(\"hidden\") &&\n                        !dd.contains(event.target) &&\n                        !event.target.closest(\".settings-button\")) {\n                        dd.classList.add(\"hidden\");\n                    }\n                });\n            });\n\n            // ---------- Chapter Dropdown Truncate ----------\n            const chapterSelect = document.getElementById(\"chapter-select-")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<script>\n    (function () {\n        const selectId = \"chapter-select-")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Var9, templ_7745c5c3_Err := templruntime.ScriptContentInsideStringLiteral(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 274, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 223, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\");\n            if (chapterSelect) {\n                const maxChars = 20;\n                setTimeout(() => {\n                    for (let i = 0; i < chapterSelect.options.length; i++) {\n                        const opt = chapterSelect.options[i];\n                        if (opt.text.length > maxChars) {\n                            opt.text = opt.text.substring(0, maxChars) + \"...\";\n                        }\n                    }\n                }, 500);\n            }\n        }\n\n        // Run once after DOM is ready\n        if (document.readyState === \"complete\" || document.readyState === \"interactive\") {\n            initNavigationButtons();\n        } else {\n            document.addEventListener(\"DOMContentLoaded\", initNavigationButtons);\n        }\n    })();\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\";\n\n        function mountChapterSelect() {\n            const select = document.getElementById(selectId);\n            if (!select) return;\n\n            select.addEventListener(\"change\", function () {\n                const selectedUrl = new URL(this.value, window.location.origin).pathname;\n\n                if (selectedUrl !== window.location.pathname) {\n                    window.location.href = this.value;\n                }\n            });\n        }\n\n        // Mount initially\n        mountChapterSelect();\n\n        // Re-mount after HTMX swap\n        document.body.addEventListener(\"htmx:afterSwap\", function (evt) {\n            if (evt.target.querySelector && evt.target.querySelector(`#${selectId}`)) {\n                mountChapterSelect();\n            }\n        });\n    })();\n</script><script>\n    (function () {\n        function initNavigationButtons() {\n            // ---------- Settings Dropdown ----------\n            document.querySelectorAll(\".settings-button\").forEach(btn => {\n                const dropdown = btn.nextElementSibling; // assumes dropdown is immediately after button\n                if (!dropdown) return;\n\n                // Avoid adding duplicate listeners\n                if (btn.dataset.listenerAdded) return;\n                btn.dataset.listenerAdded = \"true\";\n\n                btn.addEventListener(\"click\", e => {\n                    e.stopPropagation();\n                    dropdown.classList.toggle(\"hidden\");\n\n                    // ---------- Flip logic ----------\n                    const rect = dropdown.getBoundingClientRect();\n                    const btnRect = btn.getBoundingClientRect();\n                    const spaceBelow = window.innerHeight - btnRect.bottom;\n                    const spaceAbove = btnRect.top;\n\n                    if (!dropdown.classList.contains(\"hidden\")) {\n                        if (spaceBelow < rect.height && spaceAbove > rect.height) {\n                            // Open upwards\n                            dropdown.style.top = \"auto\";\n                            dropdown.style.bottom = \"100%\";\n                            dropdown.style.marginTop = \"0\";\n                            dropdown.style.marginBottom = \"0.5rem\";\n                        } else {\n                            // Open downwards\n                            dropdown.style.bottom = \"auto\";\n                            dropdown.style.top = \"100%\";\n                            dropdown.style.marginBottom = \"0\";\n                            dropdown.style.marginTop = \"0.5rem\";\n                        }\n                    }\n                });\n            });\n\n            // Close dropdowns when clicking outside\n            document.addEventListener(\"click\", event => {\n                document.querySelectorAll(\".settings-dropdown\").forEach(dd => {\n                    if (!dd.classList.contains(\"hidden\") &&\n                        !dd.contains(event.target) &&\n                        !event.target.closest(\".settings-button\")) {\n                        dd.classList.add(\"hidden\");\n                    }\n                });\n            });\n\n            // ---------- Chapter Dropdown Truncate ----------\n            const chapterSelect = document.getElementById(\"chapter-select-")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var10, templ_7745c5c3_Err := templruntime.ScriptContentInsideStringLiteral(id)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/chapters/navigation_buttons.templ`, Line: 301, Col: 79}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\");\n            if (chapterSelect) {\n                const maxChars = 20;\n                setTimeout(() => {\n                    for (let i = 0; i < chapterSelect.options.length; i++) {\n                        const opt = chapterSelect.options[i];\n                        if (opt.text.length > maxChars) {\n                            opt.text = opt.text.substring(0, maxChars) + \"...\";\n                        }\n                    }\n                }, 500);\n            }\n        }\n\n        // Run once after DOM is ready\n        if (document.readyState === \"complete\" || document.readyState === \"interactive\") {\n            initNavigationButtons();\n        } else {\n            document.addEventListener(\"DOMContentLoaded\", initNavigationButtons);\n        }\n    })();\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

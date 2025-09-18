@@ -69,15 +69,21 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 	if isRedirectStr != "" {
 		isRedirect = true
 	}
-
-	chapter := MapToChapterDto(dbNovel, dbChapter, prevChapterIntPointer, nextChapterIntPointer)
-	metaData := BuildChapterMeta(dbNovel, chapterNum, novelStatus)
+	chapter := MapToChapterDto(&dbNovel, &dbChapter, prevChapterIntPointer, nextChapterIntPointer)
+	metaData := BuildChapterMeta(&dbNovel, chapterNum, novelStatus)
 
 	handlers.GenericHandler(w, r, metaData, chapters.ChapterReader(&chapter, isRedirect))
 }
 
 func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Request) {
 	novelSlug := chi.URLParam(r, "novelSlug")
+	chapterNumberStr := r.URL.Query().Get("chapterNumber")
+
+	chapterNumber, err := strconv.Atoi(chapterNumberStr)
+	if err != nil || chapterNumber < 1 {
+		handlers.ServerErrorHandler(w, r)
+		return
+	}
 
 	dbNovel, err := h.chapterService.GetNovelBySlug(novelSlug)
 	if err != nil {
@@ -93,7 +99,6 @@ func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Requ
 
 	chaptersList := DbChaptersToChaptersMapper(dbChapters)
 
-	cmp := dropdown.ChapterDropdown(novelSlug, chaptersList)
+	cmp := dropdown.ChapterDropdown(novelSlug, chaptersList, chapterNumber)
 	templ.Handler(cmp).ServeHTTP(w, r)
-
 }

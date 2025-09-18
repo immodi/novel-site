@@ -41,7 +41,7 @@ def scrapper():
 
         parser = get_parser(
             args.url,
-            SkipDuplicate.NOVEL,
+            SkipDuplicate.CHAPTER,
             max_chapters_number=args.max_novel_chapters_num,
         )
         novels = parser.parse_list_of_novels(list_tree)

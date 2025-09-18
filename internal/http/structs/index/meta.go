@@ -20,4 +20,7 @@ type MetaDataStruct struct {
 	UpdateTime        string
 	LatestChapterName string
 	LatestChapterURL  string
+	HomePageJsonLd    string
+	NovelPageJsonLd   string
+	ChapterPageJsonLd string
 }

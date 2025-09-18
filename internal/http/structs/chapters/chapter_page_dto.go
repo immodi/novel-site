@@ -6,6 +6,7 @@ type ChapterPage struct {
 	ChapterTitle   string
 	ChapterContent string
 	ChapterID      int
+	ChapterNumber  int
 	PrevChapter    *int
 	NextChapter    *int
 }
