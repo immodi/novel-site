@@ -254,9 +254,25 @@ class NovelFireParser(Parser):
         return save_dir, chapters
 
 
-@browser(output=None, headless=False, max_retry=10)
+@browser(output=None, headless=True, max_retry=10)
 def scrape_chapter(driver: Driver, url: str) -> NovelFireChapter:
-    driver.google_get(url)
+    driver.google_get(url, bypass_cloudflare=True)
+
+    # Wait for page to fully load
+    driver.long_random_sleep()
+    # Locate iframe containing the Cloudflare challenge
+    iframe = driver.get_element_at_point(160, 290)
+
+    # Find checkbox element within the iframe
+    checkbox = iframe.get_element_at_point(30, 30)
+
+    # Enable human mode for realistic, human-like mouse movements
+    driver.enable_human_mode()
+
+    # Click the checkbox to solve the challenge
+    checkbox.click()
+
+    driver.disable_human_mode()
 
     # Title
     title = driver.get_text(".chapter-title").strip()

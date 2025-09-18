@@ -165,18 +165,38 @@ class NovelBinParser(Parser):
         return "", []
 
 
-@browser(output=None, headless=False, max_retry=10)
+@browser(output=None, headless=True, max_retry=10)
 def scrape_chapter(driver: Driver, url: str) -> str:
-    driver.google_get(url)
+    driver.google_get(url, bypass_cloudflare=True)
 
-    # Get raw HTML of content container
-    content_tab = driver.get("#chr-content")
-    content_html = getattr(content_tab, "html", str(content_tab))  # ensure string
+    # Wait for page to fully load
+    driver.long_random_sleep()
+    # Locate iframe containing the Cloudflare challenge
+    iframe = driver.get_element_at_point(160, 290)
+
+    # Find checkbox element within the iframe
+    checkbox = iframe.get_element_at_point(30, 30)
+
+    # Enable human mode for realistic, human-like mouse movements
+    driver.enable_human_mode()
+
+    # Click the checkbox to solve the challenge
+    checkbox.click()
+
+    driver.disable_human_mode()
+
+    # Now get the element using element selection methods
+    content_tab = driver.wait_for_element("#chr-content")  # This finds the element
+
+    if content_tab is None:
+        print("Element #chr-content not found")
+        return ""
+
+    content_html = getattr(content_tab, "html", str(content_tab))
 
     # Extract only <p> tags
     soup = BeautifulSoup(content_html, "html.parser")
     chapter_text = "".join(str(p) for p in soup.find_all("p"))
-
     return chapter_text
 
 
