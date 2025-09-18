@@ -491,9 +491,9 @@ func MetaHead(s *indexdtostructs.MetaDataStruct) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var23 templ.SafeURL
-			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinURLErrs(indexdtostructs.DOMAIN + "/static/sitemap.xml")
+			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinURLErrs(indexdtostructs.DOMAIN + "/sitemap.xml")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/meta.templ`, Line: 77, Col: 114}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/index/meta.templ`, Line: 77, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
