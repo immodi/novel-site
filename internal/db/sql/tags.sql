@@ -3,6 +3,16 @@ INSERT INTO novel_tags (novel_id, tag, tag_slug)
 VALUES (?, ?, ?)
 ON CONFLICT(novel_id, tag) DO NOTHING;
 
+-- name: ListAllTags :many
+SELECT DISTINCT tag
+FROM novel_tags
+ORDER BY tag COLLATE NOCASE;
+
+-- name: ListAllTagSlugs :many
+SELECT DISTINCT tag_slug
+FROM novel_tags
+ORDER BY tag COLLATE NOCASE;
+
 -- name: RemoveTagFromNovel :exec
 DELETE FROM novel_tags
 WHERE novel_id = ? AND tag = ?;

@@ -3,6 +3,11 @@ SELECT DISTINCT genre
 FROM novel_genres
 ORDER BY genre;
 
+-- name: ListAllGenreSlugs :many
+SELECT DISTINCT genre_slug
+FROM novel_genres
+ORDER BY genre;
+
 -- name: AddGenreToNovel :exec
 INSERT INTO novel_genres (novel_id, genre, genre_slug)
 VALUES (?, ?, ?)

@@ -11,6 +11,7 @@ import (
 	"immodi/novel-site/internal/app/services/novels"
 	"immodi/novel-site/internal/app/services/profile"
 	"immodi/novel-site/internal/app/services/search"
+	"immodi/novel-site/internal/app/services/sitemap"
 	"immodi/novel-site/internal/config"
 	"log"
 )
@@ -26,6 +27,7 @@ type Services struct {
 	ProfileService        profile.ProfileService
 	CommentService        comments.CommentService
 	ChapterCommentService chaptercomments.ChapterCommentService
+	SitemapService        sitemap.SitemapService
 }
 
 func RegisterServices() *Services {
@@ -50,6 +52,7 @@ func RegisterServices() *Services {
 		ProfileService:        profileSerivce,
 		CommentService:        comments.NewCommentService(dbService),
 		ChapterCommentService: chaptercomments.NewChapterCommentService(dbService),
+		SitemapService:        sitemap.NewSitemapService(dbService),
 	}
 }
 

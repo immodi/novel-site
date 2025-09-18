@@ -11,6 +11,7 @@ import (
 	"immodi/novel-site/internal/app/handlers/privacy"
 	"immodi/novel-site/internal/app/handlers/profile"
 	"immodi/novel-site/internal/app/handlers/search"
+	"immodi/novel-site/internal/app/handlers/sitemap"
 	"immodi/novel-site/internal/app/handlers/terms"
 )
 
@@ -26,6 +27,7 @@ type Handlers struct {
 	Profile        *profile.ProfileHandler
 	Comment        *comments.CommentHandler
 	ChapterComment *chaptercomments.ChapterCommentHandler
+	Sitemap        *sitemap.SitemapHandler
 }
 
 func RegisterHandlers(svcs *Services) *Handlers {
@@ -41,5 +43,6 @@ func RegisterHandlers(svcs *Services) *Handlers {
 		Profile:        profile.NewProfileHandler(svcs.ProfileService, svcs.HomeService),
 		Comment:        comments.NewCommentHandler(svcs.CommentService, svcs.ProfileService),
 		ChapterComment: chaptercomments.NewChapterCommentHandler(svcs.ChapterCommentService, svcs.ProfileService),
+		Sitemap:        sitemap.NewSitemapHandler(svcs.SitemapService),
 	}
 }

@@ -68,6 +68,35 @@ func (q *Queries) GetGenreBySlug(ctx context.Context, genreSlug string) (NovelGe
 	return i, err
 }
 
+const listAllGenreSlugs = `-- name: ListAllGenreSlugs :many
+SELECT DISTINCT genre_slug
+FROM novel_genres
+ORDER BY genre
+`
+
+func (q *Queries) ListAllGenreSlugs(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listAllGenreSlugs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var genre_slug string
+		if err := rows.Scan(&genre_slug); err != nil {
+			return nil, err
+		}
+		items = append(items, genre_slug)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listAllGenres = `-- name: ListAllGenres :many
 SELECT DISTINCT genre
 FROM novel_genres

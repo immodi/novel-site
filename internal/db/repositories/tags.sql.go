@@ -63,6 +63,64 @@ func (q *Queries) GetTagBySlug(ctx context.Context, tagSlug string) (NovelTag, e
 	return i, err
 }
 
+const listAllTagSlugs = `-- name: ListAllTagSlugs :many
+SELECT DISTINCT tag_slug
+FROM novel_tags
+ORDER BY tag COLLATE NOCASE
+`
+
+func (q *Queries) ListAllTagSlugs(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listAllTagSlugs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var tag_slug string
+		if err := rows.Scan(&tag_slug); err != nil {
+			return nil, err
+		}
+		items = append(items, tag_slug)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAllTags = `-- name: ListAllTags :many
+SELECT DISTINCT tag
+FROM novel_tags
+ORDER BY tag COLLATE NOCASE
+`
+
+func (q *Queries) ListAllTags(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listAllTags)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var tag string
+		if err := rows.Scan(&tag); err != nil {
+			return nil, err
+		}
+		items = append(items, tag)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listNovelsByTag = `-- name: ListNovelsByTag :many
 SELECT n.id, n.title, n.slug, n.description, n.cover_image, n.author, n.author_slug, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
 FROM novels n

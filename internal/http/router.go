@@ -91,7 +91,12 @@ func (router *Router) RegisterRoutes() {
 
 	router.r.Handle("/static/*", router.serveStatic("static"))
 	router.r.Get("/robots.txt", router.serveStaticAsset("robots.txt"))
-	router.r.Get("/sitemap.xml", router.serveStaticAsset("sitemap.xml"))
+
+	router.r.Get("/sitemap.xml", router.handlers.Sitemap.MainSiteMap)
+	router.r.Get("/sitemaps/novels.xml", router.handlers.Sitemap.NovelsSiteMap)
+	router.r.Get("/sitemaps/genres.xml", router.handlers.Sitemap.GenresSiteMap)
+	router.r.Get("/sitemaps/tags.xml", router.handlers.Sitemap.TagsSiteMap)
+
 	router.r.Get("/novels", router.redirectToHome())
 	router.r.NotFound(handlers.NotFoundHandler)
 
