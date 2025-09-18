@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"immodi/novel-site/internal/db/repositories"
 	"immodi/novel-site/internal/http/payloads"
+	"immodi/novel-site/pkg"
 	"log"
 	"net/http"
 )
@@ -69,6 +70,7 @@ func (h *LoadHandler) AppendChapters(w http.ResponseWriter, r *http.Request) {
 			NovelID:       req.NovelID,
 			ChapterNumber: int64(ch.Number),
 			Title:         ch.Title,
+			ReleaseDate:   pkg.GetCurrentTimeRFC3339(),
 			Content:       ch.Content,
 		})
 	}

@@ -1,4 +1,5 @@
-from pathlib import Path
+import argparse
+from time import sleep
 from scrapper import config
 from scrapper.helpers.move_files_up_and_delete import move_files_up_and_delete
 from scrapper.helpers.combine_json_objects_into_array import (
@@ -37,7 +38,7 @@ def update():
 
         parser = get_parser(
             chapter.last_chapter_url,
-            SkipDuplicate.NOVEL,
+            SkipDuplicate.CHAPTER,
         )
         save_dir, new_chapters_list = parser.update_novel(
             chapter.novel_name, chapter.last_chapter_url
@@ -66,4 +67,26 @@ def update():
 
 
 if __name__ == "__main__":
-    update()
+    parser = argparse.ArgumentParser(prog="updater", description="Novel updater CLI")
+    parser.add_argument(
+        "interval_hours",
+        type=float,
+        default=12,
+        help="Interval in hours between updates (default: 12)",
+    )
+
+    args = parser.parse_args()
+    interval_hours = args.interval_hours
+
+    print(f"Updater started. Interval hours: {interval_hours}")
+
+    while True:
+        try:
+            print("Starting update...")
+            update()
+            print("Update complete.")
+        except Exception as e:
+            print(f"Error occurred during update: {e}")
+
+        print(f"Sleeping for {interval_hours} hours...")
+        sleep(interval_hours * 60 * 60)

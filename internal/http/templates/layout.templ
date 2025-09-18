@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"immodi/novel-site/internal/config"
 	components "immodi/novel-site/internal/http/components/index"
 	"immodi/novel-site/internal/http/structs/index"
 	"immodi/novel-site/pkg"
@@ -10,7 +11,9 @@ templ Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Lay
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
-			@GoogleAnalytics()
+			if config.IsProduction {
+				@GoogleAnalytics()
+			}
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<!-- <link rel="stylesheet" href="/static/styles/output.css"/> -->

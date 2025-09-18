@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"immodi/novel-site/internal/config"
 	components "immodi/novel-site/internal/http/components/index"
 	"immodi/novel-site/internal/http/structs/index"
 	"immodi/novel-site/pkg"
@@ -39,9 +40,11 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = GoogleAnalytics().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if config.IsProduction {
+			templ_7745c5c3_Err = GoogleAnalytics().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- <link rel=\"stylesheet\" href=\"/static/styles/output.css\"/> --><link rel=\"stylesheet\" href=\"")
 		if templ_7745c5c3_Err != nil {
@@ -50,7 +53,7 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 		var templ_7745c5c3_Var2 templ.SafeURL
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs("/static/styles/output.css?v=" + pkg.HashCSS())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 17, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 20, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -63,7 +66,7 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(metaData.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 20, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 23, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
