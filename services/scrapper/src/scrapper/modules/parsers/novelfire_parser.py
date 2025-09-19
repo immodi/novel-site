@@ -12,15 +12,18 @@ from scrapper.datatypes.novel import ChapterData, NovelData, NovelLink
 from lxml import html
 from scrapper.datatypes.novel_fire_chapter import NovelFireChapter
 from typing import Tuple
+from scrapper.cache.db_cache import NovelDataCache
 
 
 class NovelFireParser(Parser):
     def __init__(
         self,
         max_chapters_number: int,
+        cache: NovelDataCache,
         skip_duplicates: SkipDuplicate = SkipDuplicate.NONE,
     ):
         self.max_chapters_number = max_chapters_number
+        self.cache = cache
         self.skip_duplicates = skip_duplicates
 
     def parse_list_of_novels(
@@ -41,8 +44,9 @@ class NovelFireParser(Parser):
                 title = title_el[0].text_content().strip()
                 url = urljoin(config.BASE_URL, link_el[0].get("href"))
 
-                if self.skip_duplicates == SkipDuplicate.NOVEL and self.novel_exists(
-                    title
+                if (
+                    self.skip_duplicates == SkipDuplicate.NOVEL
+                    and self.cache.novel_exists(url)
                 ):
                     print(f"Novel {title} already exists. Skipping...")
                     continue
@@ -109,6 +113,8 @@ class NovelFireParser(Parser):
                 cover_image, f"{config.OUTPUT_DIR}/covers", title or "cover"
             )
 
+        # self.cache.save_novel(novel_data)
+
         return novel_data
 
     def parse_chapters(
@@ -143,6 +149,7 @@ class NovelFireParser(Parser):
                 f"Maximum number of chapters ({self.max_chapters_number}) exceeded. Skipping..."
             )
             self.clean_up_novel(novel_name)
+            # self.cache.remove_novel_by_url(url)
             return chapters
 
         # Build chapter links (ascending order)
@@ -170,6 +177,7 @@ class NovelFireParser(Parser):
                 saver.save_item(
                     chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
                 )
+                # self.cache.save_last_chapter(url, chapter.url, chapter.title)
 
             print(
                 f"--> Fetched {chapter_data.title} of length {utils.bold_green(len(chapter_data.content))} from url {chapter_link}."
@@ -180,11 +188,12 @@ class NovelFireParser(Parser):
                 saver.save_item(
                     chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
                 )
+            # self.cache.save_last_chapter(url, chapters[-1].url, chapters[-1].title)
 
         return chapters
 
     def update_novel(
-        self, novel_name: str, last_chapter_url: str
+        self, novel_name: str, novel_url: str, last_chapter_url: str
     ) -> Tuple[str, List[ChapterData]]:
         chapters: List[ChapterData] = []
         if not last_chapter_url:
@@ -192,6 +201,7 @@ class NovelFireParser(Parser):
             return "", chapters
 
         current_url = last_chapter_url
+        print(f"Updating {novel_name} from {current_url}")
         save_dir = f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}/updates"
 
         while True:
@@ -229,13 +239,6 @@ class NovelFireParser(Parser):
             # 5. scrape chapter content
             chapter_data = scrape_chapter_with_request(current_url)  # type: ignore
 
-            # skip duplicates if configured
-            if self.skip_duplicates == SkipDuplicate.CHAPTER and self.chapter_exists(
-                chapter_data.title, utils.slugify(novel_name)
-            ):
-                print(f"Chapter {chapter_data.title} already exists. Skipping...")
-                continue
-
             chapter = ChapterData(
                 title=chapter_data.title,
                 content=chapter_data.content,
@@ -245,6 +248,7 @@ class NovelFireParser(Parser):
 
             # save each chapter immediately
             saver.save_item(chapter, save_dir)
+            self.cache.save_last_chapter(novel_url, current_url, chapter.title)
 
             print(
                 f"--> Fetched {chapter_data.title} of length "

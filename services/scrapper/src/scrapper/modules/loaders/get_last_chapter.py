@@ -44,26 +44,11 @@ class LastChapterClient:
         data = self._post_json(url, payload.__dict__)
         return GetLastChapterResponse(**data)
 
-    def get_by_name(self, file_name: str) -> GetLastChapterResponse:
+    def get_by_name(self, novel_title: str) -> GetLastChapterResponse:
         """
         POST /load/last-chapter/name
-
-        Parameters
-        ----------
-        file_name : str
-            Name of the local novel JSON file (without .json extension).
-            The file must contain a 'title' field whose value is the
-            actual novel title stored in the database.
         """
-        novel_json_path = Path(OUTPUT_DIR) / "novels" / f"{file_name}.json"
-
-        with open(novel_json_path, "r", encoding="utf-8") as f:
-            novel_data = json.load(f)
-
-        # Extract the real title field from the JSON
-        real_title = novel_data["title"]
-
         url = f"{self.base_url}/load/last-chapter/name"
-        payload = GetLastChapterByNameRequest(name=real_title)
+        payload = GetLastChapterByNameRequest(name=novel_title)
         data = self._post_json(url, payload.__dict__)
         return GetLastChapterResponse(**data)

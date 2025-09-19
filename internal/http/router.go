@@ -93,6 +93,7 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/robots.txt", router.serveStaticAsset("robots.txt"))
 
 	router.r.Get("/sitemap.xml", router.handlers.Sitemap.MainSiteMap)
+	router.r.Get("/sitemaps/home.xml", router.handlers.Sitemap.HomeSiteMap)
 	router.r.Get("/sitemaps/novels.xml", router.handlers.Sitemap.NovelsSiteMap)
 	router.r.Get("/sitemaps/genres.xml", router.handlers.Sitemap.GenresSiteMap)
 	router.r.Get("/sitemaps/tags.xml", router.handlers.Sitemap.TagsSiteMap)

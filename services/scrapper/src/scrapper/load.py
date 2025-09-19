@@ -8,9 +8,11 @@ from scrapper.modules.loaders.send_to_server import send_novel_to_server
 from scrapper.helpers.combine_json_objects_into_array import (
     combine_json_objects_to_array,
 )
+from scrapper.cache.db_cache import NovelDataCache
 
 
 def loader(retry_delay: float = 2.0, max_retries: int = 5):
+    cache = NovelDataCache(config.CACHE_DB_PATH)
     novels_dir = Path(config.OUTPUT_DIR) / "novels"
     covers_dir = Path(config.OUTPUT_DIR) / "covers"
     for json_file in novels_dir.glob("*.json"):
@@ -26,9 +28,13 @@ def loader(retry_delay: float = 2.0, max_retries: int = 5):
                         "Server response missing novel_id even though success=True"
                     )
                 print(f"{json_file.name}: {resp}")
+                cache.save_novel(novel)
                 novel_name = json_file.stem
                 path, cleanup_callback = combine_json_objects_to_array(
-                    f"{config.OUTPUT_DIR}/chapters/{novel_name}",
+                    novel_url=novel.url,
+                    novel_name=json_file.stem,
+                    dir_path=f"{config.OUTPUT_DIR}/chapters/{novel_name}",
+                    cache=cache,
                 )
                 ch_resp = send_chapters_to_server(path, resp.novel_id)
                 if ch_resp.success:

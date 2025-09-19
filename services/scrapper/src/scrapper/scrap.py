@@ -2,6 +2,7 @@ from scrapper import config
 from urllib.parse import urlparse
 from scrapper.helpers import utils
 from scrapper.modules.factories.factory import get_parser, SkipDuplicate
+from scrapper.cache.db_cache import NovelDataCache
 import argparse
 
 
@@ -34,14 +35,15 @@ def scrapper():
     base_url = f"{parsed.scheme}://{parsed.netloc}"
 
     config.BASE_URL = base_url
-
+    cache = NovelDataCache(config.CACHE_DB_PATH)
     try:
         print("📥 Fetching novel list...")
         list_tree = utils.fetch_page(list_urls)  # type: ignore
 
         parser = get_parser(
             args.url,
-            SkipDuplicate.CHAPTER,
+            cache,
+            SkipDuplicate.NOVEL,
             max_chapters_number=args.max_novel_chapters_num,
         )
         novels = parser.parse_list_of_novels(list_tree)

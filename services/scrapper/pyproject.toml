@@ -19,6 +19,7 @@ dependencies = [
 scrapper = "scrapper.scrap:scrapper"
 loader = "scrapper.load:loader"
 updater = "scrapper.update:update"
+seeder = "scrapper.seed:seed"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/scrapper"]

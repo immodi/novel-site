@@ -49,7 +49,7 @@ class Parser(Protocol):
     """
 
     def update_novel(
-        self, novel_name: str, last_chapter_url: str
+        self, novel_name: str, novel_url: str, last_chapter_url: str
     ) -> Tuple[str, List[ChapterData]]: ...
 
     def novel_exists(self, title: str) -> bool:

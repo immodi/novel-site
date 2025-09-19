@@ -1,8 +1,12 @@
 import json
+from scrapper.config import OUTPUT_DIR
 from pathlib import Path
 from typing import Callable, Tuple
 import tempfile
+from scrapper.cache.db_cache import NovelDataCache
 from scrapper.helpers.helpers import CHAPTER_REGEX
+from scrapper.modules.loaders.get_chapter_data import get_chapter_data
+from scrapper.modules.loaders.load_from_json import load_from_json
 
 
 def append__combine_json_objects_to_array(
@@ -68,12 +72,15 @@ def append__combine_json_objects_to_array(
     return str(temp_file_path), cleanup
 
 
-def combine_json_objects_to_array(dir_path: str) -> Tuple[str, Callable[[], None]]:
+def combine_json_objects_to_array(
+    novel_url: str, novel_name: str, dir_path: str, cache: NovelDataCache
+) -> Tuple[str, Callable[[], None]]:
     dir_path_obj = Path(dir_path)  # convert to Path
     combined = []
 
     # Collect JSON objects and pair with their chapter number
     json_entries = []
+    max_chapter_num = 0
     for json_file in dir_path_obj.glob("*.json"):
         try:
             with open(json_file, "r", encoding="utf-8") as f:
@@ -82,6 +89,26 @@ def combine_json_objects_to_array(dir_path: str) -> Tuple[str, Callable[[], None
                     match = CHAPTER_REGEX.search(data["url"])
                     if match:
                         chapter_num = int(match.group(1))
+                        is_caching = max(max_chapter_num, chapter_num) == chapter_num
+
+                        if is_caching:
+                            chapter_data = get_chapter_data(
+                                novel_name=novel_name,
+                                chapter_file=json_file.name,
+                                chapter_dir=f"{OUTPUT_DIR}/chapters",
+                            )
+                            cache.save_last_chapter(
+                                novel_url=novel_url,
+                                chapter_url=chapter_data.last_chapter_url,
+                                chapter_name=chapter_data.last_chapter_name,
+                            )
+                            max_chapter_num = chapter_num
+                            print(
+                                chapter_num,
+                                "is bigger than max_chapter_num:",
+                                max_chapter_num,
+                            )
+
                         json_entries.append((chapter_num, data))
                     else:
                         print(

@@ -10,15 +10,18 @@ from scrapper import config
 from typing import List, Tuple, Union
 from scrapper.datatypes.novel import ChapterData, NovelData, NovelLink
 from lxml import html
+from scrapper.cache.db_cache import NovelDataCache
 
 
 class NovelBinParser(Parser):
     def __init__(
         self,
         max_chapters_number: int,
+        cache: NovelDataCache,
         skip_duplicates: SkipDuplicate = SkipDuplicate.NONE,
     ):
         self.max_chapters_number = max_chapters_number
+        self.cache = cache
         self.skip_duplicates = skip_duplicates
 
     def parse_list_of_novels(
@@ -102,6 +105,8 @@ class NovelBinParser(Parser):
                 novel_data.title,
             )
 
+        self.cache.save_novel(novel_data)
+
         return novel_data
 
     def parse_chapters(
@@ -121,6 +126,7 @@ class NovelBinParser(Parser):
                 f"Maximum number of chapters ({self.max_chapters_number}) exceeded. Skipping..."
             )
             self.clean_up_novel(novel_name)
+            self.cache.remove_novel_by_url(url)
             return chapters
 
         for chapter_link in chapters_links:
@@ -146,6 +152,7 @@ class NovelBinParser(Parser):
                 saver.save_item(
                     chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
                 )
+                self.cache.save_last_chapter(url, chapter.url, chapter.title)
 
             print(
                 f"--> Fetched {chapter_title} of length {utils.bold_green(len(chapter_content))} from url {chapter_url}."
@@ -156,6 +163,7 @@ class NovelBinParser(Parser):
                 saver.save_item(
                     chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
                 )
+            self.cache.save_last_chapter(url, chapters[-1].url, chapters[-1].title)
 
         return chapters
 
