@@ -24,6 +24,10 @@ func (s *chapterService) GetNovelBySlug(slug string) (repositories.Novel, error)
 	})
 }
 
+func (s *chapterService) IncrementNovelViewCount(novelID int64) error {
+	return s.novelService.IncrementNovelViewCount(novelID)
+}
+
 func (s *chapterService) CountChaptersByNovel(novelID int64) (int64, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (int64, error) {
 		return q.CountChaptersByNovel(ctx, novelID)

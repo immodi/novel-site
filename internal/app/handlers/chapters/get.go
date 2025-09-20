@@ -29,6 +29,8 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	go h.chapterService.IncrementNovelViewCount(dbNovel.ID)
+
 	totalChaptersNumber, err := h.chapterService.CountChaptersByNovel(dbNovel.ID)
 	if err != nil {
 		handlers.ServerErrorHandler(w, r)

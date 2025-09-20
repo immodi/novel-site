@@ -304,6 +304,7 @@ def scrape_chapter_with_request(request: Request, url: str) -> NovelFireChapter:
     # Title
     chapter_title = soup.find("span", class_="chapter-title")
     title = chapter_title.get_text(strip=True) if chapter_title else ""
+    title = (title[:197] + "...") if len(title) > 200 else title
 
     # Content (keep <p> tags)
     chapter_content = soup.find(id="content")

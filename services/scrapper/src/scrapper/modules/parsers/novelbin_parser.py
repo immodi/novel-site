@@ -168,7 +168,7 @@ class NovelBinParser(Parser):
         return chapters
 
     def update_novel(
-        self, novel_name: str, last_chapter_url: str
+        self, novel_name: str, novel_url: str, last_chapter_url: str
     ) -> Tuple[str, List[ChapterData]]:
         return "", []
 

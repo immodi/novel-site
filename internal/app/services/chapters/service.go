@@ -11,4 +11,6 @@ type ChapterService interface {
 
 	CreateChapterWithDefaults(novelID int64) (repositories.Chapter, error)
 	CreateBulkChapters(chapters []repositories.CreateChapterParams) error
+
+	IncrementNovelViewCount(novelID int64) error
 }
