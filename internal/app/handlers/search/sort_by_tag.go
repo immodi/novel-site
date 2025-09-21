@@ -23,7 +23,7 @@ func (h *SearchHandler) SortNovelsByTags(w http.ResponseWriter, r *http.Request)
 
 	totalResults, err := h.searchService.CountNovelsByTag(tag)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		log.Println(err.Error())
 		return
 	}
@@ -33,7 +33,7 @@ func (h *SearchHandler) SortNovelsByTags(w http.ResponseWriter, r *http.Request)
 
 	tagName, dbResults, err := h.searchService.ListNovelsByTag(tag, offset, pkg.SEARCH_PAGE_LIMIT)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		log.Println(err.Error())
 		return
 	}

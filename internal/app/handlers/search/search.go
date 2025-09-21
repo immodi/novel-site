@@ -23,7 +23,7 @@ func (h *SearchHandler) SearchNovel(w http.ResponseWriter, r *http.Request) {
 
 	totalSearchResults, err := h.searchService.CountTotalSearchedNovels(novelName)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		return
 	}
 
@@ -32,7 +32,7 @@ func (h *SearchHandler) SearchNovel(w http.ResponseWriter, r *http.Request) {
 
 	dbSearchResults, err := h.searchService.SearchNovelsPaginated(novelName, offset, pkg.SEARCH_PAGE_LIMIT)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		return
 	}
 	searchNovels := DbNovelsToSearchDtosMapper(h.searchService, dbSearchResults)

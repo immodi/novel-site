@@ -23,7 +23,7 @@ func (h *SearchHandler) SortNovelsByAuthor(w http.ResponseWriter, r *http.Reques
 
 	totalResults, err := h.searchService.CountNovelsByAuthor(author)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		log.Println(err.Error())
 		return
 	}
@@ -33,7 +33,7 @@ func (h *SearchHandler) SortNovelsByAuthor(w http.ResponseWriter, r *http.Reques
 
 	authorName, dbResults, err := h.searchService.ListNovelsByAuthor(author, offset, pkg.SEARCH_PAGE_LIMIT)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		log.Println(err.Error())
 		return
 	}

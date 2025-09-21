@@ -29,7 +29,7 @@ func (h *SearchHandler) SortNovelsByCollection(w http.ResponseWriter, r *http.Re
 
 	totalResults, err := h.searchService.CountSortedNovels(collection)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		log.Println(err.Error())
 		return
 	}
@@ -39,7 +39,7 @@ func (h *SearchHandler) SortNovelsByCollection(w http.ResponseWriter, r *http.Re
 
 	dbResults, err := h.searchService.ListSortedNovels(collection, offset, pkg.SEARCH_PAGE_LIMIT)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		log.Println(err.Error())
 		return
 	}
