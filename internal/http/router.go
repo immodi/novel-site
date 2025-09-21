@@ -9,9 +9,11 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httprate"
 )
 
 type Router struct {
@@ -113,6 +115,7 @@ func (router *Router) RegisterHandlers() {
 
 func (router *Router) RegisterMiddlewares() {
 	router.r.Use(middleware.Logger)
+	router.r.Use(httprate.LimitByIP(100, time.Minute))
 }
 
 func (router *Router) redirectToHome() http.HandlerFunc {

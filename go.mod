@@ -7,9 +7,15 @@ require modernc.org/sqlite v1.38.2
 require github.com/golang-jwt/jwt/v5 v5.3.0
 
 require (
+	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
+	github.com/zeebo/xxh3 v1.0.2 // indirect
+)
+
+require (
 	github.com/a-h/templ v0.3.943
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-chi/chi/v5 v5.2.2
+	github.com/go-chi/httprate v0.15.0
 	github.com/google/uuid v1.6.0
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect

@@ -100,3 +100,17 @@ func (s *chapterService) ListChaptersByNovel(novelID int64) ([]repositories.Chap
 		return q.ListChaptersByNovel(ctx, novelID)
 	})
 }
+
+func (s *chapterService) UpdateLastReadChapter(userID, novelID, chapterID int64) error {
+	return db.ExecuteTx(s.db, func(ctx context.Context, q *repositories.Queries) error {
+		if userID == 0 || novelID == 0 || chapterID == 0 {
+			return nil
+		}
+
+		return q.UpdateLastReadChapter(ctx, repositories.UpdateLastReadChapterParams{
+			UserID:            userID,
+			NovelID:           novelID,
+			LastReadChapterID: db.NewNullInt64(chapterID),
+		})
+	})
+}

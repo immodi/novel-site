@@ -5,6 +5,7 @@ import (
 	"immodi/novel-site/internal/config"
 	authdtostructs "immodi/novel-site/internal/http/structs/auth"
 	"immodi/novel-site/internal/http/templates/auth"
+	"immodi/novel-site/pkg"
 	"net/http"
 )
 
@@ -34,14 +35,14 @@ func (h *AuthHandler) PostLoginHandler(w http.ResponseWriter, r *http.Request) {
 		handlers.GenericHandler(w, r, BuildAuthMeta("Login"), auth.Login(dto))
 	}
 
-	token, err := GenerateToken(user.ID, user.Role, DefaultJwtDuration)
+	token, err := pkg.GenerateToken(user.ID, user.Role, pkg.DefaultJwtDuration)
 	if err != nil {
 		dto := authdtostructs.LoginDTO{Errors: []string{"Could not generate token"}, Email: email}
 		handlers.GenericHandler(w, r, BuildAuthMeta("Login"), auth.Login(dto))
 		return
 	}
 
-	setAuthCookie(w, token, DefaultJwtDuration, config.IsProduction)
+	setAuthCookie(w, token, pkg.DefaultJwtDuration, config.IsProduction)
 
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }

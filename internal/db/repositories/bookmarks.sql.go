@@ -7,6 +7,7 @@ package repositories
 
 import (
 	"context"
+	"database/sql"
 )
 
 const addUserBookmark = `-- name: AddUserBookmark :exec
@@ -37,6 +38,24 @@ func (q *Queries) CountUserBookmarks(ctx context.Context, userID int64) (int64, 
 	var count int64
 	err := row.Scan(&count)
 	return count, err
+}
+
+const getLastReadChapterID = `-- name: GetLastReadChapterID :one
+SELECT last_read_chapter_id
+FROM user_bookmarks
+WHERE user_id = ? AND novel_id = ?
+`
+
+type GetLastReadChapterIDParams struct {
+	UserID  int64
+	NovelID int64
+}
+
+func (q *Queries) GetLastReadChapterID(ctx context.Context, arg GetLastReadChapterIDParams) (sql.NullInt64, error) {
+	row := q.db.QueryRowContext(ctx, getLastReadChapterID, arg.UserID, arg.NovelID)
+	var last_read_chapter_id sql.NullInt64
+	err := row.Scan(&last_read_chapter_id)
+	return last_read_chapter_id, err
 }
 
 const isNovelBookmarked = `-- name: IsNovelBookmarked :one
@@ -122,5 +141,22 @@ type RemoveUserBookmarkParams struct {
 
 func (q *Queries) RemoveUserBookmark(ctx context.Context, arg RemoveUserBookmarkParams) error {
 	_, err := q.db.ExecContext(ctx, removeUserBookmark, arg.UserID, arg.NovelID)
+	return err
+}
+
+const updateLastReadChapter = `-- name: UpdateLastReadChapter :exec
+UPDATE user_bookmarks
+SET last_read_chapter_id = ?
+WHERE user_id = ? AND novel_id = ?
+`
+
+type UpdateLastReadChapterParams struct {
+	LastReadChapterID sql.NullInt64
+	UserID            int64
+	NovelID           int64
+}
+
+func (q *Queries) UpdateLastReadChapter(ctx context.Context, arg UpdateLastReadChapterParams) error {
+	_, err := q.db.ExecContext(ctx, updateLastReadChapter, arg.LastReadChapterID, arg.UserID, arg.NovelID)
 	return err
 }

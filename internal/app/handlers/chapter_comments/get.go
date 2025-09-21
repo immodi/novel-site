@@ -2,8 +2,8 @@ package chaptercomments
 
 import (
 	"immodi/novel-site/internal/app/handlers"
-	"immodi/novel-site/internal/app/handlers/comments"
 	comment_component "immodi/novel-site/internal/http/components/chapters"
+	"immodi/novel-site/pkg"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,7 +12,7 @@ import (
 )
 
 func (h *ChapterCommentHandler) Comments(w http.ResponseWriter, r *http.Request) {
-	userID := comments.IsAuthedUser(r)
+	userID := pkg.IsAuthedUser(r)
 	chapterIDStr := r.URL.Query().Get("chapterID")
 
 	chapterID, err := strconv.Atoi(chapterIDStr)

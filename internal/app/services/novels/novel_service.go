@@ -185,3 +185,24 @@ func (s *novelService) IsNovelBookMarked(novelID int64, userID int64) (bool, err
 		return value == 1, nil
 	})
 }
+
+func (s *novelService) GetLastReadChapterID(userID, novelID int64) (int64, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (int64, error) {
+		chapterID, err := q.GetLastReadChapterID(ctx, repositories.GetLastReadChapterIDParams{
+			UserID:  userID,
+			NovelID: novelID,
+		})
+
+		if err != nil || !chapterID.Valid {
+			return 0, err
+		}
+
+		return chapterID.Int64, nil
+	})
+}
+
+func (s *novelService) GetChapterByID(chapterID int64) (repositories.Chapter, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (repositories.Chapter, error) {
+		return q.GetChapterByID(ctx, chapterID)
+	})
+}

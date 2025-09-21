@@ -3,6 +3,7 @@ package comments
 import (
 	"immodi/novel-site/internal/app/handlers"
 	comment_component "immodi/novel-site/internal/http/components/novels"
+	"immodi/novel-site/pkg"
 	"log"
 	"net/http"
 	"strconv"
@@ -11,7 +12,7 @@ import (
 )
 
 func (h *CommentHandler) Comments(w http.ResponseWriter, r *http.Request) {
-	userID := IsAuthedUser(r)
+	userID := pkg.IsAuthedUser(r)
 	novelIDStr := r.URL.Query().Get("novelID")
 
 	novelID, err := strconv.Atoi(novelIDStr)

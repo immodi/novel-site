@@ -87,7 +87,8 @@ type User struct {
 }
 
 type UserBookmark struct {
-	UserID    int64
-	NovelID   int64
-	CreatedAt string
+	UserID            int64
+	NovelID           int64
+	CreatedAt         string
+	LastReadChapterID sql.NullInt64
 }

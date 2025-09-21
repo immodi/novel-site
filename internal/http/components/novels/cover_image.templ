@@ -16,12 +16,21 @@ templ CoverImageComponent(novel *novelsdtostructs.Novel) {
 			/>
 		</div>
 		<div class="flex flex-col gap-2">
-			<a
-				href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, 1) }
-				class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded text-center transition-colors"
-			>
-				READ NOW
-			</a>
+			if novel.LastReadChapterNumber != nil {
+				<a
+					href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, *novel.LastReadChapterNumber) }
+					class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded text-center transition-colors"
+				>
+					CONTINUE READING
+				</a>
+			} else {
+				<a
+					href={ fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, 1) }
+					class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded text-center transition-colors"
+				>
+					READ NOW
+				</a>
+			}
 			<!-- <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors"> -->
 			<!-- 	SUBSCRIBE -->
 			<!-- </button> -->

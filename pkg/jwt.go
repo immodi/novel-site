@@ -1,7 +1,6 @@
-package auth
+package pkg
 
 import (
-	"fmt"
 	"immodi/novel-site/internal/config"
 	"time"
 
@@ -30,20 +29,4 @@ func ParseToken(tokenString string) (jwt.MapClaims, error) {
 		return nil, err
 	}
 	return token.Claims.(jwt.MapClaims), nil
-}
-
-// GetUserIDFromToken parses the token and extracts the user_id claim as int64
-func GetUserIDFromToken(tokenString string) (int64, error) {
-	claims, err := ParseToken(tokenString)
-	if err != nil {
-		return 0, err
-	}
-
-	// Ensure user_id exists and is a number
-	uid, ok := claims["user_id"].(float64)
-	if !ok {
-		return 0, fmt.Errorf("invalid or missing user_id in token")
-	}
-
-	return int64(uid), nil
 }

@@ -7,6 +7,8 @@ import (
 type NovelService interface {
 	GetNovelBySlug(slug string) (repositories.Novel, error)
 	GetChapters(novelID, page int) ([]repositories.Chapter, error)
+	GetChapterByID(chapterID int64) (repositories.Chapter, error)
+
 	GetGenres(novelID int64) ([]repositories.NovelGenre, error)
 	GetTags(novelID int64) ([]repositories.NovelTag, error)
 	CountChapters(novelID int64) (int, error)
@@ -24,4 +26,5 @@ type NovelService interface {
 	DeleteNovel(novelID int64) error
 
 	IsNovelBookMarked(novelID int64, userID int64) (bool, error)
+	GetLastReadChapterID(userID, novelID int64) (int64, error)
 }

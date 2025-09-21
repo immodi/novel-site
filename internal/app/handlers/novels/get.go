@@ -16,6 +16,7 @@ import (
 func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
 	novelSlug := chi.URLParam(r, "novelSlug")
+	userID := pkg.IsAuthedUser(r)
 	successMsg := pkg.GetAndClearCookie(w, r, "successMessage")
 	errorMsg := pkg.GetAndClearCookie(w, r, "errorMessage")
 
@@ -71,6 +72,19 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		novelStatus = "Ongoing"
 	}
 
+	var lastReadChapterNumber *int64
+	lastReadChapterID, err := h.novelService.GetLastReadChapterID(userID, dbNovel.ID)
+	if err != nil || lastReadChapterID == 0 {
+		lastReadChapterNumber = nil
+	} else {
+		lastReadChapter, err := h.novelService.GetChapterByID(lastReadChapterID)
+		if err != nil {
+			lastReadChapterNumber = nil
+		}
+
+		lastReadChapterNumber = &lastReadChapter.ChapterNumber
+	}
+
 	isNovelBookMarked := IsNovelBookMarked(r, dbNovel.ID, h.novelService)
 	novel := MapToNovel(
 		dbNovel,
@@ -84,6 +98,7 @@ func (h *NovelHandler) GetNovel(w http.ResponseWriter, r *http.Request) {
 		&lastChapter,
 		successMsg,
 		errorMsg,
+		lastReadChapterNumber,
 	)
 
 	var isRedirect bool = false

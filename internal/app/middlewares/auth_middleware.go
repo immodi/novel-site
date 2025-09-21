@@ -3,6 +3,7 @@ package middlewares
 import (
 	"context"
 	"immodi/novel-site/internal/app/handlers/auth"
+	"immodi/novel-site/pkg"
 	"net/http"
 )
 
@@ -23,7 +24,7 @@ func RoleMiddleware(requiredRole string) func(http.Handler) http.Handler {
 			}
 
 			// Parse JWT
-			claims, err := auth.ParseToken(tokenString)
+			claims, err := pkg.ParseToken(tokenString)
 			if err != nil {
 				http.Redirect(w, r, "/login", http.StatusSeeOther)
 				return

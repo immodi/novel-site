@@ -16,6 +16,7 @@ import (
 func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 	novelSlug := chi.URLParam(r, "novelSlug")
 	chapterNumStr := chi.URLParam(r, "chapterNumber")
+	userID := pkg.IsAuthedUser(r)
 
 	chapterNum, err := strconv.Atoi(chapterNumStr)
 	if err != nil || chapterNum < 1 {
@@ -43,6 +44,8 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 		handlers.ServerErrorHandler(w, r)
 		return
 	}
+
+	go h.chapterService.UpdateLastReadChapter(userID, dbNovel.ID, dbChapter.ID)
 
 	var nextChapterIntPointer *int
 	var prevChapterIntPointer *int

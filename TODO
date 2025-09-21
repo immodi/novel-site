@@ -2,6 +2,3 @@
 
 -- admin panel
 
--- automatic updater for novel chapters
-
--- make the scrapper and the updater document the data in a sqlite database instead of the data/ directory

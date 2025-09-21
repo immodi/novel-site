@@ -13,4 +13,6 @@ type ChapterService interface {
 	CreateBulkChapters(chapters []repositories.CreateChapterParams) error
 
 	IncrementNovelViewCount(novelID int64) error
+
+	UpdateLastReadChapter(userID, novelID, chapterID int64) error
 }

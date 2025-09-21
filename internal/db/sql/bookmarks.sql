@@ -26,3 +26,13 @@ SELECT EXISTS (
     FROM user_bookmarks
     WHERE user_id = ? AND novel_id = ?
 ) AS is_bookmarked;
+
+-- name: GetLastReadChapterID :one
+SELECT last_read_chapter_id
+FROM user_bookmarks
+WHERE user_id = ? AND novel_id = ?;
+
+-- name: UpdateLastReadChapter :exec
+UPDATE user_bookmarks
+SET last_read_chapter_id = ?
+WHERE user_id = ? AND novel_id = ?;

@@ -81,9 +81,11 @@ CREATE TABLE IF NOT EXISTS user_bookmarks (
     user_id INTEGER NOT NULL,
     novel_id INTEGER NOT NULL,
     created_at TEXT NOT NULL DEFAULT '',
+    last_read_chapter_id INTEGER DEFAULT NULL,
     PRIMARY KEY (user_id, novel_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE
+    FOREIGN KEY (novel_id) REFERENCES novels(id) ON DELETE CASCADE,
+    FOREIGN KEY (last_read_chapter_id) REFERENCES chapters(id) ON DELETE SET NULL
 );
 
 -- Indexes for bookmarks

@@ -68,7 +68,7 @@ func (h *AuthHandler) PostRegisterHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	token, err := GenerateToken(userId, string(sql.UserRoleUser), DefaultJwtDuration)
+	token, err := pkg.GenerateToken(userId, string(sql.UserRoleUser), pkg.DefaultJwtDuration)
 	if err != nil {
 		dto := authdtostructs.RegisterDTO{
 			Errors:   []string{"Could not generate token"},
@@ -79,6 +79,6 @@ func (h *AuthHandler) PostRegisterHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	setAuthCookie(w, token, DefaultJwtDuration, config.IsProduction)
+	setAuthCookie(w, token, pkg.DefaultJwtDuration, config.IsProduction)
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }

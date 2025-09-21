@@ -2,9 +2,9 @@ package novels
 
 import (
 	"fmt"
-	"immodi/novel-site/internal/app/handlers/auth"
 	"immodi/novel-site/internal/app/services/novels"
 	"immodi/novel-site/internal/config"
+	"immodi/novel-site/pkg"
 	"net/http"
 	"time"
 )
@@ -43,7 +43,7 @@ func IsAuthedUser(r *http.Request) int64 {
 	}
 	tokenString = token.Value
 
-	userID, err := auth.GetUserIDFromToken(tokenString)
+	userID, err := pkg.GetUserIDFromToken(tokenString)
 	if err != nil {
 		return 0
 	}
