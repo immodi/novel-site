@@ -20,13 +20,13 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 
 	chapterNum, err := strconv.Atoi(chapterNumStr)
 	if err != nil || chapterNum < 1 {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		return
 	}
 
 	dbNovel, err := h.chapterService.GetNovelBySlug(novelSlug)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		return
 	}
 
@@ -34,14 +34,14 @@ func (h *ChapterHandler) ReadChapter(w http.ResponseWriter, r *http.Request) {
 
 	totalChaptersNumber, err := h.chapterService.CountChaptersByNovel(dbNovel.ID)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		return
 	}
 
 	// Get the chapter
 	dbChapter, err := h.chapterService.GetChapterByNumber(dbNovel.ID, int64(chapterNum))
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
+		handlers.NotFoundHandler(w, r)
 		return
 	}
 
@@ -86,19 +86,16 @@ func (h *ChapterHandler) GetChaptersDropDown(w http.ResponseWriter, r *http.Requ
 
 	chapterNumber, err := strconv.Atoi(chapterNumberStr)
 	if err != nil || chapterNumber < 1 {
-		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
 	dbNovel, err := h.chapterService.GetNovelBySlug(novelSlug)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
 		return
 	}
 
 	dbChapters, err := h.chapterService.ListChaptersByNovel(dbNovel.ID)
 	if err != nil {
-		handlers.ServerErrorHandler(w, r)
 		return
 	}
 

@@ -37,6 +37,7 @@ templ MetaHead(s *indexdtostructs.MetaDataStruct) {
 		if s.Canonical != "" {
 			<link rel="canonical" href={ s.Canonical }/>
 		}
+		<meta property="og:site_name" content={ indexdtostructs.SITE_NAME }/>
 		<meta property="og:type" content="website"/>
 		<meta name="referrer" content="origin-when-cross-origin"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>

@@ -21,5 +21,6 @@ func (h *SearchHandler) GenericSearch(paramter string, totalResults int64, heade
 
 	totalPages := int(math.Ceil(float64(totalResults) / float64(pkg.SEARCH_PAGE_LIMIT)))
 
-	handlers.GenericHandler(w, r, index.BuildHomeMeta(), search.SearchResults(paramter, headerText, query, collection, hotNovels, currentPage, totalPages))
+	meta := BuildSearchMeta(paramter, query)
+	handlers.GenericHandler(w, r, meta, search.SearchResults(paramter, headerText, query, collection, hotNovels, currentPage, totalPages))
 }

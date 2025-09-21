@@ -13,19 +13,29 @@ func GenericHandler(
 	r *http.Request,
 	data *indexdtostructs.MetaDataStruct,
 	cmp templ.Component,
+	statusCode ...int,
 ) {
+	code := http.StatusOK
+	if len(statusCode) > 0 {
+		code = statusCode[0]
+	}
+
 	authHeaderEntry := "Login"
 	_, err := r.Cookie("auth_token")
 	if err == nil {
 		authHeaderEntry = "Profile"
 	}
 
-	headers := []string{"Novels", authHeaderEntry}
+	headers := []string{authHeaderEntry}
 
-	Render(data, &indexdtostructs.LayoutData{Headers: headers}, cmp).ServeHTTP(w, r)
+	Render(data, &indexdtostructs.LayoutData{Headers: headers}, cmp, code).ServeHTTP(w, r)
 }
 
-func Render(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.LayoutData, cmp templ.Component) http.HandlerFunc {
-	layout := templates.Layout(metaData, data, cmp)
-	return templ.Handler(layout).ServeHTTP
+func Render(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.LayoutData, cmp templ.Component, code int) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		layout := templates.Layout(metaData, data, cmp)
+
+		w.WriteHeader(code)
+		templ.Handler(layout).ServeHTTP(w, r)
+	}
 }
