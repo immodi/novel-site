@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"immodi/novel-site/internal/app/services/db"
@@ -102,5 +103,31 @@ func (a *authService) AuthenticateForRegister(username, password string) (bool, 
 		}
 
 		return true, nil
+	})
+}
+
+func (a *authService) GetUserByEmail(email string) (repositories.User, bool, error) {
+	var exists bool = false
+	user, err := db.ExecuteWithResult(a.db, func(ctx context.Context, q *repositories.Queries) (repositories.User, error) {
+		user, err := q.GetUserByEmail(ctx, email)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return repositories.User{}, nil
+			}
+			return repositories.User{}, err
+		}
+		exists = true
+		return user, nil
+	})
+
+	return user, exists, err
+}
+
+func (a *authService) UpdateUserImage(userID int64, image string) error {
+	return db.Execute(a.db, func(ctx context.Context, q *repositories.Queries) error {
+		return q.UpdateUserImage(ctx, repositories.UpdateUserImageParams{
+			ID:    userID,
+			Image: image,
+		})
 	})
 }

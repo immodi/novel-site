@@ -54,6 +54,9 @@ func (router *Router) RegisterRoutes() {
 	router.r.Get("/privacy", router.handlers.Privacy.Privacy)
 	router.r.Get("/terms", router.handlers.Terms.Terms)
 
+	router.r.Get("/auth/google/login", router.handlers.Auth.GoogleAuth)
+	router.r.Get("/auth/google/callback", router.handlers.Auth.GoogleCallback)
+
 	router.r.Get("/login", router.handlers.Auth.LoginHandler)
 	router.r.Post("/login", router.handlers.Auth.PostLoginHandler)
 	router.r.Get("/logout", router.handlers.Auth.LogoutHandler)

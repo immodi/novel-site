@@ -6,10 +6,13 @@ import (
 )
 
 var (
-	DBPath       = mustGetEnv("DB_PATH")
-	JWTSecret    = mustGetEnv("JWT_SECRET")
-	Port         = mustGetEnv("PORT")
-	IsProduction = mustGetEnv("IS_PRODUCTION") == "true"
+	DBPath             = mustGetEnv("DB_PATH")
+	JWTSecret          = mustGetEnv("JWT_SECRET")
+	Port               = mustGetEnv("PORT")
+	SiteURL            = mustGetEnv("SITE_URL")
+	IsProduction       = mustGetEnv("IS_PRODUCTION") == "true"
+	GoogleClientID     = mustGetEnv("GOOGLE_CLIENT_ID")
+	GoogleClientSecret = mustGetEnv("GOOGLE_CLIENT_SECRET")
 )
 
 func mustGetEnv(key string) string {
@@ -19,4 +22,3 @@ func mustGetEnv(key string) string {
 	}
 	return value
 }
-

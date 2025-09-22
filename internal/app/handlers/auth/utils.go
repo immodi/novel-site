@@ -1,11 +1,15 @@
 package auth
 
 import (
+	"crypto/rand"
+	"encoding/base64"
+	"log"
 	"net/http"
 	"time"
 )
 
 var CookieName = "auth_token"
+var OauthStateName = "oauth_token"
 
 func removeAuthCookie(w http.ResponseWriter, isProduction bool) {
 	var secure bool = false
@@ -83,4 +87,22 @@ func authenticateLoginRequest(email, password string) []string {
 	}
 
 	return errors
+}
+
+func GenerateStateOauthCookie(w http.ResponseWriter) (string, error) {
+	b := make([]byte, 16)
+	if _, err := rand.Read(b); err != nil {
+		log.Println("Failed to generate random state:", err)
+		return "", err
+	}
+	state := base64.URLEncoding.EncodeToString(b)
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     OauthStateName,
+		Value:    state,
+		HttpOnly: true,
+		Path:     "/",
+		MaxAge:   300,
+	})
+	return state, nil
 }
