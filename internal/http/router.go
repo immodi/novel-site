@@ -36,75 +36,85 @@ func (router *Router) NewRouter() *chi.Mux {
 }
 
 func (router *Router) RegisterRoutes() {
-	router.r.Get("/", router.handlers.Home.Index)
-
-	router.r.Get("/novel/{novelSlug}", router.handlers.Novel.GetNovel)
-	router.r.Get("/novel/{novelSlug}/chapters", router.handlers.Chapter.GetChaptersDropDown)
-	router.r.Get("/novel/{novelSlug}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
-
-	router.r.Get("/comments", router.handlers.Comment.Comments)
-	router.r.Get("/chapter-comments", router.handlers.ChapterComment.Comments)
-
-	router.r.Get("/search/{novelName}", router.handlers.Search.SearchNovel)
-	router.r.Get("/sort/{collection}", router.handlers.Search.SortNovelsByCollection)
-	router.r.Get("/genre/{genre}", router.handlers.Search.SortNovelsByGenres)
-	router.r.Get("/tag/{tag}", router.handlers.Search.SortNovelsByTags)
-	router.r.Get("/author/{author}", router.handlers.Search.SortNovelsByAuthor)
-
-	router.r.Get("/privacy", router.handlers.Privacy.Privacy)
-	router.r.Get("/terms", router.handlers.Terms.Terms)
-
-	router.r.Get("/auth/google/login", router.handlers.Auth.GoogleAuth)
-	router.r.Get("/auth/google/callback", router.handlers.Auth.GoogleCallback)
-
-	router.r.Get("/login", router.handlers.Auth.LoginHandler)
-	router.r.Post("/login", router.handlers.Auth.PostLoginHandler)
-	router.r.Get("/logout", router.handlers.Auth.LogoutHandler)
-
-	router.r.Get("/register", router.handlers.Auth.RegisterHandler)
-	router.r.Post("/register", router.handlers.Auth.PostRegisterHandler)
-
-	router.r.Post("/load/novel", router.handlers.Load.LoadNovel)
-	router.r.Post("/load/chapters", router.handlers.Load.LoadChapter)
-	router.r.Post("/load/last-chapter/id", router.handlers.Load.GetLastChapterById)
-	router.r.Post("/load/last-chapter/name", router.handlers.Load.GetLastChapterByName)
-	router.r.Post("/load/append-chapters", router.handlers.Load.AppendChapters)
-
-	if !config.IsProduction {
-		router.r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)
-		router.r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
-	}
 
 	router.r.Group(func(r chi.Router) {
-		r.Use(middlewares.RoleMiddleware("user"))
+		r.Use(httprate.LimitByIP(100, time.Minute))
 
-		r.Get("/profile", router.handlers.Profile.Profile)
-		r.Post("/profile", router.handlers.Profile.UpdateProfile)
+		r.Get("/", router.handlers.Home.Index)
 
-		r.Post("/bookmark", router.handlers.Profile.PostBookmark)
-		r.Post("/bookmark-remove", router.handlers.Profile.RemoveBookmark)
+		r.Get("/novel/{novelSlug}", router.handlers.Novel.GetNovel)
+		r.Get("/novel/{novelSlug}/chapters", router.handlers.Chapter.GetChaptersDropDown)
+		r.Get("/novel/{novelSlug}/chapter-{chapterNumber}", router.handlers.Chapter.ReadChapter)
 
-		r.Post("/comment", router.handlers.Comment.PostComment)
-		r.Post("/comment/edit", router.handlers.Comment.EditComment)
-		r.Post("/comment/reaction", router.handlers.Comment.PostReact)
+		r.Get("/comments", router.handlers.Comment.Comments)
+		r.Get("/chapter-comments", router.handlers.ChapterComment.Comments)
 
-		r.Post("/chapter-comments", router.handlers.ChapterComment.PostComment)
-		r.Post("/chapter-comments/edit", router.handlers.ChapterComment.EditComment)
-		r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
+		r.Get("/search/{novelName}", router.handlers.Search.SearchNovel)
+		r.Get("/sort/{collection}", router.handlers.Search.SortNovelsByCollection)
+		r.Get("/genre/{genre}", router.handlers.Search.SortNovelsByGenres)
+		r.Get("/tag/{tag}", router.handlers.Search.SortNovelsByTags)
+		r.Get("/author/{author}", router.handlers.Search.SortNovelsByAuthor)
+
+		r.Get("/privacy", router.handlers.Privacy.Privacy)
+		r.Get("/terms", router.handlers.Terms.Terms)
+
+		r.Get("/auth/google/login", router.handlers.Auth.GoogleAuth)
+		r.Get("/auth/google/callback", router.handlers.Auth.GoogleCallback)
+
+		r.Get("/login", router.handlers.Auth.LoginHandler)
+		r.Post("/login", router.handlers.Auth.PostLoginHandler)
+		r.Get("/logout", router.handlers.Auth.LogoutHandler)
+
+		r.Get("/register", router.handlers.Auth.RegisterHandler)
+		r.Post("/register", router.handlers.Auth.PostRegisterHandler)
+
+		if !config.IsProduction {
+			r.Get("/create-novel/{novelName}/{novelStatus}", router.handlers.Novel.CreateNovelWithDefaults)
+			r.Get("/create-chapter/{novelId}", router.handlers.Chapter.CreateChapterWithDefaults)
+		}
+
+		r.Group(func(r chi.Router) {
+			r.Use(middlewares.RoleMiddleware("user"))
+
+			r.Get("/profile", router.handlers.Profile.Profile)
+			r.Post("/profile", router.handlers.Profile.UpdateProfile)
+
+			r.Post("/bookmark", router.handlers.Profile.PostBookmark)
+			r.Post("/bookmark-remove", router.handlers.Profile.RemoveBookmark)
+
+			r.Post("/comment", router.handlers.Comment.PostComment)
+			r.Post("/comment/edit", router.handlers.Comment.EditComment)
+			r.Post("/comment/reaction", router.handlers.Comment.PostReact)
+
+			r.Post("/chapter-comments", router.handlers.ChapterComment.PostComment)
+			r.Post("/chapter-comments/edit", router.handlers.ChapterComment.EditComment)
+			r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
+
+		})
+
+		r.Handle("/static/*", router.serveStatic("static"))
+		r.Get("/robots.txt", router.serveStaticAsset("robots.txt"))
+
+		r.Get("/sitemap.xml", router.handlers.Sitemap.MainSiteMap)
+		r.Get("/sitemaps/home.xml", router.handlers.Sitemap.HomeSiteMap)
+		r.Get("/sitemaps/novels.xml", router.handlers.Sitemap.NovelsSiteMap)
+		r.Get("/sitemaps/genres.xml", router.handlers.Sitemap.GenresSiteMap)
+		r.Get("/sitemaps/tags.xml", router.handlers.Sitemap.TagsSiteMap)
+
+		r.Get("/novels", router.redirectToHome())
+		r.NotFound(handlers.NotFoundHandler)
 
 	})
 
-	router.r.Handle("/static/*", router.serveStatic("static"))
-	router.r.Get("/robots.txt", router.serveStaticAsset("robots.txt"))
+	router.r.Group(func(r chi.Router) {
+		r.Use(middlewares.LocalOnlyMiddleware)
 
-	router.r.Get("/sitemap.xml", router.handlers.Sitemap.MainSiteMap)
-	router.r.Get("/sitemaps/home.xml", router.handlers.Sitemap.HomeSiteMap)
-	router.r.Get("/sitemaps/novels.xml", router.handlers.Sitemap.NovelsSiteMap)
-	router.r.Get("/sitemaps/genres.xml", router.handlers.Sitemap.GenresSiteMap)
-	router.r.Get("/sitemaps/tags.xml", router.handlers.Sitemap.TagsSiteMap)
-
-	router.r.Get("/novels", router.redirectToHome())
-	router.r.NotFound(handlers.NotFoundHandler)
+		r.Post("/load/novel", router.handlers.Load.LoadNovel)
+		r.Post("/load/chapters", router.handlers.Load.LoadChapter)
+		r.Post("/load/last-chapter/id", router.handlers.Load.GetLastChapterById)
+		r.Post("/load/last-chapter/name", router.handlers.Load.GetLastChapterByName)
+		r.Post("/load/append-chapters", router.handlers.Load.AppendChapters)
+	})
 
 }
 
@@ -118,7 +128,6 @@ func (router *Router) RegisterHandlers() {
 
 func (router *Router) RegisterMiddlewares() {
 	router.r.Use(middleware.Logger)
-	router.r.Use(httprate.LimitByIP(100, time.Minute))
 }
 
 func (router *Router) redirectToHome() http.HandlerFunc {
