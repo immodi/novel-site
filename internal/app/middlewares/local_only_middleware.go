@@ -1,22 +1,24 @@
 package middlewares
 
 import (
+	"net"
 	"net/http"
-	"strings"
 )
 
 func LocalOnlyMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ip := r.RemoteAddr
-		// In case RemoteAddr includes port, strip it
-		if colon := strings.LastIndex(ip, ":"); colon != -1 {
-			ip = ip[:colon]
-		}
-
-		if ip != "127.0.0.1" && ip != "::1" {
+		host, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
+
+		ip := net.ParseIP(host)
+		if !ip.IsLoopback() {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }
