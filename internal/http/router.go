@@ -36,7 +36,6 @@ func (router *Router) NewRouter() *chi.Mux {
 }
 
 func (router *Router) RegisterRoutes() {
-
 	router.r.Group(func(r chi.Router) {
 		r.Use(httprate.LimitByIP(100, time.Minute))
 
@@ -94,6 +93,7 @@ func (router *Router) RegisterRoutes() {
 
 		r.Handle("/static/*", router.serveStatic("static"))
 		r.Get("/robots.txt", router.serveStaticAsset("robots.txt"))
+		r.Get("/favicon.ico", router.serveStaticAsset("logo/favicon.ico"))
 
 		r.Get("/sitemap.xml", router.handlers.Sitemap.MainSiteMap)
 		r.Get("/sitemaps/home.xml", router.handlers.Sitemap.HomeSiteMap)
