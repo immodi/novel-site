@@ -20,4 +20,4 @@ def get_parser(
         return NovelFireParser(max_chapters_number, cache, skip_duplicates)
 
     # default fallback
-    return NovelBinParser(max_chapters_number)
+    return NovelBinParser(max_chapters_number, cache, skip_duplicates)

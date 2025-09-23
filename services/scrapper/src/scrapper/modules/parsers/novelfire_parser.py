@@ -7,7 +7,7 @@ from scrapper.helpers import utils, saver, helpers
 from scrapper.modules.factories.factory import Parser, SkipDuplicate
 from scrapper.helpers.utils import safe_text
 from scrapper import config
-from typing import List, Union
+from typing import List, Union, Generator
 from scrapper.datatypes.novel import ChapterData, NovelData, NovelLink
 from lxml import html
 from scrapper.datatypes.novel_fire_chapter import NovelFireChapter
@@ -189,6 +189,76 @@ class NovelFireParser(Parser):
                     chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
                 )
             # self.cache.save_last_chapter(url, chapters[-1].url, chapters[-1].title)
+
+        return chapters
+
+    def parse_chapters_with_notify(
+        self, url: str, novel_name: str, save_per_chapter: bool
+    ) -> Generator[str, None, List[ChapterData]]:
+        """
+        Like parse_chapters, but yields a message for each chapter fetched.
+        Returns the full list of chapters at the end.
+        """
+        ajax_url = f"{url}/chapters"
+        tree = utils.fetch_page(ajax_url)  # type: ignore
+        chapters: List[ChapterData] = []
+
+        # Find last chapter number
+        header_el = tree.cssselect("header.container")
+        if not header_el:
+            return chapters
+
+        last_link = header_el[0].getchildren()[-1].cssselect("a")
+        if not last_link:
+            return chapters
+
+        href = last_link[0].get("href")
+        if not href or "chapter-" not in href:
+            return chapters
+
+        base_url, last_chap = href.split("chapter-")
+        try:
+            last_chapter_number = int(last_chap)
+        except ValueError:
+            return chapters
+
+        if last_chapter_number > self.max_chapters_number:
+            yield f"Maximum number of chapters ({self.max_chapters_number}) exceeded. Skipping {novel_name}."
+            self.clean_up_novel(novel_name)
+            return chapters
+
+        # Fetch chapters
+        for i in range(1, last_chapter_number + 1):
+            chapter_link = f"{base_url}chapter-{i}"
+            chapter_data = scrape_chapter_with_request(chapter_link)  # type: ignore
+
+            if self.skip_duplicates == SkipDuplicate.CHAPTER and self.chapter_exists(
+                chapter_data.title, utils.slugify(novel_name)
+            ):
+                yield f"Chapter {chapter_data.title} already exists. Skipping..."
+                continue
+
+            chapter = ChapterData(
+                title=chapter_data.title,
+                content=chapter_data.content,
+                url=chapter_link,
+            )
+            chapters.append(chapter)
+
+            if save_per_chapter:
+                saver.save_item(
+                    chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
+                )
+
+            msg = f"--> Fetched {chapter.title} of length {utils.bold_green(len(chapter.content))} from url {chapter_link}."
+            print(msg)
+            yield msg
+
+        if not save_per_chapter:
+            for chapter in chapters:
+                saver.save_item(
+                    chapter, f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}"
+                )
 
         return chapters
 

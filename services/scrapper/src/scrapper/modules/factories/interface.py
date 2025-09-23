@@ -1,4 +1,4 @@
-from typing import Protocol, List, Union, Tuple
+from typing import Protocol, List, Union, Tuple, Generator
 from lxml import html
 from scrapper import config
 from scrapper.helpers import utils
@@ -47,6 +47,10 @@ class Parser(Protocol):
     until the link has the 'isDisabled' class. For each chapter page,
     fetch and save a ChapterData object.
     """
+
+    def parse_chapters_with_notify(
+        self, url: str, novel_name: str, save_per_chapter: bool
+    ) -> Generator[str, None, List[ChapterData]]: ...
 
     def update_novel(
         self, novel_name: str, novel_url: str, last_chapter_url: str

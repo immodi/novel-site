@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package scrapper;
+
+service ScrapperService {
+  rpc ScrapeNovels(ScrapeRequest) returns (stream ScrapeResponse) {}
+}
+
+message NovelLink {
+  string title = 1;
+  string url = 2;
+}
+
+message ChapterMessage {
+  string message = 1;
+}
+
+message ScrapeRequest {
+  string url = 1;
+  int32 start_page_num = 2;
+  int32 total_pages_num = 3;
+  int32 max_novel_chapters_num = 4;
+}
+
+message ScrapeResponse {
+  NovelLink      novel_link = 1;
+  ChapterMessage chapter_message = 2;
+}
