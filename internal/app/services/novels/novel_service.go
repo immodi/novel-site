@@ -61,9 +61,21 @@ func (s *novelService) GetGenres(novelID int64) ([]repositories.NovelGenre, erro
 	})
 }
 
+func (s *novelService) GetAllGenres() ([]string, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
+		return q.ListAllGenres(ctx)
+	})
+}
+
 func (s *novelService) GetTags(novelID int64) ([]repositories.NovelTag, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.NovelTag, error) {
 		return q.GetNovelTags(ctx, novelID)
+	})
+}
+
+func (s *novelService) FilterTagsByName(tag string) ([]string, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]string, error) {
+		return q.ListTagsByName(ctx, fmt.Sprintf("%s%%", tag))
 	})
 }
 

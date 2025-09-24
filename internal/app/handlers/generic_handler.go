@@ -26,7 +26,7 @@ func GenericHandler(
 		authHeaderEntry = "Profile"
 	}
 
-	headers := []string{authHeaderEntry}
+	headers := []string{"Filter", authHeaderEntry}
 
 	Render(data, &indexdtostructs.LayoutData{Headers: headers}, cmp, code).ServeHTTP(w, r)
 }

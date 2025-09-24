@@ -216,6 +216,37 @@ func (q *Queries) ListNovelsByTagPaginated(ctx context.Context, arg ListNovelsBy
 	return items, nil
 }
 
+const listTagsByName = `-- name: ListTagsByName :many
+SELECT DISTINCT tag
+FROM novel_tags
+WHERE LOWER(tag) LIKE LOWER(?)
+ORDER BY tag ASC
+LIMIT 20
+`
+
+func (q *Queries) ListTagsByName(ctx context.Context, lower string) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listTagsByName, lower)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var tag string
+		if err := rows.Scan(&tag); err != nil {
+			return nil, err
+		}
+		items = append(items, tag)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listTagsByNovel = `-- name: ListTagsByNovel :many
 SELECT novel_id, tag, tag_slug
 FROM novel_tags

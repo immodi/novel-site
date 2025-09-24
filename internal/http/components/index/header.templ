@@ -16,7 +16,7 @@ templ Header(navLinks []string) {
 			/>
 		</a>
 		<!-- Navigation Links and Right Side Controls -->
-		<div class="flex w-auto gap-6 h-full">
+		<div class="flex justify-center items-center w-auto gap-6 h-full">
 			<!-- Desktop Search Bar - Moved to left after logo -->
 			<form
 				method="GET"
@@ -51,7 +51,8 @@ templ Header(navLinks []string) {
 				</button>
 			</form>
 			<div class="flex items-center justify-end w-fit h-full">
-				<nav class="hidden md:flex items-center justify-center space-x-8 text-lg mt-2 mr-6">
+				<!-- Desktop Navigation Links - Hidden on all screens since we're using hamburger menu everywhere -->
+				<nav class="hidden items-center justify-center space-x-8 text-lg mt-2 mr-6">
 					for _, link := range navLinks {
 						<a href={ "/" + strings.ToLower(link) } class="relative pb-1 group">
 							{ link }
@@ -62,7 +63,7 @@ templ Header(navLinks []string) {
 					}
 				</nav>
 				<!-- Right Side Controls -->
-				<div class="flex items-center space-x-4">
+				<div class="flex items-center space-x-4 h-full justify-center">
 					<!-- Search Icon (Mobile) - Now opens the side menu -->
 					<button
 						id="mobileSearchToggle"
@@ -85,10 +86,10 @@ templ Header(navLinks []string) {
 						</svg>
 					</button>
 					@ThemeToggle()
-					<!-- Mobile Hamburger -->
+					<!-- Hamburger Menu - Visible on all screens -->
 					<button
 						id="menuToggle"
-						class="md:hidden cursor-pointer w-6 h-5 flex flex-col justify-between items-center"
+						class="cursor-pointer w-6 h-5 flex flex-col justify-between items-center"
 						onclick="openMenu()"
 					>
 						<span
@@ -103,19 +104,19 @@ templ Header(navLinks []string) {
 			</div>
 		</div>
 	</header>
-	<!-- Mobile Menu Overlay - Redesigned -->
+	<!-- Menu Overlay - Redesigned - Visible on all screens -->
 	<div
 		id="mobileMenu"
-		class="fixed top-0 right-0 w-full h-full bg-[#121212] dark:bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden"
+		class="fixed top-0 right-0 w-full h-full bg-[#121212] dark:bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out"
 	>
 		<!-- Menu Content Container -->
-		<div class="flex flex-col h-full overflow-y-auto bg-[#121212] dark:bg-white">
+		<div class="flex flex-col h-full w-full overflow-y-auto bg-[#121212] dark:bg-white">
 			<!-- Header with Close Button -->
-			<div class="flex justify-between items-center p-5 border-b border-[#252525] dark:border-[#e5e5e5]">
+			<div class="flex justify-between items-center p-5 border-b border-[#252525] p-4 dark:border-[#e5e5e5]">
 				<h2 class="text-xl font-semibold text-white dark:text-black">Menu</h2>
 				<button
 					id="closeMenu"
-					class="p-2 rounded-full bg-[#252525] dark:bg-gray-200 hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors duration-200"
+					class="p-2 cursor-pointer rounded-full bg-[#252525] dark:bg-gray-200 hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors duration-200"
 					onclick="closeMenu()"
 					aria-label="Close menu"
 				>
@@ -130,8 +131,8 @@ templ Header(navLinks []string) {
 					</svg>
 				</button>
 			</div>
-			<!-- Search Bar -->
-			<div class="p-5 border-b border-[#252525] dark:border-[#e5e5e5]">
+			<!-- Search Bar - Hidden on desktop since we have the desktop search bar -->
+			<div class="p-5 border-b border-[#252525] dark:border-[#e5e5e5] md:hidden">
 				<form method="GET" action="/search" class="relative" onsubmit="return handleSearch(event, this)">
 					<input
 						type="text"
@@ -227,7 +228,7 @@ templ Header(navLinks []string) {
 templ ThemeToggle() {
 	<button
 		id="toggleDark"
-		class="md:top-[1px] relative w-8 h-8 cursor-pointer rounded-full 
+		class="space-y-4 relative w-8 h-8 cursor-pointer rounded-full 
                hover:bg-gray-800 dark:hover:bg-gray-100 
                transition-colors duration-200 focus:outline-none 
                focus:ring-2 focus:ring-gray-600 dark:focus:ring-gray-300"

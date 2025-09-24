@@ -53,6 +53,11 @@ func (router *Router) RegisterRoutes() {
 		r.Get("/genre/{genre}", router.handlers.Search.SortNovelsByGenres)
 		r.Get("/tag/{tag}", router.handlers.Search.SortNovelsByTags)
 		r.Get("/author/{author}", router.handlers.Search.SortNovelsByAuthor)
+		r.Post("/filter", router.handlers.Search.SortByFilter)
+
+		r.Get("/filter", router.handlers.Filter.Filter)
+		r.Get("/filter/tags", router.handlers.Filter.FilterTags)
+		r.Get("/filter/tags-excluded", router.handlers.Filter.FilterExcludedTags)
 
 		r.Get("/privacy", router.handlers.Privacy.Privacy)
 		r.Get("/terms", router.handlers.Terms.Terms)

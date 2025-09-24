@@ -13,6 +13,13 @@ SELECT DISTINCT tag_slug
 FROM novel_tags
 ORDER BY tag COLLATE NOCASE;
 
+-- name: ListTagsByName :many
+SELECT DISTINCT tag
+FROM novel_tags
+WHERE LOWER(tag) LIKE LOWER(?)
+ORDER BY tag ASC
+LIMIT 20;
+
 -- name: RemoveTagFromNovel :exec
 DELETE FROM novel_tags
 WHERE novel_id = ? AND tag = ?;

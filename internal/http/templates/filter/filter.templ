@@ -1,0 +1,378 @@
+package filter
+
+templ AdvancedSearch(genres []string) {
+	<div class="w-full bg-[#121212] dark:bg-white text-gray-100 dark:text-gray-900 min-h-screen py-8">
+		<div class="container max-w-7xl mx-auto px-4">
+			<!-- Page Title -->
+			<div class="mb-8">
+				<h1 class="text-3xl font-bold text-gray-100 dark:text-gray-900">Advanced Search</h1>
+				<p class="text-gray-400 dark:text-gray-600 mt-2">Filter novels by multiple criteria</p>
+			</div>
+			<!-- Advanced Search Form -->
+			<section class="bg-[#1a1a1a] dark:bg-gray-100 rounded-lg border border-[#252525] dark:border-gray-300 p-6 mb-8">
+				<form autocomplete="off" method="post" action="/filter" class="space-y-8">
+					<!-- Genres -->
+					<div class="adv-section">
+						<label class="block text-lg font-semibold text-gray-100 dark:text-gray-900 mb-4">
+							<div class="flex items-center space-x-4">
+								<span>Genres</span>
+								<select
+									class="bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+									name="ctgcon"
+								>
+									<option value="and">AND</option>
+									<option value="or">OR</option>
+									<option value="exclude">EXCLUDE</option>
+								</select>
+								<span class="text-sm text-gray-400 dark:text-gray-600">(Matches ALL genres selected)</span>
+							</div>
+						</label>
+						<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+							for _, genre := range genres {
+								<label class="flex items-center space-x-3 cursor-pointer">
+									<input type="checkbox" value={ genre } name="genres" class="hidden peer"/>
+									<div
+										class="flex items-center justify-center w-4 h-4 border-2 border-[#353535] dark:border-gray-400 rounded peer-checked:bg-blue-500 peer-checked:border-blue-500 transition-colors"
+									></div>
+									<span
+										class="text-sm text-gray-300 dark:text-gray-700 peer-checked:text-blue-400 dark:peer-checked:text-blue-600 transition-colors"
+									>
+										{ genre }
+									</span>
+								</label>
+							}
+						</div>
+					</div>
+					<!-- Filter Row -->
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+						<!-- Chapters -->
+						<div class="adv-section">
+							<label class="block text-sm font-semibold text-gray-100 dark:text-gray-900 mb-2">
+								Chapters
+							</label>
+							<select
+								class="w-full bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+								name="totalchapter"
+							>
+								<option value="0">All</option>
+								<option value="1,49">&lt;50</option>
+								<option value="50,100">50-100</option>
+								<option value="100,200">100-200</option>
+								<option value="200,500">200-500</option>
+								<option value="500,1000">500-1000</option>
+								<option value="1001,1000000">&gt;1000</option>
+							</select>
+						</div>
+						<!-- Rating -->
+						<!-- <div class="adv-section"> -->
+						<!-- 	<label class="block text-sm font-semibold text-gray-100 dark:text-gray-900 mb-2"> -->
+						<!-- 		<div class="flex items-center space-x-2"> -->
+						<!-- 			<span>Rating</span> -->
+						<!-- 			<select -->
+						<!-- 				class="bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500" -->
+						<!-- 				name="ratcon" -->
+						<!-- 			> -->
+						<!-- 				<option value="min">min</option> -->
+						<!-- 				<option value="max">max</option> -->
+						<!-- 			</select> -->
+						<!-- 		</div> -->
+						<!-- 	</label> -->
+						<!-- 	<select -->
+						<!-- 		class="w-full bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" -->
+						<!-- 		name="rating" -->
+						<!-- 	> -->
+						<!-- 		<option value="0">none</option> -->
+						<!-- 		<option value="1">1</option> -->
+						<!-- 		<option value="2">2</option> -->
+						<!-- 		<option value="3">3</option> -->
+						<!-- 		<option value="4">4</option> -->
+						<!-- 		<option value="5">5</option> -->
+						<!-- 	</select> -->
+						<!-- </div> -->
+						<!-- Translation Status -->
+						<div class="adv-section">
+							<label class="block text-sm font-semibold text-gray-100 dark:text-gray-900 mb-2">
+								Translation Status
+							</label>
+							<select
+								class="w-full bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+								name="status"
+							>
+								<option value="-1">All</option>
+								<option value="1">Completed</option>
+								<option value="0">Ongoing</option>
+							</select>
+						</div>
+						<!-- Sort Results -->
+						<div class="adv-section">
+							<label class="block text-sm font-semibold text-gray-100 dark:text-gray-900 mb-2">
+								Sort Results By...
+							</label>
+							<select
+								class="w-full bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+								name="sort"
+							>
+								<option value="rank-top">Rank (Top)</option>
+								<option value="bookmark">Bookmark Count (Most)</option>
+								<option value="review">Review Count (Most)</option>
+								<option value="abc">Title (A&gt;Z)</option>
+								<option value="cba">Title (Z&gt;A)</option>
+								<option value="date" selected>Last Updated (Newest)</option>
+								<option value="chapter-count-most">Chapter Count (Most)</option>
+							</select>
+						</div>
+					</div>
+					<!-- Tags -->
+					<div class="adv-section">
+						<label class="block text-lg font-semibold text-gray-100 dark:text-gray-900 mb-4">
+							<div class="flex items-center space-x-4">
+								<span>Tags</span>
+								<select
+									class="bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+									name="tag"
+								>
+									<option value="and">AND</option>
+									<option value="or">OR</option>
+								</select>
+								<span class="text-sm text-gray-400 dark:text-gray-600">
+									(Matches ALL tags selected)
+								</span>
+							</div>
+						</label>
+						<!-- container that holds chips/pills -->
+						<div id="selected-tags" class="flex flex-wrap gap-2 mb-2"></div>
+						<!-- the visible text box for searching tags -->
+						<input
+							id="tags-input"
+							name="tag"
+							type="text"
+							placeholder="Type to search and click to add"
+							class="w-full bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300
+                               text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2
+                               focus:ring-blue-500 placeholder-gray-500 dark:placeholder-gray-400"
+							autocomplete="off"
+							hx-get="/filter/tags"
+							hx-trigger="keyup changed delay:150ms"
+							hx-target="#tags-suggestions-container"
+							hx-swap="innerHTML"
+						/>
+						<div id="tags-suggestions-container" class="relative"></div>
+					</div>
+					<!-- Tags Excluded -->
+					<div class="adv-section">
+						<label class="block text-lg font-semibold text-gray-100 dark:text-gray-900 mb-4">
+							<div class="flex items-center space-x-4">
+								<span>Tags Excluded</span>
+								<span class="text-sm text-gray-400 dark:text-gray-600">
+									(Novels associated with selected tags are excluded)
+								</span>
+							</div>
+						</label>
+						<!-- container that holds chips/pills -->
+						<div id="selected-tags-excluded" class="flex flex-wrap gap-2 mb-2"></div>
+						<!-- the visible text box for searching tags to exclude -->
+						<input
+							id="tags-input-excluded"
+							name="tagExcluded"
+							type="text"
+							placeholder="Type to search and click to add"
+							class="w-full bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300
+               text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2
+               focus:ring-blue-500 placeholder-gray-500 dark:placeholder-gray-400"
+							autocomplete="off"
+							hx-get="/filter/tags-excluded"
+							hx-trigger="keyup changed delay:150ms"
+							hx-target="#tags-suggestions-container-excluded"
+							hx-swap="innerHTML"
+						/>
+						<div id="tags-suggestions-container-excluded" class="relative"></div>
+					</div>
+					<!-- Submit Button -->
+					<div class="text-center pt-6">
+						<button
+							type="submit"
+							class="cursor-pointer bg-blue-500 hover:bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-[#121212] dark:focus:ring-offset-white"
+						>
+							Apply Filters
+						</button>
+					</div>
+				</form>
+			</section>
+		</div>
+	</div>
+	<style>
+    .adv-section {
+        @apply border-b border-[#252525] dark:border-gray-300 pb-6 last:border-b-0 last:pb-0;
+    }
+
+    /* Custom checkbox styling */
+    input[type="checkbox"]:checked+div {
+        @apply bg-blue-500 border-blue-500;
+    }
+
+    input[type="checkbox"]:checked+div::after {
+        content: '✓';
+        @apply text-white text-xs font-bold absolute inset-0 flex items-center justify-center;
+    }
+</style>
+	<script>
+    function applyFilter() {
+        // Filter logic will be implemented here
+        console.log('Applying filters...');
+    }
+
+    // Add interactivity to custom checkboxes
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                // Custom checkbox styling is handled by CSS
+            });
+        });
+    });
+</script>
+	<script>
+    document.addEventListener('click', e => {
+        const container = document.getElementById('tags-suggestions-container');
+        const input = document.getElementById('tags-input');
+
+        // if the click is NOT inside the input or suggestions
+        if (!input.contains(e.target) && !container.contains(e.target)) {
+            container.innerHTML = '';
+        }
+    });
+</script>
+	<script>
+    document.addEventListener('click', e => {
+        const c1 = document.getElementById('tags-suggestions-container');
+        const i1 = document.getElementById('tags-input');
+        const c2 = document.getElementById('tags-suggestions-container-excluded');
+        const i2 = document.getElementById('tags-input-excluded');
+
+        if (!i1.contains(e.target) && !c1.contains(e.target)) c1.innerHTML = '';
+        if (!i2.contains(e.target) && !c2.contains(e.target)) c2.innerHTML = '';
+    });
+</script>
+	<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const suggestions = document.getElementById('tags-suggestions-container');
+        const selected = document.getElementById('selected-tags');
+        const input = document.getElementById('tags-input');
+
+        suggestions.addEventListener('click', e => {
+            const li = e.target.closest('li[data-value]');
+            console.log(`closeset li ${li}`)
+            if (!li) return;
+            const value = li.dataset.value;
+
+            // If already selected, do nothing
+            if (selected.querySelector(`[data-tag-pill="${CSS.escape(value)}"]`)) {
+                input.value = '';
+                suggestions.innerHTML = '';
+                return;
+            }
+
+            // Create the pill (visible chip)
+            const pill = document.createElement('span');
+            pill.dataset.tagPill = value;
+            pill.className =
+                "flex items-center bg-blue-600 text-white px-2 py-1 rounded-full text-sm";
+            pill.innerHTML =
+                `${value} <button type="button" class="ml-2 text-white font-bold">&times;</button>`;
+
+            // Hidden input so form submission works
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'tags'; // <-- name matches your backend
+            hidden.value = value;
+
+            // remove pill & hidden input when × is clicked
+            pill.querySelector('button').addEventListener('click', () => {
+                pill.remove();
+                hidden.remove();
+            });
+
+            selected.appendChild(pill);
+            selected.appendChild(hidden);
+
+            // clear the text box and suggestion list
+            input.value = '';
+            suggestions.innerHTML = '';
+        });
+    });
+</script>
+	<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const suggestions2 = document.getElementById('tags-suggestions-container-excluded');
+        const selected2 = document.getElementById('selected-tags-excluded');
+        const input2 = document.getElementById('tags-input-excluded');
+
+        suggestions2.addEventListener('click', e => {
+            const li = e.target.closest('li[data-value]');
+            if (!li) return;
+            const value = li.dataset.value;
+
+            // prevent duplicates
+            if (selected2.querySelector(`[data-tag-pill="${CSS.escape(value)}"]`)) {
+                input2.value = '';
+                suggestions2.innerHTML = '';
+                return;
+            }
+
+            // pill
+            const pill = document.createElement('span');
+            pill.dataset.tagPill = value;
+            pill.className = "flex items-center bg-red-600 text-white px-2 py-1 rounded-full text-sm";
+            pill.innerHTML = `${value} <button type="button" class="ml-2 text-white font-bold">&times;</button>`;
+
+            // hidden input (NOTE: name is 'tagsExcluded')
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'tagsExcluded';
+            hidden.value = value;
+
+            pill.querySelector('button').addEventListener('click', () => {
+                pill.remove();
+                hidden.remove();
+            });
+
+            selected2.appendChild(pill);
+            selected2.appendChild(hidden);
+
+            input2.value = '';
+            suggestions2.innerHTML = '';
+        });
+    });
+</script>
+}
+
+templ TagSelector(tags []string) {
+	<ul
+		class="absolute left-0 top-full mt-1 w-full bg-[#1a1a1a] dark:bg-gray-100
+               border border-[#353535] dark:border-gray-300 rounded shadow-lg
+               z-50 max-h-56 overflow-auto"
+	>
+		for _, tag := range tags {
+			<li
+				data-value={ tag }
+				class="cursor-pointer px-3 py-2 text-gray-100 dark:text-gray-900
+                       hover:bg-gray-700 dark:hover:bg-gray-200"
+			>
+				{ tag }
+			</li>
+		}
+	</ul>
+}
+
+templ TagSelectorWarning() {
+	<ul
+		class="absolute left-0 top-full mt-1 w-full
+		       bg-[#1a1a1a] dark:bg-gray-100
+		       border border-[#353535] dark:border-gray-300
+		       rounded shadow-lg z-50 max-h-56 overflow-auto"
+	>
+		<li class="px-3 py-2 text-gray-400 dark:text-gray-600">
+			Type at least 3 characters to search for tags
+		</li>
+	</ul>
+}

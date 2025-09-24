@@ -10,7 +10,11 @@ type NovelService interface {
 	GetChapterByID(chapterID int64) (repositories.Chapter, error)
 
 	GetGenres(novelID int64) ([]repositories.NovelGenre, error)
+	GetAllGenres() ([]string, error)
+
 	GetTags(novelID int64) ([]repositories.NovelTag, error)
+	FilterTagsByName(tag string) ([]string, error)
+
 	CountChapters(novelID int64) (int, error)
 	GetLastChapter(novelID int64) (repositories.Chapter, error)
 	CreateNovel(params repositories.CreateNovelParams) (repositories.Novel, error)
