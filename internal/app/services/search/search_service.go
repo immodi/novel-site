@@ -177,11 +177,8 @@ func (s *searchService) ListNovelsByGenre(genre string, offset int, limit int) (
 	return dbGenre.Genre, novels, err
 }
 
-func (s *searchService) ListNovelsByChapterRange(min, max int) ([]repositories.ListNovelsByChapterRangeRow, error) {
-	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.ListNovelsByChapterRangeRow, error) {
-		return q.ListNovelsByChapterRange(ctx, repositories.ListNovelsByChapterRangeParams{
-			MinChapters: int64(min),
-			MaxChapters: int64(max),
-		})
+func (s *searchService) FilterNovels(args repositories.FilterNovelsParams) (*repositories.FilterNovelsResult, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (*repositories.FilterNovelsResult, error) {
+		return q.FilterNovels(ctx, args)
 	})
 }

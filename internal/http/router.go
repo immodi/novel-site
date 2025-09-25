@@ -53,7 +53,7 @@ func (router *Router) RegisterRoutes() {
 		r.Get("/genre/{genre}", router.handlers.Search.SortNovelsByGenres)
 		r.Get("/tag/{tag}", router.handlers.Search.SortNovelsByTags)
 		r.Get("/author/{author}", router.handlers.Search.SortNovelsByAuthor)
-		r.Post("/filter", router.handlers.Search.SortByFilter)
+		r.Get("/filter-results", router.handlers.Search.SortByFilter)
 
 		r.Get("/filter", router.handlers.Filter.Filter)
 		r.Get("/filter/tags", router.handlers.Filter.FilterTags)
@@ -166,15 +166,13 @@ func (router *Router) serveStatic(dir string) http.HandlerFunc {
 
 func (router *Router) serveStaticAsset(assetName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Absolute path to the robots.txt file in your static folder
-		filePath := filepath.Join("static", assetName) // adjust if needed
+		filePath := filepath.Join("static", assetName)
 		info, err := os.Stat(filePath)
 		if os.IsNotExist(err) || info.IsDir() {
 			http.NotFound(w, r)
 			return
 		}
 
-		// Optional: set cache control
 		w.Header().Set("Cache-Control", "public, max-age=604800") // 1 week
 
 		http.ServeFile(w, r, filePath)

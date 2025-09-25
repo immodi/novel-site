@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	components "immodi/novel-site/internal/http/components/index"
 	indexdtostructs "immodi/novel-site/internal/http/structs/index"
 	"immodi/novel-site/internal/http/templates"
 	"net/http"
@@ -26,9 +27,12 @@ func GenericHandler(
 		authHeaderEntry = "Profile"
 	}
 
-	headers := []string{"Filter", authHeaderEntry}
+	// headers := []string{"Filter", authHeaderEntry}
 
-	Render(data, &indexdtostructs.LayoutData{Headers: headers}, cmp, code).ServeHTTP(w, r)
+	Render(data, &indexdtostructs.LayoutData{Headers: []indexdtostructs.HeaderItem{
+		{Name: authHeaderEntry, Url: authHeaderEntry, Icon: components.ProfileIcon()},
+		{Name: "Filter", Url: "filter", Icon: components.FilterIcon()},
+	}}, cmp, code).ServeHTTP(w, r)
 }
 
 func Render(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.LayoutData, cmp templ.Component, code int) http.HandlerFunc {

@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+type NovelStatus int
+
+const (
+	All      NovelStatus = iota - 1 // -1 = All
+	Ongoing                         // 0
+	Complete                        // 1
+)
+
 // ParseTotalChapterRange parses strings like:
 //
 //	""         -> no filter (nil, nil)
@@ -45,5 +53,32 @@ func ParseTotalChapterRange(param string) (min, max *int, err error) {
 
 	default:
 		return nil, nil, fmt.Errorf("invalid totalchapter format")
+	}
+}
+
+func SliceWithLimitOffset[T any](items []T, offset, limit int) []T {
+	if offset >= len(items) {
+		return []T{}
+	}
+
+	end := min(offset+limit, len(items))
+
+	return items[offset:end]
+}
+
+func ParseNovelStatus(s string) NovelStatus {
+	if s == "" {
+		return All
+	}
+	val, err := strconv.Atoi(s)
+	if err != nil {
+		return All
+	}
+
+	switch NovelStatus(val) {
+	case All, Ongoing, Complete:
+		return NovelStatus(val)
+	default:
+		return All
 	}
 }

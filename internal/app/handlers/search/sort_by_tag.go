@@ -44,6 +44,7 @@ func (h *SearchHandler) SortNovelsByTags(w http.ResponseWriter, r *http.Request)
 		totalResults,
 		"tag",
 		tagName,
+		"",
 		results,
 		currentPage,
 		w,

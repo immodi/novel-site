@@ -161,11 +161,3 @@ LIMIT sqlc.arg(limit) OFFSET sqlc.arg(offset);
 SELECT COUNT(*) AS total
 FROM novels
 WHERE LOWER(title) LIKE '%' || LOWER(sqlc.arg(search)) || '%';
-
--- name: ListNovelsByChapterRange :many
-SELECT n.id, n.title, n.slug, n.description, n.cover_image, n.author, n.author_slug, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count, 
-       (SELECT COUNT(*) FROM chapters c WHERE c.novel_id = n.id) as chapter_count
-FROM novels n
-WHERE (SELECT COUNT(*) FROM chapters c WHERE c.novel_id = n.id) >= sqlc.arg(min_chapters) 
-  AND (SELECT COUNT(*) FROM chapters c WHERE c.novel_id = n.id) <= sqlc.arg(max_chapters)
-ORDER BY n.update_time DESC;

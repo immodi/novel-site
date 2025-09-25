@@ -41,8 +41,9 @@ func (h *SearchHandler) SortNovelsByAuthor(w http.ResponseWriter, r *http.Reques
 	h.GenericSearch(
 		"author",
 		totalResults,
-		"auhtor",
+		"author",
 		authorName,
+		"",
 		results,
 		currentPage,
 		w,

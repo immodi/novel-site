@@ -27,5 +27,5 @@ type SearchService interface {
 	CountNovelsByAuthor(author string) (int64, error)
 	ListNovelsByAuthor(author string, offset, limit int) (string, []repositories.Novel, error)
 
-	ListNovelsByChapterRange(min, max int) ([]repositories.ListNovelsByChapterRangeRow, error)
+	FilterNovels(args repositories.FilterNovelsParams) (*repositories.FilterNovelsResult, error)
 }

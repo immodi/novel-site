@@ -99,3 +99,66 @@ templ Pagination(paramter string, currentPage int, totalPages int, searchQuery s
 		</div>
 	</div>
 }
+
+templ PaginationURL(currentURL string, currentPage int, totalPages int) {
+	{{ isNextPage := currentPage < totalPages }} {{ isPrevPage := currentPage > 1 }}
+	<div class="flex justify-center mt-8">
+		<div class="flex items-center space-x-2">
+			<!-- Previous -->
+			if isPrevPage {
+				<a
+					href={ pkg.UpdatePageQuery(currentURL, currentPage-1) }
+					class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 
+					       dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 
+					       transition-colors border border-[#353535] dark:border-gray-300"
+				>
+					&lt;
+				</a>
+			} else {
+				<span
+					class="px-4 py-2 rounded-lg bg-[#1a1a1a] dark:bg-gray-100 text-gray-500 
+				              dark:text-gray-400 border border-[#353535] dark:border-gray-300 cursor-not-allowed"
+				>
+					&lt;
+				</span>
+			}
+			<!-- Page Numbers -->
+			for _, p := range pkg.MakePagesCompact(currentPage, totalPages) {
+				if p == "…" {
+					<span class="px-4 py-2">…</span>
+				} else if p == fmt.Sprintf("%d", currentPage) {
+					<span class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium border border-blue-600">
+						{ p }
+					</span>
+				} else {
+					<a
+						href={ pkg.UpdatePageQuery(currentURL, pkg.Atoi(p)) }
+						class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 
+						       dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 
+						       transition-colors border border-[#353535] dark:border-gray-300"
+					>
+						{ p }
+					</a>
+				}
+			}
+			<!-- Next -->
+			if isNextPage {
+				<a
+					href={ pkg.UpdatePageQuery(currentURL, currentPage+1) }
+					class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 
+					       dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 
+					       transition-colors border border-[#353535] dark:border-gray-300"
+				>
+					&gt;
+				</a>
+			} else {
+				<span
+					class="px-4 py-2 rounded-lg bg-[#1a1a1a] dark:bg-gray-100 text-gray-500 
+				              dark:text-gray-400 border border-[#353535] dark:border-gray-300 cursor-not-allowed"
+				>
+					&gt;
+				</span>
+			}
+		</div>
+	</div>
+}

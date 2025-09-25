@@ -10,7 +10,7 @@ templ AdvancedSearch(genres []string) {
 			</div>
 			<!-- Advanced Search Form -->
 			<section class="bg-[#1a1a1a] dark:bg-gray-100 rounded-lg border border-[#252525] dark:border-gray-300 p-6 mb-8">
-				<form autocomplete="off" method="post" action="/filter" class="space-y-8">
+				<form autocomplete="off" method="get" action="/filter-results" class="space-y-8">
 					<!-- Genres -->
 					<div class="adv-section">
 						<label class="block text-lg font-semibold text-gray-100 dark:text-gray-900 mb-4">
@@ -129,7 +129,7 @@ templ AdvancedSearch(genres []string) {
 								<span>Tags</span>
 								<select
 									class="bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-									name="tag"
+									name="tagcon"
 								>
 									<option value="and">AND</option>
 									<option value="or">OR</option>

@@ -44,6 +44,7 @@ func (h *SearchHandler) SortNovelsByGenres(w http.ResponseWriter, r *http.Reques
 		totalResults,
 		"genre",
 		genreName,
+		"",
 		results,
 		currentPage,
 		w,
