@@ -5,6 +5,7 @@ import (
 	chaptercomments "immodi/novel-site/internal/app/handlers/chapter_comments"
 	"immodi/novel-site/internal/app/handlers/chapters"
 	"immodi/novel-site/internal/app/handlers/comments"
+	"immodi/novel-site/internal/app/handlers/filter"
 	"immodi/novel-site/internal/app/handlers/index"
 	"immodi/novel-site/internal/app/handlers/load"
 	"immodi/novel-site/internal/app/handlers/novels"
@@ -28,6 +29,7 @@ type Handlers struct {
 	Comment        *comments.CommentHandler
 	ChapterComment *chaptercomments.ChapterCommentHandler
 	Sitemap        *sitemap.SitemapHandler
+	Filter         *filter.FilterHandler
 }
 
 func RegisterHandlers(svcs *Services) *Handlers {
@@ -44,5 +46,6 @@ func RegisterHandlers(svcs *Services) *Handlers {
 		Comment:        comments.NewCommentHandler(svcs.CommentService, svcs.ProfileService),
 		ChapterComment: chaptercomments.NewChapterCommentHandler(svcs.ChapterCommentService, svcs.ProfileService),
 		Sitemap:        sitemap.NewSitemapHandler(svcs.SitemapService),
+		Filter:         filter.NewFilterHandler(svcs.NovelService),
 	}
 }

@@ -13,6 +13,7 @@ templ SearchResults(
 	paramter string,
 	headerText string,
 	searchQuery string,
+	currentURL string,
 	searchResults []searchresutlsdto.SearchResultDto,
 	hotNovels []indexdtostructs.HomeNovelDto,
 	currentPage int,
@@ -146,7 +147,11 @@ templ SearchResults(
 						}
 					</div>
 					<!-- Pagination -->
-					@search.Pagination(paramter, currentPage, totalPages, searchQuery)
+					if searchQuery != "" {
+						@search.Pagination(paramter, currentPage, totalPages, searchQuery)
+					} else {
+						@search.PaginationURL(currentURL, currentPage, totalPages)
+					}
 				}
 			</div>
 			<!-- Hot Novels Sidebar -->

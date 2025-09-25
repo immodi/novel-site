@@ -42,6 +42,7 @@ func (h *SearchHandler) SearchNovel(w http.ResponseWriter, r *http.Request) {
 		totalSearchResults,
 		"search",
 		novelName,
+		"",
 		searchNovels,
 		currentPage,
 		w,

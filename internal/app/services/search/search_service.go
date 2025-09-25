@@ -176,3 +176,9 @@ func (s *searchService) ListNovelsByGenre(genre string, offset int, limit int) (
 	dbGenre, err := s.GetGenreBySlug(genre)
 	return dbGenre.Genre, novels, err
 }
+
+func (s *searchService) FilterNovels(args repositories.FilterNovelsParams) (*repositories.FilterNovelsResult, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (*repositories.FilterNovelsResult, error) {
+		return q.FilterNovels(ctx, args)
+	})
+}

@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func (h *SearchHandler) GenericSearch(paramter string, totalResults int64, headerText string, query string, collection []searchresutlsdto.SearchResultDto, currentPage int, w http.ResponseWriter, r *http.Request) {
+func (h *SearchHandler) GenericSearch(paramter string, totalResults int64, headerText string, query string, currentURL string, collection []searchresutlsdto.SearchResultDto, currentPage int, w http.ResponseWriter, r *http.Request) {
 	dbHotNovels, err := h.searchService.ListSortedNovels(sql.CollectionHot, 0, 5)
 	hotNovels, err := index.DbNovelToHomeNovelMapper(dbHotNovels, h.homeService)
 	if err != nil {
@@ -22,5 +22,14 @@ func (h *SearchHandler) GenericSearch(paramter string, totalResults int64, heade
 	totalPages := int(math.Ceil(float64(totalResults) / float64(pkg.SEARCH_PAGE_LIMIT)))
 
 	meta := BuildSearchMeta(paramter, query)
-	handlers.GenericHandler(w, r, meta, search.SearchResults(paramter, headerText, query, collection, hotNovels, currentPage, totalPages))
+	handlers.GenericHandler(w, r, meta, search.SearchResults(
+		paramter,
+		headerText,
+		query,
+		currentURL,
+		collection,
+		hotNovels,
+		currentPage,
+		totalPages,
+	))
 }

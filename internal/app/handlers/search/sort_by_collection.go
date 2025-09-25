@@ -50,6 +50,7 @@ func (h *SearchHandler) SortNovelsByCollection(w http.ResponseWriter, r *http.Re
 		totalResults,
 		"sort by collection",
 		strings.ToUpper(string(collection)),
+		"",
 		results,
 		currentPage,
 		w,
