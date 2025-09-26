@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"immodi/novel-site/internal/db/repositories"
-	"immodi/novel-site/internal/http/payloads"
+	"immodi/novel-site/internal/http/payloads/load"
 	"immodi/novel-site/pkg"
 	"log"
 	"net/http"
@@ -12,7 +12,7 @@ import (
 
 func (h *LoadHandler) LoadChapter(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		WriteJSON(w, http.StatusMethodNotAllowed, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusMethodNotAllowed, load.LoadNovelResponse{
 			Success: false,
 			Message: "method not allowed",
 		})
@@ -21,7 +21,7 @@ func (h *LoadHandler) LoadChapter(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(20 << 20) // 20 MB max
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusBadRequest, load.LoadNovelResponse{
 			Success: false,
 			Message: "failed to parse form (file too large?)",
 		})
@@ -32,7 +32,7 @@ func (h *LoadHandler) LoadChapter(w http.ResponseWriter, r *http.Request) {
 	// Get the uploaded file
 	file, _, err := r.FormFile("file") // the field name should be 'file'
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusBadRequest, load.LoadNovelResponse{
 			Success: false,
 			Message: "failed to get file",
 		})
@@ -43,9 +43,9 @@ func (h *LoadHandler) LoadChapter(w http.ResponseWriter, r *http.Request) {
 
 	// 2. Get the metadata JSON
 	metadataStr := r.FormValue("metadata")
-	var req payloads.LoadChapterRequest
+	var req load.LoadChapterRequest
 	if err := json.Unmarshal([]byte(metadataStr), &req); err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusBadRequest, load.LoadNovelResponse{
 			Success: false,
 			Message: "invalid metadata JSON",
 		})
@@ -54,9 +54,9 @@ func (h *LoadHandler) LoadChapter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Decode JSON from file
-	var chapters []payloads.LoadChapter
+	var chapters []load.LoadChapter
 	if err := json.NewDecoder(file).Decode(&chapters); err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusBadRequest, load.LoadNovelResponse{
 			Success: false,
 			Message: "invalid JSON file",
 		})
@@ -76,7 +76,7 @@ func (h *LoadHandler) LoadChapter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.loadService.CreateBulkChapters(createParams); err != nil {
-		WriteJSON(w, http.StatusInternalServerError, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusInternalServerError, load.LoadNovelResponse{
 			Success: false,
 			Message: "failed to insert chapters",
 		})
@@ -85,7 +85,7 @@ func (h *LoadHandler) LoadChapter(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Respond success
-	WriteJSON(w, http.StatusOK, payloads.LoadNovelResponse{
+	WriteJSON(w, http.StatusOK, load.LoadNovelResponse{
 		Success: true,
 		Message: fmt.Sprintf("Loaded %d chapters", len(chapters)),
 	})

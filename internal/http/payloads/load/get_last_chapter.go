@@ -1,4 +1,4 @@
-package payloads
+package load
 
 type GetLastChapterByIdRequest struct {
 	NovelID int64 `json:"novel_id"`

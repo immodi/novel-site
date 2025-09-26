@@ -3,22 +3,22 @@ package load
 import (
 	"encoding/json"
 	"fmt"
-	"immodi/novel-site/internal/http/payloads"
+	"immodi/novel-site/internal/http/payloads/load"
 	"net/http"
 )
 
 func (h *LoadHandler) GetLastChapterById(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		WriteJSON(w, http.StatusMethodNotAllowed, payloads.GetLastChapterResponse{
+		WriteJSON(w, http.StatusMethodNotAllowed, load.GetLastChapterResponse{
 			Success: false,
 			Message: "method not allowed",
 		})
 		return
 	}
 
-	var req payloads.GetLastChapterByIdRequest
+	var req load.GetLastChapterByIdRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.GetLastChapterResponse{
+		WriteJSON(w, http.StatusBadRequest, load.GetLastChapterResponse{
 			Success: false,
 			Message: "invalid request body",
 		})
@@ -28,7 +28,7 @@ func (h *LoadHandler) GetLastChapterById(w http.ResponseWriter, r *http.Request)
 
 	dbNovel, err := h.loadService.GetNovelById(req.NovelID)
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.GetLastChapterResponse{
+		WriteJSON(w, http.StatusBadRequest, load.GetLastChapterResponse{
 			Success: false,
 			Message: "invalid novel id",
 		})
@@ -37,7 +37,7 @@ func (h *LoadHandler) GetLastChapterById(w http.ResponseWriter, r *http.Request)
 
 	dbLastChapter, err := h.loadService.GetLastNovelChapter(dbNovel.ID)
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.GetLastChapterResponse{
+		WriteJSON(w, http.StatusBadRequest, load.GetLastChapterResponse{
 			Success: false,
 			Message: "couldn't get last chapter",
 		})
@@ -45,7 +45,7 @@ func (h *LoadHandler) GetLastChapterById(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Respond success
-	WriteJSON(w, http.StatusOK, payloads.GetLastChapterResponse{
+	WriteJSON(w, http.StatusOK, load.GetLastChapterResponse{
 		Success:           true,
 		Message:           fmt.Sprintf("got the last chapter of novel %s", dbNovel.Title),
 		NovelID:           dbNovel.ID,
@@ -57,16 +57,16 @@ func (h *LoadHandler) GetLastChapterById(w http.ResponseWriter, r *http.Request)
 
 func (h *LoadHandler) GetLastChapterByName(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		WriteJSON(w, http.StatusMethodNotAllowed, payloads.GetLastChapterResponse{
+		WriteJSON(w, http.StatusMethodNotAllowed, load.GetLastChapterResponse{
 			Success: false,
 			Message: "method not allowed",
 		})
 		return
 	}
 
-	var req payloads.GetLastChapterByNameRequest
+	var req load.GetLastChapterByNameRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.GetLastChapterResponse{
+		WriteJSON(w, http.StatusBadRequest, load.GetLastChapterResponse{
 			Success: false,
 			Message: "invalid request body",
 		})
@@ -76,7 +76,7 @@ func (h *LoadHandler) GetLastChapterByName(w http.ResponseWriter, r *http.Reques
 
 	dbNovel, err := h.loadService.GetNovelByExactName(req.Name)
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.GetLastChapterResponse{
+		WriteJSON(w, http.StatusBadRequest, load.GetLastChapterResponse{
 			Success: false,
 			Message: "invalid novel name",
 		})
@@ -85,7 +85,7 @@ func (h *LoadHandler) GetLastChapterByName(w http.ResponseWriter, r *http.Reques
 
 	dbLastChapter, err := h.loadService.GetLastNovelChapter(dbNovel.ID)
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.GetLastChapterResponse{
+		WriteJSON(w, http.StatusBadRequest, load.GetLastChapterResponse{
 			Success: false,
 			Message: "couldn't get last chapter",
 		})
@@ -93,7 +93,7 @@ func (h *LoadHandler) GetLastChapterByName(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Respond success
-	WriteJSON(w, http.StatusOK, payloads.GetLastChapterResponse{
+	WriteJSON(w, http.StatusOK, load.GetLastChapterResponse{
 		Success:           true,
 		Message:           fmt.Sprintf("got the last chapter of novel %s", dbNovel.Title),
 		NovelID:           dbNovel.ID,

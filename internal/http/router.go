@@ -93,7 +93,13 @@ func (router *Router) RegisterRoutes() {
 			r.Post("/chapter-comments", router.handlers.ChapterComment.PostComment)
 			r.Post("/chapter-comments/edit", router.handlers.ChapterComment.EditComment)
 			r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
+		})
 
+		r.Group(func(r chi.Router) {
+			r.Use(middlewares.RoleMiddleware("admin"))
+
+			r.Post("/admin/login", router.handlers.Admin.AdminLoginHandler)
+			r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
 		})
 
 		r.Handle("/static/*", router.serveStatic("static"))

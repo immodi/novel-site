@@ -8,4 +8,5 @@ type AuthService interface {
 	UpdateUserImage(userID int64, image string) error
 
 	GetUserByEmail(email string) (repositories.User, bool, error)
+	GetAllUsers() ([]repositories.User, error)
 }

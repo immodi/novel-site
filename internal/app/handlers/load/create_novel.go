@@ -3,7 +3,7 @@ package load
 import (
 	"database/sql"
 	"immodi/novel-site/internal/db/repositories"
-	"immodi/novel-site/internal/http/payloads"
+	"immodi/novel-site/internal/http/payloads/load"
 	"immodi/novel-site/pkg"
 	"log"
 	"net/http"
@@ -12,7 +12,7 @@ import (
 
 func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		WriteJSON(w, http.StatusMethodNotAllowed, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusMethodNotAllowed, load.LoadNovelResponse{
 			Success: false,
 			Message: "method not allowed",
 		})
@@ -22,7 +22,7 @@ func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 	// Parse multipart form (limit 10 MB)
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
-		WriteJSON(w, http.StatusBadRequest, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusBadRequest, load.LoadNovelResponse{
 			Success: false,
 			Message: "failed to parse form: " + err.Error(),
 		})
@@ -30,7 +30,7 @@ func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Build request object from form fields
-	req := payloads.LoadNovelRequest{
+	req := load.LoadNovelRequest{
 		Title:       r.FormValue("title"),
 		Author:      r.FormValue("author"),
 		Status:      r.FormValue("status"),
@@ -47,7 +47,7 @@ func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 		coverURL, err = pkg.SaveUploadedFile(file, header, "static/media")
 		println(coverURL)
 		if err != nil {
-			WriteJSON(w, http.StatusInternalServerError, payloads.LoadNovelResponse{
+			WriteJSON(w, http.StatusInternalServerError, load.LoadNovelResponse{
 				Success: false,
 				Message: "failed to save cover: " + err.Error(),
 			})
@@ -59,14 +59,14 @@ func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 	// Check if novel already exists
 	novel, err := h.loadService.GetNovelByExactName(req.Title)
 	if err == nil {
-		WriteJSON(w, http.StatusConflict, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusConflict, load.LoadNovelResponse{
 			Success: false,
 			Message: "novel with this title already exists",
 			NovelID: novel.ID,
 		})
 		return
 	} else if err != sql.ErrNoRows {
-		WriteJSON(w, http.StatusInternalServerError, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusInternalServerError, load.LoadNovelResponse{
 			Success: false,
 			Message: err.Error(),
 		})
@@ -93,7 +93,7 @@ func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 		UpdateTime:  pkg.GetCurrentTimeRFC3339(),
 	})
 	if err != nil {
-		WriteJSON(w, http.StatusInternalServerError, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusInternalServerError, load.LoadNovelResponse{
 			Success: false,
 			Message: err.Error(),
 		})
@@ -103,7 +103,7 @@ func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 
 	// Add genres in bulk
 	if err := h.loadService.AddBulkGenresToNovel(novel.ID, req.Genres); err != nil {
-		WriteJSON(w, http.StatusInternalServerError, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusInternalServerError, load.LoadNovelResponse{
 			Success: false,
 			Message: err.Error(),
 		})
@@ -114,7 +114,7 @@ func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 
 	// Add tags in bulk
 	if err := h.loadService.AddBulkTagsToNovel(novel.ID, req.Tags); err != nil {
-		WriteJSON(w, http.StatusInternalServerError, payloads.LoadNovelResponse{
+		WriteJSON(w, http.StatusInternalServerError, load.LoadNovelResponse{
 			Success: false,
 			Message: err.Error(),
 		})
@@ -123,7 +123,7 @@ func (h *LoadHandler) LoadNovel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	WriteJSON(w, http.StatusCreated, payloads.LoadNovelResponse{
+	WriteJSON(w, http.StatusCreated, load.LoadNovelResponse{
 		Success: true,
 		Message: "novel loaded successfully",
 		NovelID: novel.ID,

@@ -131,3 +131,9 @@ func (a *authService) UpdateUserImage(userID int64, image string) error {
 		})
 	})
 }
+
+func (a *authService) GetAllUsers() ([]repositories.User, error) {
+	return db.ExecuteWithResult(a.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.User, error) {
+		return q.GetAllUsers(ctx)
+	})
+}
