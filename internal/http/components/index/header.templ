@@ -57,9 +57,7 @@ templ Header(headerItems []indexdtostructs.HeaderItem) {
 					for _, link := range headerItems {
 						<a href={ "/" + strings.ToLower(link.Url) } class="relative pb-1 group flex items-center gap-2">
 							if link.Icon != nil {
-								<div class="flex items-center justify-center w-5 h-5">
-									@link.Icon
-								</div>
+								@link.Icon
 							}
 							{ link.Name }
 							<span
@@ -177,12 +175,16 @@ templ Header(headerItems []indexdtostructs.HeaderItem) {
 								class="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-[#252525] text-white dark:text-black dark:hover:bg-gray-100 dark:hover:text-black transition-colors duration-200 text-lg font-medium"
 								onclick="closeMenu()"
 							>
-								if link.Icon != nil {
-									<div class="flex items-center justify-center w-5 h-5">
-										@link.Icon
+								<div class="flex justify-center items-center gap-2">
+									if link.Icon != nil {
+										<div class="w-8 h-8 flex justify-center items-center">
+											@link.Icon
+										</div>
+									}
+									<div class="flex flex-1 justify-center items-center">
+										{ link.Name }
 									</div>
-								}
-								{ link.Name }
+								</div>
 							</a>
 						</li>
 					}
@@ -278,7 +280,7 @@ templ FilterIcon() {
 		viewBox="0 0 24 24"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
-		class="w-5 h-5 text-current"
+		class="w-7 h-7 text-current"
 		stroke="currentColor"
 		stroke-width="1.5"
 		stroke-linecap="round"
@@ -295,9 +297,9 @@ templ ProfileIcon() {
 		viewBox="0 0 24 24"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
-		class="w-[1.1rem] h-[1.1rem] text-current"
+		class="w-6 h-6 text-current"
 		stroke="currentColor"
-		stroke-width="2"
+		stroke-width="2.1"
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	>
