@@ -8,6 +8,10 @@ SELECT *
 FROM users
 WHERE id = ?;
 
+-- name: GetAllUsers :many
+SELECT *
+FROM users;
+
 -- name: GetUserByUsername :one
 SELECT *
 FROM users

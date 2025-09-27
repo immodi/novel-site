@@ -1,4 +1,4 @@
-package payloads
+package load
 
 type LoadNovelRequest struct {
 	Title       string   `json:"title"`

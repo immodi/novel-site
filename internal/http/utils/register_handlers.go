@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"immodi/novel-site/internal/app/handlers/admin"
 	"immodi/novel-site/internal/app/handlers/auth"
 	chaptercomments "immodi/novel-site/internal/app/handlers/chapter_comments"
 	"immodi/novel-site/internal/app/handlers/chapters"
@@ -30,6 +31,7 @@ type Handlers struct {
 	ChapterComment *chaptercomments.ChapterCommentHandler
 	Sitemap        *sitemap.SitemapHandler
 	Filter         *filter.FilterHandler
+	Admin          *admin.AdminHandler
 }
 
 func RegisterHandlers(svcs *Services) *Handlers {
@@ -47,5 +49,6 @@ func RegisterHandlers(svcs *Services) *Handlers {
 		ChapterComment: chaptercomments.NewChapterCommentHandler(svcs.ChapterCommentService, svcs.ProfileService),
 		Sitemap:        sitemap.NewSitemapHandler(svcs.SitemapService),
 		Filter:         filter.NewFilterHandler(svcs.NovelService),
+		Admin:          admin.NewAuthHandler(svcs.AuthService, svcs.ProfileService),
 	}
 }

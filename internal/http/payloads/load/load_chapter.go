@@ -1,4 +1,4 @@
-package payloads
+package load
 
 type LoadChapterRequest struct {
 	NovelID int64 `json:"novel_id"`
