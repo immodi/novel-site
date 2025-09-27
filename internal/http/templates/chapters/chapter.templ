@@ -20,6 +20,8 @@ templ ChapterReader(ch *chaptersdtostructs.ChapterPage, isRedirect bool) {
 			</p>
 			<!-- Navigation (top) -->
 			@chapters.NavigationButtons(ch)
+			<!-- Ads -->
+			@TopAds()
 			<!-- Content -->
 			<div
 				id="chapter-content"
@@ -28,7 +30,7 @@ templ ChapterReader(ch *chaptersdtostructs.ChapterPage, isRedirect bool) {
 				@templ.Raw(ch.ChapterContent)
 			</div>
 			<!-- Ads -->
-			@Ads()
+			@BottomAds()
 			<!-- Navigation (bottom) -->
 			@chapters.NavigationButtons(ch)
 			<!-- Separator with comments heading -->
@@ -127,7 +129,7 @@ templ ContentSettingsScript() {
 </script>
 }
 
-templ Ads() {
+templ BottomAds() {
 	<div class="flex justify-center my-10 mb-16">
 		<script>
         (function (sgnu) {
@@ -140,6 +142,23 @@ templ Ads() {
             s.referrerPolicy = 'no-referrer-when-downgrade';
             l.parentNode.insertBefore(s, l);
         })({})
+    </script>
+	</div>
+}
+
+templ TopAds() {
+	<div class="flex justify-center my-10 mt-16">
+		<script>
+            (function (izysrd) {
+                var d = document,
+                    s = d.createElement('script'),
+                    l = d.scripts[d.scripts.length - 1];
+                s.settings = izysrd || {};
+                s.src = "\/\/finemonth.com\/beX.VIsvdYG\/lM0PY\/WQcp\/OetmB9KuVZRUsllkHPtTXYz2FN-jIEGycMKTEAWtjNujwY\/2-MfT\/IRxEMvQm";
+                s.async = true;
+                s.referrerPolicy = 'no-referrer-when-downgrade';
+                l.parentNode.insertBefore(s, l);
+            })({})
     </script>
 	</div>
 }
