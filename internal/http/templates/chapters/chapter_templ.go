@@ -180,7 +180,7 @@ func Ads() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex justify-center my-8\"><script>\n        (function (sgnu) {\n            var d = document,\n                s = d.createElement('script'),\n                l = d.scripts[d.scripts.length - 1];\n            s.settings = sgnu || {};\n            s.src = \"\\/\\/finemonth.com\\/blXJVas_d.Gxly0QY\\/WxcC\\/zeQmP9euWZbUKlMkuPZTYYR2\\/NfjmEfxCN\\/TUgHtDNRjdYo2\\/MIThEN1AOAQn\";\n            s.async = true;\n            s.referrerPolicy = 'no-referrer-when-downgrade';\n            l.parentNode.insertBefore(s, l);\n        })({})\n    </script></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"flex justify-center my-10 mb-16\"><script>\n        (function (sgnu) {\n            var d = document,\n                s = d.createElement('script'),\n                l = d.scripts[d.scripts.length - 1];\n            s.settings = sgnu || {};\n            s.src = \"\\/\\/finemonth.com\\/blXJVas_d.Gxly0QY\\/WxcC\\/zeQmP9euWZbUKlMkuPZTYYR2\\/NfjmEfxCN\\/TUgHtDNRjdYo2\\/MIThEN1AOAQn\";\n            s.async = true;\n            s.referrerPolicy = 'no-referrer-when-downgrade';\n            l.parentNode.insertBefore(s, l);\n        })({})\n    </script></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
