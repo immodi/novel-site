@@ -13,8 +13,8 @@ func (h *AdminHandler) AdminGetAllUsers(w http.ResponseWriter, r *http.Request) 
 	var req admin.AdminGetAllUsersRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token:  "",
-			Errors: []string{"invalid request body"},
+			Token: "",
+			Error: "invalid request body",
 		})
 		return
 	}
@@ -23,8 +23,8 @@ func (h *AdminHandler) AdminGetAllUsers(w http.ResponseWriter, r *http.Request) 
 	userID, err := pkg.GetUserIDFromToken(req.Token)
 	if err != nil {
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token:  "",
-			Errors: []string{"invalid token"},
+			Token: "",
+			Error: "invalid token",
 		})
 		return
 	}
@@ -32,16 +32,16 @@ func (h *AdminHandler) AdminGetAllUsers(w http.ResponseWriter, r *http.Request) 
 	user, err := h.profileService.GetUserById(userID)
 	if err != nil {
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token:  "",
-			Errors: []string{"coudlnt get the user from the admin token"},
+			Token: "",
+			Error: "coudlnt get the user from the admin token",
 		})
 		return
 	}
 
 	if user.Role != string(sql.UserRoleAdmin) {
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token:  "",
-			Errors: []string{"user is not an admin"},
+			Token: "",
+			Error: "user is not an admin",
 		})
 		return
 	}
@@ -49,8 +49,8 @@ func (h *AdminHandler) AdminGetAllUsers(w http.ResponseWriter, r *http.Request) 
 	users, err := h.authService.GetAllUsers()
 	if err != nil {
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token:  "",
-			Errors: []string{"could not get all users"},
+			Token: "",
+			Error: "could not get all users",
 		})
 		return
 	}

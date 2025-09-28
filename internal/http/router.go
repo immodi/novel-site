@@ -95,10 +95,9 @@ func (router *Router) RegisterRoutes() {
 			r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
 		})
 
+		r.Post("/admin/login", router.handlers.Admin.AdminLoginHandler)
 		r.Group(func(r chi.Router) {
 			r.Use(middlewares.RoleMiddleware("admin"))
-
-			r.Post("/admin/login", router.handlers.Admin.AdminLoginHandler)
 			r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
 		})
 
