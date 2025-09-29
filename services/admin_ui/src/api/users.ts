@@ -1,5 +1,5 @@
 import { apiRequest } from "../helpers/api";
-import type { AdminGetAllUsersResponse } from "../types/api/users_data";
+import type { AdminGetAllUsersResponse } from "../types/api/users";
 
 export async function getAllUsers(token: string) {
     return apiRequest<AdminGetAllUsersResponse>("/admin/users", {

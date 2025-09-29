@@ -14,6 +14,12 @@ func NewHomeService(db *db.DBService) HomeService {
 	return &homeService{db: db}
 }
 
+func (s *homeService) ListAllNovels() ([]repositories.Novel, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
+		return q.ListAllNovels(ctx)
+	})
+}
+
 func (s *homeService) ListNewestNovels() ([]repositories.Novel, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
 		return q.ListNewestHomeNovelsPaginated(ctx, repositories.ListNewestHomeNovelsPaginatedParams{

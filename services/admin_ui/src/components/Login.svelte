@@ -1,6 +1,6 @@
 <script lang="ts">
     import { login } from "../api/login";
-    import { setUserToken } from "../lib/states/auth.svelte";
+    import { setUserToken } from "../lib/states/auth_state.svelte";
 
     let email = "";
     let password = "";

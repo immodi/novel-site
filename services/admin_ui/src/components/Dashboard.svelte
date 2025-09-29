@@ -1,23 +1,15 @@
 <script lang="ts">
-    import type { User } from "../types/dtos/user";
     import type { Novel } from "../types/dtos/novel";
     import type { Chapter } from "../types/dtos/chapter";
     import UsersTab from "./dashboard/UsersTab.svelte";
     import NovelsTab from "./dashboard/NovelsTab.svelte";
     import ChaptersTab from "./dashboard/ChaptersTab.svelte";
-    import { getUsers } from "../lib/states/user_data.svelte";
     type Tab = "users" | "novels" | "chapters";
 
     let activeTab: Tab = $state("users");
-    let users = $state(getUsers());
+    let selectedNovel: Novel | null = $state(null);
 
-    let novels: Novel[] = [
-        { id: 1, title: "The Lost Kingdom", viewCount: 15432 },
-        { id: 2, title: "Echoes of Tomorrow", viewCount: 9876 },
-        { id: 3, title: "Shadow and Light", viewCount: 23451 },
-    ];
-
-    let chapters: Chapter[] = [
+    let allChapters: Chapter[] = [
         {
             id: 1,
             novelId: 1,
@@ -34,16 +26,50 @@
         },
         {
             id: 3,
+            novelId: 1,
+            title: "Chapter 3: The Discovery",
+            content: "<p>They discover the ancient ruins...</p>",
+            releaseDate: "2023-05-15",
+        },
+        {
+            id: 4,
             novelId: 2,
             title: "Chapter 1: New World",
             content: "<p>Entering a new world full of possibilities...</p>",
             releaseDate: "2023-06-01",
         },
+        {
+            id: 5,
+            novelId: 2,
+            title: "Chapter 2: First Contact",
+            content: "<p>Meeting the inhabitants of the new world...</p>",
+            releaseDate: "2023-06-08",
+        },
+        {
+            id: 6,
+            novelId: 3,
+            title: "Chapter 1: Darkness Falls",
+            content: "<p>The darkness begins to spread...</p>",
+            releaseDate: "2023-07-01",
+        },
+        // Add more chapters to test pagination...
     ];
 
-    // Event handlers
-    function handleTabChange(tab: "users" | "novels" | "chapters") {
+    function handleTabChange(tab: Tab): void {
         activeTab = tab;
+        // Clear selected novel when switching away from chapters
+        if (tab !== "chapters") {
+            selectedNovel = null;
+        }
+    }
+
+    function handleNovelSelect(novel: Novel): void {
+        selectedNovel = novel;
+        activeTab = "chapters";
+    }
+
+    function handleClearSelectedNovel(): void {
+        selectedNovel = null;
     }
 </script>
 
@@ -70,33 +96,55 @@
             <div class="flex space-x-4">
                 <button
                     class={`cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 ${activeTab === "users" ? "bg-[#19183B] text-white border-[#19183B]" : "text-[#19183B] bg-white border-[#A1C2BD] hover:bg-[#A1C2BD]"}`}
-                    on:click={() => handleTabChange("users")}
+                    onclick={() => handleTabChange("users")}
                 >
                     Users
                 </button>
                 <button
                     class={`cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 ${activeTab === "novels" ? "bg-[#19183B] text-white border-[#19183B]" : "text-[#19183B] bg-white border-[#A1C2BD] hover:bg-[#A1C2BD]"}`}
-                    on:click={() => handleTabChange("novels")}
+                    onclick={() => handleTabChange("novels")}
                 >
                     Novels
                 </button>
                 <button
                     class={`cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 ${activeTab === "chapters" ? "bg-[#19183B] text-white border-[#19183B]" : "text-[#19183B] bg-white border-[#A1C2BD] hover:bg-[#A1C2BD]"}`}
-                    on:click={() => handleTabChange("chapters")}
+                    onclick={() => handleTabChange("chapters")}
                 >
                     Chapters
                 </button>
             </div>
         </div>
 
+        <!-- Selected Novel Banner (only shows in chapters tab) -->
+        {#if activeTab === "chapters" && selectedNovel}
+            <div class="bg-[#E7F2EF] px-4 py-2 border-b border-[#A1C2BD]">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-[#708993]"
+                            >Viewing chapters for:</span
+                        >
+                        <span class="text-sm font-medium text-[#19183B]"
+                            >{selectedNovel.title}</span
+                        >
+                    </div>
+                    <button
+                        class="cursor-pointer text-sm text-[#19183B] hover:text-[#2a2852] transition-colors"
+                        onclick={handleClearSelectedNovel}
+                    >
+                        Clear Selection
+                    </button>
+                </div>
+            </div>
+        {/if}
+
         <!-- Tab Content -->
         <div class="bg-white rounded-b-xl shadow-lg overflow-hidden">
             {#if activeTab === "users"}
-                <UsersTab {users} />
+                <UsersTab />
             {:else if activeTab === "novels"}
-                <NovelsTab {novels} />
+                <NovelsTab onNovelSelect={handleNovelSelect} />
             {:else if activeTab === "chapters"}
-                <ChaptersTab {chapters} />
+                <ChaptersTab chapters={allChapters} {selectedNovel} />
             {/if}
         </div>
     </main>

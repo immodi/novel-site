@@ -1,9 +1,5 @@
 package admin
 
-type AdminGetAllUsersRequest struct {
-	Token string `json:"token"`
-}
-
 type AdminGetAllUsersResponse struct {
 	Users []User `json:"users"`
 	Error string `json:"error"`

@@ -1,13 +1,9 @@
-export interface AdminGetAllUsersRequest {
-    token: string;
-}
-
 export interface AdminGetAllUsersResponse {
-    users: User[];
+    users: UserResponse[];
     error: string;
 }
 
-export interface User {
+export interface UserResponse {
     id: number;
     username: string;
     email: string;

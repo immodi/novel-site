@@ -99,6 +99,7 @@ func (router *Router) RegisterRoutes() {
 		r.Group(func(r chi.Router) {
 			r.Use(middlewares.ApiAdminRoleMiddleware())
 			r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
+			r.Get("/admin/novels", router.handlers.Admin.AdminGetAllNovels)
 		})
 
 		r.Handle("/static/*", router.serveStatic("static"))

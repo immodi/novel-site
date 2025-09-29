@@ -15,9 +15,9 @@ SELECT * FROM novels
 WHERE LOWER(slug) = LOWER(?)
 LIMIT 1;
 
--- name: ListNovels :many
+-- name: ListAllNovels :many
 SELECT * FROM novels
-ORDER BY update_time DESC;
+ORDER BY id ASC;
 
 -- name: CountNovels :one
 SELECT COUNT(*) FROM novels;

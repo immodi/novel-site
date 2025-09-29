@@ -1,5 +1,7 @@
 export interface Novel {
     id: number;
     title: string;
-    viewCount: number;
+    views: number;
+    author: string;
+    status: string;
 }

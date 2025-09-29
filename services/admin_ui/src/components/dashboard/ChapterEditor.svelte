@@ -31,7 +31,9 @@
     <div class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-[#19183B] mb-1"
+                <label
+                    for="title"
+                    class="block text-sm font-medium text-[#19183B] mb-1"
                     >Chapter Title</label
                 >
                 <input
@@ -41,7 +43,9 @@
                 />
             </div>
             <div>
-                <label class="block text-sm font-medium text-[#19183B] mb-1"
+                <label
+                    for="releaseDate"
+                    class="block text-sm font-medium text-[#19183B] mb-1"
                     >Release Date</label
                 >
                 <input
@@ -52,7 +56,9 @@
             </div>
         </div>
         <div>
-            <label class="block text-sm font-medium text-[#19183B] mb-1"
+            <label
+                for="content"
+                class="block text-sm font-medium text-[#19183B] mb-1"
                 >Content (HTML)</label
             >
             <div class="mb-2 text-xs text-[#708993]">

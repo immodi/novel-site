@@ -1,5 +1,5 @@
 import { apiRequest } from "../helpers/api";
-import type { AdminLoginRequest, AdminLoginResponse } from "../types/api/admin_login";
+import type { AdminLoginRequest, AdminLoginResponse } from "../types/api/login";
 
 export async function login(body: AdminLoginRequest) {
     return apiRequest<AdminLoginResponse>("/admin/login", {

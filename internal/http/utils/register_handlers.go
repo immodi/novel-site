@@ -49,6 +49,6 @@ func RegisterHandlers(svcs *Services) *Handlers {
 		ChapterComment: chaptercomments.NewChapterCommentHandler(svcs.ChapterCommentService, svcs.ProfileService),
 		Sitemap:        sitemap.NewSitemapHandler(svcs.SitemapService),
 		Filter:         filter.NewFilterHandler(svcs.NovelService),
-		Admin:          admin.NewAuthHandler(svcs.AuthService, svcs.ProfileService),
+		Admin:          admin.NewAuthHandler(svcs.AuthService, svcs.ProfileService, svcs.HomeService),
 	}
 }
