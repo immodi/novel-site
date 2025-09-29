@@ -55,7 +55,11 @@ templ Header(headerItems []indexdtostructs.HeaderItem) {
 				<!-- Desktop Navigation Links - Hidden on all screens since we're using hamburger menu everywhere -->
 				<nav class="hidden items-center justify-center space-x-8 text-lg mt-2 mr-6">
 					for _, link := range headerItems {
-						<a href={ "/" + strings.ToLower(link.Url) } class="relative pb-1 group flex items-center gap-2">
+						<a
+							rel="nofollow"
+							href={ "/" + strings.ToLower(link.Url) }
+							class="relative pb-1 group flex items-center gap-2"
+						>
 							if link.Icon != nil {
 								@link.Icon
 							}
