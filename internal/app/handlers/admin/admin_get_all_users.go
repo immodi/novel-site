@@ -1,29 +1,40 @@
 package admin
 
 import (
-	"encoding/json"
+	"net/http"
+	"strings"
+
 	"immodi/novel-site/internal/app/handlers"
 	sql "immodi/novel-site/internal/db/schema"
 	"immodi/novel-site/internal/http/payloads/admin"
 	"immodi/novel-site/pkg"
-	"net/http"
 )
 
 func (h *AdminHandler) AdminGetAllUsers(w http.ResponseWriter, r *http.Request) {
-	var req admin.AdminGetAllUsersRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
-			Error: "invalid request body",
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminGetAllUsersResponse{
+			Users: nil,
+			Error: "missing Authorization header",
 		})
 		return
 	}
-	defer r.Body.Close()
 
-	userID, err := pkg.GetUserIDFromToken(req.Token)
+	// expected format: "Bearer <token>"
+	parts := strings.SplitN(authHeader, " ", 2)
+	if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminGetAllUsersResponse{
+			Users: nil,
+			Error: "invalid Authorization header format",
+		})
+		return
+	}
+	token := parts[1]
+
+	userID, err := pkg.GetUserIDFromToken(token)
 	if err != nil {
-		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
+		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminGetAllUsersResponse{
+			Users: nil,
 			Error: "invalid token",
 		})
 		return
@@ -31,16 +42,16 @@ func (h *AdminHandler) AdminGetAllUsers(w http.ResponseWriter, r *http.Request) 
 
 	user, err := h.profileService.GetUserById(userID)
 	if err != nil {
-		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
-			Error: "coudlnt get the user from the admin token",
+		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminGetAllUsersResponse{
+			Users: nil,
+			Error: "could not get the user from the token",
 		})
 		return
 	}
 
 	if user.Role != string(sql.UserRoleAdmin) {
-		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
+		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminGetAllUsersResponse{
+			Users: nil,
 			Error: "user is not an admin",
 		})
 		return
@@ -48,8 +59,8 @@ func (h *AdminHandler) AdminGetAllUsers(w http.ResponseWriter, r *http.Request) 
 
 	users, err := h.authService.GetAllUsers()
 	if err != nil {
-		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
+		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminGetAllUsersResponse{
+			Users: nil,
 			Error: "could not get all users",
 		})
 		return
@@ -58,5 +69,6 @@ func (h *AdminHandler) AdminGetAllUsers(w http.ResponseWriter, r *http.Request) 
 	adminPanelUsers := DbUsersToAdminPanelUsersMapper(users)
 	handlers.WriteJSON(w, http.StatusOK, admin.AdminGetAllUsersResponse{
 		Users: adminPanelUsers,
+		Error: "",
 	})
 }

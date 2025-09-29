@@ -97,7 +97,7 @@ func (router *Router) RegisterRoutes() {
 
 		r.Post("/admin/login", router.handlers.Admin.AdminLoginHandler)
 		r.Group(func(r chi.Router) {
-			r.Use(middlewares.RoleMiddleware("admin"))
+			r.Use(middlewares.ApiAdminRoleMiddleware())
 			r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
 		})
 

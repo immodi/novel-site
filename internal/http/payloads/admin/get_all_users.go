@@ -6,6 +6,7 @@ type AdminGetAllUsersRequest struct {
 
 type AdminGetAllUsersResponse struct {
 	Users []User `json:"users"`
+	Error string `json:"error"`
 }
 
 type User struct {
