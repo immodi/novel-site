@@ -30,8 +30,8 @@ func GenericHandler(
 	// headers := []string{"Filter", authHeaderEntry}
 
 	Render(data, &indexdtostructs.LayoutData{Headers: []indexdtostructs.HeaderItem{
-		{Name: authHeaderEntry, Url: authHeaderEntry, Icon: components.ProfileIcon()},
-		{Name: "Filter", Url: "filter", Icon: components.FilterIcon()},
+		{NavigationLink: components.NoFollowNavigationLink(authHeaderEntry, components.ProfileIcon(), authHeaderEntry)},
+		{NavigationLink: components.FollowNavigationLink("Filter", components.FilterIcon(), "filter")},
 	}}, cmp, code).ServeHTTP(w, r)
 }
 
