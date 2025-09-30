@@ -95,17 +95,21 @@ func (router *Router) RegisterRoutes() {
 			r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
 		})
 
-		r.Group(func(r chi.Router) {
+		router.r.Route("/admin", func(r chi.Router) {
+			// Apply CORS for all /admin routes
 			r.Use(middlewares.CORSMiddleware([]string{config.AdminSiteURL}))
-			r.Post("/admin/login", router.handlers.Admin.AdminLogin)
 
+			// Public login route
+			r.Post("/login", router.handlers.Admin.AdminLogin)
+
+			// Protected routes
 			r.Group(func(r chi.Router) {
 				r.Use(middlewares.ApiAdminRoleMiddleware())
 
-				r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
-				r.Get("/admin/data", router.handlers.Admin.AdminGetAdminData)
-				r.Get("/admin/novels", router.handlers.Admin.AdminGetAllNovels)
-				r.Get("/admin/novels/{novelID}/chapters", router.handlers.Admin.AdminGetAllNovelChapters)
+				r.Get("/users", router.handlers.Admin.AdminGetAllUsers)
+				r.Get("/data", router.handlers.Admin.AdminGetAdminData)
+				r.Get("/novels", router.handlers.Admin.AdminGetAllNovels)
+				r.Get("/novels/{novelID}/chapters", router.handlers.Admin.AdminGetAllNovelChapters)
 			})
 		})
 
