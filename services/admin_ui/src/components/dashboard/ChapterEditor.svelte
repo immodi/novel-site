@@ -73,13 +73,13 @@
         <div class="flex space-x-2">
             <button
                 class="cursor-pointer px-4 py-2 bg-[#19183B] text-white rounded-lg hover:bg-[#2a2852] transition-colors"
-                on:click={handleSave}
+                onclick={handleSave}
             >
                 Save Changes
             </button>
             <button
                 class="cursor-pointer px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                on:click={handleCancel}
+                onclick={handleCancel}
             >
                 Cancel
             </button>

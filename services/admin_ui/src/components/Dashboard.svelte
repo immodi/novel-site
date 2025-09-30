@@ -1,63 +1,27 @@
 <script lang="ts">
     import type { Novel } from "../types/dtos/novel";
-    import type { Chapter } from "../types/dtos/chapter";
     import UsersTab from "./dashboard/UsersTab.svelte";
     import NovelsTab from "./dashboard/NovelsTab.svelte";
     import ChaptersTab from "./dashboard/ChaptersTab.svelte";
-    type Tab = "users" | "novels" | "chapters";
+    import logoutIcon from "../assets/logout_icon.svg";
+    import {
+        clearUserData,
+        setUserData,
+    } from "../lib/states/auth_state.svelte";
+    import { AUTH_COOKIE_NAME } from "../lib/constants";
 
+    type Tab = "users" | "novels" | "chapters";
+    type Props = {
+        username: string;
+        coverImage: string;
+    };
+
+    const { username, coverImage }: Props = $props();
     let activeTab: Tab = $state("users");
     let selectedNovel: Novel | null = $state(null);
 
-    let allChapters: Chapter[] = [
-        {
-            id: 1,
-            novelId: 1,
-            title: "Chapter 1: The Beginning",
-            content: "<p>This is the beginning of the story...</p>",
-            releaseDate: "2023-05-01",
-        },
-        {
-            id: 2,
-            novelId: 1,
-            title: "Chapter 2: The Journey",
-            content: "<p>The journey continues with exciting adventures...</p>",
-            releaseDate: "2023-05-08",
-        },
-        {
-            id: 3,
-            novelId: 1,
-            title: "Chapter 3: The Discovery",
-            content: "<p>They discover the ancient ruins...</p>",
-            releaseDate: "2023-05-15",
-        },
-        {
-            id: 4,
-            novelId: 2,
-            title: "Chapter 1: New World",
-            content: "<p>Entering a new world full of possibilities...</p>",
-            releaseDate: "2023-06-01",
-        },
-        {
-            id: 5,
-            novelId: 2,
-            title: "Chapter 2: First Contact",
-            content: "<p>Meeting the inhabitants of the new world...</p>",
-            releaseDate: "2023-06-08",
-        },
-        {
-            id: 6,
-            novelId: 3,
-            title: "Chapter 1: Darkness Falls",
-            content: "<p>The darkness begins to spread...</p>",
-            releaseDate: "2023-07-01",
-        },
-        // Add more chapters to test pagination...
-    ];
-
     function handleTabChange(tab: Tab): void {
         activeTab = tab;
-        // Clear selected novel when switching away from chapters
         if (tab !== "chapters") {
             selectedNovel = null;
         }
@@ -71,20 +35,44 @@
     function handleClearSelectedNovel(): void {
         selectedNovel = null;
     }
+
+    function handleLogout(): void {
+        document.cookie = `${AUTH_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+        clearUserData();
+    }
 </script>
 
 <div class="min-h-screen bg-gradient-to-br from-[#19183B] to-[#708993] p-6">
     <!-- Header -->
     <header class="mb-8">
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-white">Admin Dashboard</h1>
+            <h1 class="text-2xl font-bold text-white">Dashboard</h1>
             <div class="flex items-center space-x-4">
-                <div class="text-white">Admin User</div>
-                <div
-                    class="cursor-pointer w-10 h-10 rounded-full bg-[#E7F2EF] flex items-center justify-center text-[#19183B] font-bold"
+                <div class="text-white">{username}</div>
+
+                <!-- Logout Button -->
+                <button
+                    class="cursor-pointer p-2 bg-[#E7F2EF] rounded-lg hover:bg-[#A1C2BD] transition-colors"
+                    onclick={handleLogout}
+                    title="Logout"
                 >
-                    A
-                </div>
+                    <img src={logoutIcon} alt="Logout" class="w-5 h-5" />
+                </button>
+
+                {#if coverImage}
+                    <img
+                        alt=""
+                        loading="lazy"
+                        src={coverImage}
+                        class="cursor-pointer w-10 h-10 rounded-full bg-[#E7F2EF]"
+                    />
+                {:else}
+                    <div
+                        class="cursor-pointer w-10 h-10 rounded-full bg-[#E7F2EF] flex items-center justify-center text-[#19183B] font-bold"
+                    >
+                        {username ? username[0].toUpperCase() : "?"}
+                    </div>
+                {/if}
             </div>
         </div>
     </header>
@@ -144,7 +132,7 @@
             {:else if activeTab === "novels"}
                 <NovelsTab onNovelSelect={handleNovelSelect} />
             {:else if activeTab === "chapters"}
-                <ChaptersTab chapters={allChapters} {selectedNovel} />
+                <ChaptersTab {selectedNovel} />
             {/if}
         </div>
     </main>

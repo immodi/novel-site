@@ -12,7 +12,6 @@ import (
 func (h *AdminHandler) AdminLoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		handlers.WriteJSON(w, http.StatusMethodNotAllowed, admin.AdminLoginResponse{
-			Token: "",
 			Error: "method not allowed",
 		})
 		return
@@ -21,7 +20,6 @@ func (h *AdminHandler) AdminLoginHandler(w http.ResponseWriter, r *http.Request)
 	var req admin.AdminLoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
 			Error: "invalid request body",
 		})
 		return
@@ -32,7 +30,6 @@ func (h *AdminHandler) AdminLoginHandler(w http.ResponseWriter, r *http.Request)
 
 	if len(error) > 0 {
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
 			Error: "invalid request body",
 		})
 		return
@@ -42,7 +39,6 @@ func (h *AdminHandler) AdminLoginHandler(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		error := "Invalid email or password"
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
 			Error: error,
 		})
 		return
@@ -51,7 +47,6 @@ func (h *AdminHandler) AdminLoginHandler(w http.ResponseWriter, r *http.Request)
 	if user.Role != string(sql.UserRoleAdmin) {
 		error := "Your'e not an admin buddy"
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
 			Error: error,
 		})
 		return
@@ -61,14 +56,15 @@ func (h *AdminHandler) AdminLoginHandler(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		error := "Could not generate token"
 		handlers.WriteJSON(w, http.StatusBadRequest, admin.AdminLoginResponse{
-			Token: "",
 			Error: error,
 		})
 		return
 	}
 
 	handlers.WriteJSON(w, http.StatusOK, admin.AdminLoginResponse{
-		Token: token,
-		Error: "",
+		Token:      token,
+		Username:   user.Username,
+		CoverImage: user.Image,
+		Error:      "",
 	})
 }

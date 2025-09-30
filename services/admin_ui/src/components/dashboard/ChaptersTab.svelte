@@ -1,14 +1,32 @@
 <script lang="ts">
+    import { ITEMS_PER_PAGINATION_PAGE } from "../../lib/constants";
+    import { mapDbChaptersToChaptersDTO } from "../../lib/mappers/chapters_mapper";
+    import { chaptersState } from "../../lib/states/chapters_state.svelte";
     import type { Chapter } from "../../types/dtos/chapter";
     import type { Novel } from "../../types/dtos/novel";
     import ChapterEditor from "./ChapterEditor.svelte";
+    import refreshIcon from "../../assets/refresh_icon.svg";
 
     type ChapterProps = {
-        chapters: Chapter[];
         selectedNovel: Novel | null;
     };
 
-    let { chapters = [], selectedNovel = null }: ChapterProps = $props();
+    let { selectedNovel = null }: ChapterProps = $props();
+
+    // Constants
+    const itemsPerPage = ITEMS_PER_PAGINATION_PAGE;
+
+    const chapters = $derived(
+        mapDbChaptersToChaptersDTO(chaptersState.data ?? []),
+    );
+
+    function refresh(): void {
+        if (selectedNovel?.id) chaptersState.refresh(selectedNovel?.id);
+    }
+
+    $effect(() => {
+        refresh();
+    });
 
     // State for chapter editing
     let editingChapter: Chapter | null = $state(null);
@@ -18,7 +36,6 @@
 
     // Pagination state
     let currentPage = $state(1);
-    const itemsPerPage = 20;
 
     // Computed values
     const filteredChapters = $derived(
@@ -51,21 +68,9 @@
         }
     }
 
-    function deleteChapter(chapterId: number): void {
-        console.log(`Delete chapter with ID: ${chapterId}`);
-        // Future implementation will delete the chapter
-        chapters = chapters.filter((c) => c.id !== chapterId);
-    }
+    function deleteChapter(chapterId: number): void {}
 
-    function handleChapterSave(updatedChapter: Chapter): void {
-        const chapterIndex = chapters.findIndex(
-            (c) => c.id === updatedChapter.id,
-        );
-        if (chapterIndex !== -1) {
-            chapters[chapterIndex] = updatedChapter;
-        }
-        editingChapter = null;
-    }
+    function handleChapterSave(updatedChapter: Chapter): void {}
 
     function handleCancelEdit(): void {
         editingChapter = null;
@@ -80,12 +85,6 @@
     function clearFilter(): void {
         filterText = "";
         currentPage = 1;
-    }
-
-    function goToPage(page: number): void {
-        if (page >= 1 && page <= totalPages) {
-            currentPage = page;
-        }
     }
 
     function nextPage(): void {
@@ -111,12 +110,69 @@
         >
             Chapter Management
         </h2>
-        <button
-            class="cursor-pointer px-4 py-2 bg-[#19183B] text-white rounded-lg hover:bg-[#2a2852] transition-colors w-full sm:w-auto"
-        >
-            Add New Chapter
-        </button>
+        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button
+                class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 bg-[#19183B] text-white rounded-lg hover:bg-[#2a2852] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                onclick={refresh}
+                disabled={chaptersState.loading}
+            >
+                {#if chaptersState.loading}
+                    <!-- Loading Spinner -->
+                    <svg
+                        class="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                        ></circle>
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                    </svg>
+                    <span class="sm:hidden">Refreshing...</span>
+                {:else}
+                    <img src={refreshIcon} alt="Refresh" class="w-5 h-5" />
+                    <span class="sm:hidden">Refresh Chapters</span>
+                {/if}
+            </button>
+            <button
+                class="cursor-pointer px-4 py-2 bg-[#19183B] text-white rounded-lg hover:bg-[#2a2852] transition-colors w-full sm:w-auto"
+            >
+                Add New Chapter
+            </button>
+        </div>
     </div>
+
+    <!-- Error Display -->
+    {#if chaptersState.error}
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div class="flex items-start">
+                <svg
+                    class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clip-rule="evenodd"
+                    />
+                </svg>
+                <span class="text-red-700 text-sm font-medium break-words">
+                    {chaptersState.error}
+                </span>
+            </div>
+        </div>
+    {/if}
 
     {#if !selectedNovel}
         <!-- Empty state when no novel is selected -->
@@ -237,7 +293,36 @@
 
         <!-- Mobile Card View -->
         <div class="block sm:hidden space-y-4">
-            {#if paginatedChapters.length === 0}
+            {#if chaptersState.loading}
+                <!-- Loading State -->
+                <div class="text-center py-8">
+                    <div class="flex justify-center items-center">
+                        <svg
+                            class="animate-spin h-8 w-8 text-[#19183B]"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                class="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                            ></circle>
+                            <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                        </svg>
+                        <span class="ml-2 text-[#19183B]"
+                            >Loading chapters...</span
+                        >
+                    </div>
+                </div>
+            {:else if paginatedChapters.length === 0}
                 <!-- Empty State -->
                 <div class="text-center py-8">
                     <div class="text-[#708993]">
@@ -357,7 +442,38 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    {#if paginatedChapters.length === 0}
+                    {#if chaptersState.loading}
+                        <!-- Loading State -->
+                        <tr>
+                            <td colspan="5" class="px-6 py-8 text-center">
+                                <div class="flex justify-center items-center">
+                                    <svg
+                                        class="animate-spin h-8 w-8 text-[#19183B]"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            class="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            stroke-width="4"
+                                        ></circle>
+                                        <path
+                                            class="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                        ></path>
+                                    </svg>
+                                    <span class="ml-2 text-[#19183B]"
+                                        >Loading chapters...</span
+                                    >
+                                </div>
+                            </td>
+                        </tr>
+                    {:else if paginatedChapters.length === 0}
                         <tr>
                             <td
                                 colspan="5"
@@ -434,7 +550,7 @@
                         onclick={previousPage}
                         disabled={currentPage === 1}
                     >
-                        Previous
+                        Prev
                     </button>
 
                     <!-- Current page indicator -->
@@ -477,62 +593,53 @@
                             results
                         </p>
                     </div>
-                    <div>
-                        <nav
-                            class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-                            aria-label="Pagination"
+                    <div class="flex items-center space-x-2">
+                        <button
+                            class="cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-[#19183B] bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            onclick={previousPage}
+                            disabled={currentPage === 1}
                         >
-                            <button
-                                class="cursor-pointer relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                                onclick={previousPage}
-                                disabled={currentPage === 1}
+                            <svg
+                                class="h-5 w-5"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
                             >
-                                <span class="sr-only">Previous</span>
-                                <svg
-                                    class="h-5 w-5"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </button>
-                            {#each Array.from({ length: totalPages }, (_, i) => i + 1) as page}
-                                <button
-                                    class={`cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-                                        page === currentPage
-                                            ? "z-10 bg-[#19183B] text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#19183B]"
-                                            : "text-[#19183B] ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                                    }`}
-                                    onclick={() => goToPage(page)}
-                                >
-                                    {page}
-                                </button>
-                            {/each}
-                            <button
-                                class="cursor-pointer relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                                onclick={nextPage}
-                                disabled={currentPage === totalPages}
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            Previous
+                        </button>
+
+                        <!-- Current page indicator for desktop -->
+                        <div class="flex items-center">
+                            <span class="text-sm text-[#19183B] px-4">
+                                Page {currentPage} of {totalPages}
+                            </span>
+                        </div>
+
+                        <button
+                            class="cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-[#19183B] bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            onclick={nextPage}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                            <svg
+                                class="h-5 w-5"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
                             >
-                                <span class="sr-only">Next</span>
-                                <svg
-                                    class="h-5 w-5"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        fill-rule="evenodd"
-                                        d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                                        clip-rule="evenodd"
-                                    />
-                                </svg>
-                            </button>
-                        </nav>
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>

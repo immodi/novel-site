@@ -1,6 +1,6 @@
 <script lang="ts">
     import { login } from "../api/login";
-    import { setUserToken } from "../lib/states/auth_state.svelte";
+    import { setUserData } from "../lib/states/auth_state.svelte";
 
     let email = "";
     let password = "";
@@ -9,12 +9,12 @@
 
     async function handleSubmit() {
         isLoading = true;
-        error = ""; // Clear previous errors
+        error = "";
         const { data, error: networkError } = await login({ email, password });
 
         if (networkError) error = networkError;
         else if (data?.error) error = data.error;
-        else if (data?.token) setUserToken(data.token);
+        else if (data?.token) setUserData(data);
 
         isLoading = false;
     }

@@ -1,10 +1,12 @@
 <script lang="ts">
+    import { ITEMS_PER_PAGINATION_PAGE } from "../../lib/constants";
     import { mapDbNovelsToNovelsDTO } from "../../lib/mappers/novels_mapper";
     import { novelsState } from "../../lib/states/novels_state.svelte";
     import type { Novel } from "../../types/dtos/novel";
+    import NovelEditor from "./NovelEditor.svelte";
+    import refreshIcon from "../../assets/refresh_icon.svg"; // Add this import
 
     type NovelProps = {
-        novels: Novel[];
         onNovelSelect: (novel: Novel) => void;
     };
 
@@ -22,8 +24,7 @@
     const { onNovelSelect }: NovelProps = $props();
 
     let currentPage = $state(1);
-    const itemsPerPage = 20;
-
+    const itemsPerPage = ITEMS_PER_PAGINATION_PAGE;
     const totalPages = $derived(Math.ceil(novels.length / itemsPerPage));
     const paginatedNovels = $derived(
         novels.slice(
@@ -32,8 +33,14 @@
         ),
     );
 
+    // Add editing state
+    let editingNovel: Novel | null = $state(null);
+
     function editNovel(id: number) {
-        console.log("Edit novel", id);
+        const novel = novels.find((n) => n.id === id);
+        if (novel) {
+            editingNovel = novel;
+        }
     }
 
     function deleteNovel(id: number) {
@@ -44,8 +51,17 @@
         onNovelSelect(novel);
     }
 
-    function goToPage(page: number) {
-        if (page >= 1 && page <= totalPages) currentPage = page;
+    // Add novel save handler
+    function handleNovelSave(updatedNovel: Novel): void {
+        // const novelIndex = novels.findIndex((n) => n.id === updatedNovel.id);
+        // if (novelIndex !== -1) {
+        //     novels[novelIndex] = updatedNovel;
+        // }
+        editingNovel = null;
+    }
+
+    function handleCancelEdit(): void {
+        editingNovel = null;
     }
 
     function nextPage() {
@@ -83,12 +99,69 @@
         >
             Novel Management
         </h2>
-        <button
-            class="cursor-pointer px-4 py-2 bg-[#19183B] text-white rounded-lg hover:bg-[#2a2852] transition-colors w-full sm:w-auto"
-        >
-            Add New Novel
-        </button>
+        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button
+                class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 bg-[#19183B] text-white rounded-lg hover:bg-[#2a2852] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                onclick={refresh}
+                disabled={novelsState.loading}
+            >
+                {#if novelsState.loading}
+                    <!-- Loading Spinner -->
+                    <svg
+                        class="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                        ></circle>
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                    </svg>
+                    <span class="sm:hidden">Refreshing...</span>
+                {:else}
+                    <img src={refreshIcon} alt="Refresh" class="w-5 h-5" />
+                    <span class="sm:hidden">Refresh Novels</span>
+                {/if}
+            </button>
+            <button
+                class="cursor-pointer px-4 py-2 bg-[#19183B] text-white rounded-lg hover:bg-[#2a2852] transition-colors w-full sm:w-auto"
+            >
+                Add New Novel
+            </button>
+        </div>
     </div>
+
+    <!-- Error Display -->
+    {#if novelsState.error}
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div class="flex items-start">
+                <svg
+                    class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clip-rule="evenodd"
+                    />
+                </svg>
+                <span class="text-red-700 text-sm font-medium break-words">
+                    {novelsState.error}
+                </span>
+            </div>
+        </div>
+    {/if}
 
     <!-- Mobile Card View -->
     <div class="block sm:hidden space-y-4">
@@ -421,64 +494,64 @@
                         results
                     </p>
                 </div>
-                <div>
-                    <nav
-                        class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-                        aria-label="Pagination"
+                <div class="flex items-center space-x-2">
+                    <button
+                        class="cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-[#19183B] bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onclick={previousPage}
+                        disabled={currentPage === 1}
                     >
-                        <button
-                            class="cursor-pointer relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                            onclick={previousPage}
-                            disabled={currentPage === 1}
+                        <svg
+                            class="h-5 w-5 mr-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
                         >
-                            <span class="sr-only">Previous</span>
-                            <svg
-                                class="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                        </button>
-                        {#each Array.from({ length: totalPages }, (_, i) => i + 1) as page}
-                            <button
-                                class={`cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-                                    page === currentPage
-                                        ? "z-10 bg-[#19183B] text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#19183B]"
-                                        : "text-[#19183B] ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                                }`}
-                                onclick={() => goToPage(page)}
-                            >
-                                {page}
-                            </button>
-                        {/each}
-                        <button
-                            class="cursor-pointer relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                            onclick={nextPage}
-                            disabled={currentPage === totalPages}
+                            <path
+                                fill-rule="evenodd"
+                                d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                        Previous
+                    </button>
+
+                    <!-- Current page indicator for desktop -->
+                    <div class="flex items-center">
+                        <span class="text-sm text-[#19183B] px-4">
+                            Page {currentPage} of {totalPages}
+                        </span>
+                    </div>
+
+                    <button
+                        class="cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-[#19183B] bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onclick={nextPage}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                        <svg
+                            class="h-5 w-5 ml-2"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
                         >
-                            <span class="sr-only">Next</span>
-                            <svg
-                                class="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                        </button>
-                    </nav>
+                            <path
+                                fill-rule="evenodd"
+                                d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
+    {/if}
+
+    <!-- Novel Editor -->
+    {#if editingNovel}
+        <NovelEditor
+            {editingNovel}
+            onSave={handleNovelSave}
+            onCancel={handleCancelEdit}
+        />
     {/if}
 </div>

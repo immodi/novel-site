@@ -1,16 +1,16 @@
 <script lang="ts">
     import Dashboard from "./components/Dashboard.svelte";
     import Login from "./components/Login.svelte";
-    import {
-        getUserToken,
-        type UserToken,
-    } from "./lib/states/auth_state.svelte";
-    const token: UserToken = $derived(getUserToken());
+    import { getUserData, type UserData } from "./lib/states/auth_state.svelte";
+
+    const { token, coverImage, username }: UserData = $derived(
+        getUserData() || { token: "", coverImage: "", username: "" },
+    );
 </script>
 
 <main class="h-screen w-screen">
     {#if token}
-        <Dashboard />
+        <Dashboard {username} {coverImage} />
     {:else}
         <Login />
     {/if}
