@@ -31,7 +31,7 @@ func GenericHandler(
 
 	Render(data, &indexdtostructs.LayoutData{Headers: []indexdtostructs.HeaderItem{
 		{NavigationLink: components.NoFollowNavigationLink(authHeaderEntry, components.ProfileIcon(), authHeaderEntry)},
-		{NavigationLink: components.FollowNavigationLink("Filter", components.FilterIcon(), "filter")},
+		{NavigationLink: components.NoFollowNavigationLink("Filter", components.FilterIcon(), "filter")},
 	}}, cmp, code).ServeHTTP(w, r)
 }
 
