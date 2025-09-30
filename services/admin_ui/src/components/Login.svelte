@@ -1,6 +1,6 @@
 <script lang="ts">
     import { login } from "../api/login";
-    import { setUserData } from "../lib/states/auth_state.svelte";
+    import { setUserToken } from "../lib/states/auth_state.svelte";
 
     let email = "";
     let password = "";
@@ -14,7 +14,7 @@
 
         if (networkError) error = networkError;
         else if (data?.error) error = data.error;
-        else if (data?.token) setUserData(data);
+        else if (data?.token) setUserToken(data.token);
 
         isLoading = false;
     }

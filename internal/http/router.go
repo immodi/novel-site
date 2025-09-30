@@ -95,12 +95,18 @@ func (router *Router) RegisterRoutes() {
 			r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
 		})
 
-		r.Post("/admin/login", router.handlers.Admin.AdminLoginHandler)
 		r.Group(func(r chi.Router) {
-			r.Use(middlewares.ApiAdminRoleMiddleware())
-			r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
-			r.Get("/admin/novels", router.handlers.Admin.AdminGetAllNovels)
-			r.Get("/admin/novels/{novelID}/chapters", router.handlers.Admin.AdminGetAllNovelChapters)
+			r.Use(middlewares.CORSMiddleware([]string{config.AdminSiteURL}))
+			r.Post("/admin/login", router.handlers.Admin.AdminLogin)
+
+			r.Group(func(r chi.Router) {
+				r.Use(middlewares.ApiAdminRoleMiddleware())
+
+				r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
+				r.Get("/admin/data", router.handlers.Admin.AdminGetAdminData)
+				r.Get("/admin/novels", router.handlers.Admin.AdminGetAllNovels)
+				r.Get("/admin/novels/{novelID}/chapters", router.handlers.Admin.AdminGetAllNovelChapters)
+			})
 		})
 
 		r.Handle("/static/*", router.serveStatic("static"))

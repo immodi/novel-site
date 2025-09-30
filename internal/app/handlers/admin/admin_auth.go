@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func (h *AdminHandler) AdminLoginHandler(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) AdminLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		handlers.WriteJSON(w, http.StatusMethodNotAllowed, admin.AdminLoginResponse{
 			Error: "method not allowed",
@@ -62,9 +62,7 @@ func (h *AdminHandler) AdminLoginHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	handlers.WriteJSON(w, http.StatusOK, admin.AdminLoginResponse{
-		Token:      token,
-		Username:   user.Username,
-		CoverImage: user.Image,
-		Error:      "",
+		Token: token,
+		Error: "",
 	})
 }

@@ -4,21 +4,20 @@
     import NovelsTab from "./dashboard/NovelsTab.svelte";
     import ChaptersTab from "./dashboard/ChaptersTab.svelte";
     import logoutIcon from "../assets/logout_icon.svg";
-    import {
-        clearUserData,
-        setUserData,
-    } from "../lib/states/auth_state.svelte";
-    import { AUTH_COOKIE_NAME } from "../lib/constants";
-
+    import { clearUserToken } from "../lib/states/auth_state.svelte";
+    import { adminDataState } from "../lib/states/admin_data_state.svelte";
     type Tab = "users" | "novels" | "chapters";
-    type Props = {
-        username: string;
-        coverImage: string;
-    };
 
-    const { username, coverImage }: Props = $props();
+    const data = $derived(adminDataState);
+    const username = $derived(data.data?.username);
+    const coverImage = $derived(data.data?.coverImage);
+
     let activeTab: Tab = $state("users");
     let selectedNovel: Novel | null = $state(null);
+
+    function refresh(): void {
+        adminDataState.refresh();
+    }
 
     function handleTabChange(tab: Tab): void {
         activeTab = tab;
@@ -37,9 +36,14 @@
     }
 
     function handleLogout(): void {
-        document.cookie = `${AUTH_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
-        clearUserData();
+        clearUserToken();
     }
+
+    $effect(() => {
+        if (!data.data && !data.loading) {
+            refresh();
+        }
+    });
 </script>
 
 <div class="min-h-screen bg-gradient-to-br from-[#19183B] to-[#708993] p-6">
@@ -48,18 +52,53 @@
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold text-white">Dashboard</h1>
             <div class="flex items-center space-x-4">
-                <div class="text-white">{username}</div>
+                {#if data.loading}
+                    <!-- Loading state for username -->
+                    <div class="text-white animate-pulse">Loading...</div>
+                {:else}
+                    <div class="text-white">{username}</div>
+                {/if}
 
                 <!-- Logout Button -->
                 <button
-                    class="cursor-pointer p-2 bg-[#E7F2EF] rounded-lg hover:bg-[#A1C2BD] transition-colors"
+                    class="cursor-pointer p-2 bg-[#E7F2EF] rounded-lg hover:bg-[#A1C2BD] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     onclick={handleLogout}
-                    title="Logout"
+                    title={data.loading ? "Loading..." : "Logout"}
+                    disabled={data.loading}
                 >
-                    <img src={logoutIcon} alt="Logout" class="w-5 h-5" />
+                    {#if data.loading}
+                        <!-- Loading Spinner -->
+                        <svg
+                            class="animate-spin h-5 w-5 text-[#19183B]"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                class="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                            ></circle>
+                            <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                        </svg>
+                    {:else}
+                        <img src={logoutIcon} alt="Logout" class="w-5 h-5" />
+                    {/if}
                 </button>
 
-                {#if coverImage}
+                {#if data.loading}
+                    <!-- Loading state for avatar -->
+                    <div
+                        class="w-10 h-10 rounded-full bg-[#E7F2EF] animate-pulse"
+                    ></div>
+                {:else if coverImage}
                     <img
                         alt=""
                         loading="lazy"

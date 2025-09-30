@@ -5,7 +5,5 @@ export interface AdminLoginRequest {
 
 export interface AdminLoginResponse {
     token: string;
-    username: string;
-    coverImage: string;
     error: string;
 }
