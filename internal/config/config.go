@@ -10,6 +10,7 @@ var (
 	JWTSecret          = mustGetEnv("JWT_SECRET")
 	Port               = mustGetEnv("PORT")
 	SiteURL            = mustGetEnv("SITE_URL")
+	AdminSiteURL       = mustGetEnv("ADMIN_SITE_URL")
 	IsProduction       = mustGetEnv("IS_PRODUCTION") == "true"
 	GoogleClientID     = mustGetEnv("GOOGLE_CLIENT_ID")
 	GoogleClientSecret = mustGetEnv("GOOGLE_CLIENT_SECRET")

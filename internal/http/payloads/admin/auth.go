@@ -6,6 +6,6 @@ type AdminLoginRequest struct {
 }
 
 type AdminLoginResponse struct {
-	Token  string   `json:"token"`
-	Errors []string `json:"errors"`
+	Token string `json:"token"`
+	Error string `json:"error"`
 }

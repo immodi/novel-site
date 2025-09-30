@@ -96,10 +96,17 @@ func (router *Router) RegisterRoutes() {
 		})
 
 		r.Group(func(r chi.Router) {
-			r.Use(middlewares.RoleMiddleware("admin"))
+			r.Use(middlewares.CORSMiddleware([]string{config.AdminSiteURL}))
+			r.Post("/admin/login", router.handlers.Admin.AdminLogin)
 
-			r.Post("/admin/login", router.handlers.Admin.AdminLoginHandler)
-			r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
+			r.Group(func(r chi.Router) {
+				r.Use(middlewares.ApiAdminRoleMiddleware())
+
+				r.Get("/admin/users", router.handlers.Admin.AdminGetAllUsers)
+				r.Get("/admin/data", router.handlers.Admin.AdminGetAdminData)
+				r.Get("/admin/novels", router.handlers.Admin.AdminGetAllNovels)
+				r.Get("/admin/novels/{novelID}/chapters", router.handlers.Admin.AdminGetAllNovelChapters)
+			})
 		})
 
 		r.Handle("/static/*", router.serveStatic("static"))

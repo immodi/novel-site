@@ -297,6 +297,47 @@ func (q *Queries) IncrementNovelViewCount(ctx context.Context, id int64) error {
 	return err
 }
 
+const listAllNovels = `-- name: ListAllNovels :many
+SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
+ORDER BY id ASC
+`
+
+func (q *Queries) ListAllNovels(ctx context.Context) ([]Novel, error) {
+	rows, err := q.db.QueryContext(ctx, listAllNovels)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Novel
+	for rows.Next() {
+		var i Novel
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Slug,
+			&i.Description,
+			&i.CoverImage,
+			&i.Author,
+			&i.AuthorSlug,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
+			&i.UpdateTime,
+			&i.ViewCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listCompletedNovels = `-- name: ListCompletedNovels :many
 SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels
@@ -535,47 +576,6 @@ type ListNewestHomeNovelsPaginatedParams struct {
 
 func (q *Queries) ListNewestHomeNovelsPaginated(ctx context.Context, arg ListNewestHomeNovelsPaginatedParams) ([]Novel, error) {
 	rows, err := q.db.QueryContext(ctx, listNewestHomeNovelsPaginated, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Novel
-	for rows.Next() {
-		var i Novel
-		if err := rows.Scan(
-			&i.ID,
-			&i.Title,
-			&i.Slug,
-			&i.Description,
-			&i.CoverImage,
-			&i.Author,
-			&i.AuthorSlug,
-			&i.Publisher,
-			&i.ReleaseYear,
-			&i.IsCompleted,
-			&i.UpdateTime,
-			&i.ViewCount,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listNovels = `-- name: ListNovels :many
-SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count FROM novels
-ORDER BY update_time DESC
-`
-
-func (q *Queries) ListNovels(ctx context.Context) ([]Novel, error) {
-	rows, err := q.db.QueryContext(ctx, listNovels)
 	if err != nil {
 		return nil, err
 	}

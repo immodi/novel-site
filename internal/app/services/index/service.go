@@ -3,6 +3,8 @@ package index
 import "immodi/novel-site/internal/db/repositories"
 
 type HomeService interface {
+	ListAllNovels() ([]repositories.Novel, error)
+
 	ListNewestNovels() ([]repositories.Novel, error)
 	ListHotNovels() ([]repositories.Novel, error)
 	ListCompletedNovels() ([]repositories.Novel, error)

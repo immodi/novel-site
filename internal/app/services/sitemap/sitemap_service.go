@@ -16,7 +16,7 @@ func NewSitemapService(db *db.DBService) SitemapService {
 
 func (s *sitemapService) GetAllNovels() ([]repositories.Novel, error) {
 	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
-		return q.ListNovels(ctx)
+		return q.ListAllNovels(ctx)
 	})
 }
 
