@@ -14,6 +14,7 @@ var (
 	IsProduction       = mustGetEnv("IS_PRODUCTION") == "true"
 	GoogleClientID     = mustGetEnv("GOOGLE_CLIENT_ID")
 	GoogleClientSecret = mustGetEnv("GOOGLE_CLIENT_SECRET")
+	GoogleFormURL      = mustGetEnv("GOOGLE_FORM_URL")
 )
 
 func mustGetEnv(key string) string {
