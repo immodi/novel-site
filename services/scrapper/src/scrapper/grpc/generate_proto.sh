@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # generate_grpc.sh
-# This script generates Python gRPC code from the scrapper.proto file
+# This script generates Python gRPC code from all .proto files in the proto directory
 
 set -e
 
@@ -8,15 +8,17 @@ set -e
 PROTO_SRC_DIR="proto"
 PROTO_OUT_DIR="../../"
 PROTO_MAPPING="scrapper/grpc=proto"
-PROTO_FILE="${PROTO_SRC_DIR}/scrapper.proto"
 
-echo "🔹 Generating gRPC code from ${PROTO_FILE}..."
+echo "🔹 Generating gRPC code from all .proto files in ${PROTO_SRC_DIR}..."
 
-uv run python -m grpc_tools.protoc \
-  -I${PROTO_MAPPING} \
-  --python_out=${PROTO_OUT_DIR} \
-  --grpc_python_out=${PROTO_OUT_DIR} \
-  ${PROTO_FILE}
+# Loop over all .proto files
+for proto_file in ${PROTO_SRC_DIR}/*.proto; do
+  echo "⚙️  Processing ${proto_file}..."
+  uv run python -m grpc_tools.protoc \
+    -I${PROTO_MAPPING} \
+    --python_out=${PROTO_OUT_DIR} \
+    --grpc_python_out=${PROTO_OUT_DIR} \
+    ${proto_file}
+done
 
-echo "✅ gRPC code generated in ${PROTO_OUT_DIR}"
-
+echo "✅ All gRPC code generated in ${PROTO_OUT_DIR}"

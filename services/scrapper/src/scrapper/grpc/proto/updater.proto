@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package updater;
+
+service UpdaterService {
+  rpc UpdateNovels(UpdateRequest) returns (stream UpdateResponse) {}
+}
+
+message UpdateRequest {
+  int32 interval_hours  = 1;
+}
+
+message UpdateResponse {
+  string message = 1;
+}

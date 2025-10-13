@@ -33,7 +33,7 @@ class LastChapterClient:
                 print(f"[{r.status_code}] {url} ->", r.json())
             except Exception:
                 print(f"[{r.status_code}] {url} ->", r.text)
-            r.raise_for_status()
+            # r.raise_for_status()
         return r.json()
 
     # ------------------------------------------------------------------ #
