@@ -26,7 +26,9 @@ if _version_not_supported:
 
 
 class UpdaterServiceStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Old single-run version (keep for compatibility if you want)
+    rpc UpdateNovels(UpdateRequest) returns (stream UpdateResponse) {}
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -34,18 +36,45 @@ class UpdaterServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.UpdateNovels = channel.unary_stream(
-                '/updater.UpdaterService/UpdateNovels',
+        self.StartUpdate = channel.unary_unary(
+                '/updater.UpdaterService/StartUpdate',
                 request_serializer=scrapper_dot_grpc_dot_updater__pb2.UpdateRequest.SerializeToString,
+                response_deserializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+                _registered_method=True)
+        self.StopUpdate = channel.unary_unary(
+                '/updater.UpdaterService/StopUpdate',
+                request_serializer=scrapper_dot_grpc_dot_updater__pb2.Empty.SerializeToString,
+                response_deserializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+                _registered_method=True)
+        self.StreamUpdates = channel.unary_stream(
+                '/updater.UpdaterService/StreamUpdates',
+                request_serializer=scrapper_dot_grpc_dot_updater__pb2.Empty.SerializeToString,
                 response_deserializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
                 _registered_method=True)
 
 
 class UpdaterServiceServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Old single-run version (keep for compatibility if you want)
+    rpc UpdateNovels(UpdateRequest) returns (stream UpdateResponse) {}
+    """
 
-    def UpdateNovels(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+    def StartUpdate(self, request, context):
+        """Start background updater loop
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StopUpdate(self, request, context):
+        """Stop the updater loop
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def StreamUpdates(self, request, context):
+        """Stream logs/progress live
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -53,9 +82,19 @@ class UpdaterServiceServicer(object):
 
 def add_UpdaterServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'UpdateNovels': grpc.unary_stream_rpc_method_handler(
-                    servicer.UpdateNovels,
+            'StartUpdate': grpc.unary_unary_rpc_method_handler(
+                    servicer.StartUpdate,
                     request_deserializer=scrapper_dot_grpc_dot_updater__pb2.UpdateRequest.FromString,
+                    response_serializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.SerializeToString,
+            ),
+            'StopUpdate': grpc.unary_unary_rpc_method_handler(
+                    servicer.StopUpdate,
+                    request_deserializer=scrapper_dot_grpc_dot_updater__pb2.Empty.FromString,
+                    response_serializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.SerializeToString,
+            ),
+            'StreamUpdates': grpc.unary_stream_rpc_method_handler(
+                    servicer.StreamUpdates,
+                    request_deserializer=scrapper_dot_grpc_dot_updater__pb2.Empty.FromString,
                     response_serializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.SerializeToString,
             ),
     }
@@ -67,10 +106,66 @@ def add_UpdaterServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class UpdaterService(object):
-    """Missing associated documentation comment in .proto file."""
+    """Old single-run version (keep for compatibility if you want)
+    rpc UpdateNovels(UpdateRequest) returns (stream UpdateResponse) {}
+    """
 
     @staticmethod
-    def UpdateNovels(request,
+    def StartUpdate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/updater.UpdaterService/StartUpdate',
+            scrapper_dot_grpc_dot_updater__pb2.UpdateRequest.SerializeToString,
+            scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def StopUpdate(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/updater.UpdaterService/StopUpdate',
+            scrapper_dot_grpc_dot_updater__pb2.Empty.SerializeToString,
+            scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def StreamUpdates(request,
             target,
             options=(),
             channel_credentials=None,
@@ -83,8 +178,8 @@ class UpdaterService(object):
         return grpc.experimental.unary_stream(
             request,
             target,
-            '/updater.UpdaterService/UpdateNovels',
-            scrapper_dot_grpc_dot_updater__pb2.UpdateRequest.SerializeToString,
+            '/updater.UpdaterService/StreamUpdates',
+            scrapper_dot_grpc_dot_updater__pb2.Empty.SerializeToString,
             scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
             options,
             channel_credentials,

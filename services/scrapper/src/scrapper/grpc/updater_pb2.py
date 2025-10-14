@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1bscrapper/grpc/updater.proto\x12\x07updater\"\'\n\rUpdateRequest\x12\x16\n\x0einterval_hours\x18\x01 \x01(\x05\"!\n\x0eUpdateResponse\x12\x0f\n\x07message\x18\x01 \x01(\t2U\n\x0eUpdaterService\x12\x43\n\x0cUpdateNovels\x12\x16.updater.UpdateRequest\x1a\x17.updater.UpdateResponse\"\x00\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1bscrapper/grpc/updater.proto\x12\x07updater\"\'\n\rUpdateRequest\x12\x16\n\x0einterval_hours\x18\x01 \x01(\x05\"!\n\x0eUpdateResponse\x12\x0f\n\x07message\x18\x01 \x01(\t\"\x07\n\x05\x45mpty2\xc3\x01\n\x0eUpdaterService\x12>\n\x0bStartUpdate\x12\x16.updater.UpdateRequest\x1a\x17.updater.UpdateResponse\x12\x35\n\nStopUpdate\x12\x0e.updater.Empty\x1a\x17.updater.UpdateResponse\x12:\n\rStreamUpdates\x12\x0e.updater.Empty\x1a\x17.updater.UpdateResponse0\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,6 +35,8 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_UPDATEREQUEST']._serialized_end=79
   _globals['_UPDATERESPONSE']._serialized_start=81
   _globals['_UPDATERESPONSE']._serialized_end=114
-  _globals['_UPDATERSERVICE']._serialized_start=116
-  _globals['_UPDATERSERVICE']._serialized_end=201
+  _globals['_EMPTY']._serialized_start=116
+  _globals['_EMPTY']._serialized_end=123
+  _globals['_UPDATERSERVICE']._serialized_start=126
+  _globals['_UPDATERSERVICE']._serialized_end=321
 # @@protoc_insertion_point(module_scope)

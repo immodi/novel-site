@@ -3,13 +3,23 @@ syntax = "proto3";
 package updater;
 
 service UpdaterService {
-  rpc UpdateNovels(UpdateRequest) returns (stream UpdateResponse) {}
+  // Old single-run version (keep for compatibility if you want)
+  // rpc UpdateNovels(UpdateRequest) returns (stream UpdateResponse) {}
+
+  rpc StartUpdate(UpdateRequest) returns (UpdateResponse);      // Start background updater loop
+  rpc StopUpdate(Empty) returns (UpdateResponse);               // Stop the updater loop
+  rpc StreamUpdates(Empty) returns (stream UpdateResponse);     // Stream logs/progress live
 }
 
+// Input for starting/updating interval
 message UpdateRequest {
-  int32 interval_hours  = 1;
+  int32 interval_hours = 1;
 }
 
+// Used for simple text messages or responses
 message UpdateResponse {
   string message = 1;
 }
+
+// Generic empty message (no parameters)
+message Empty {}
