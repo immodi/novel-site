@@ -21,7 +21,7 @@ templ ChapterReader(ch *chaptersdtostructs.ChapterPage, isRedirect bool) {
 			<!-- Navigation (top) -->
 			@chapters.NavigationButtons(ch)
 			<!-- Ads -->
-			<!-- @TopAds() -->
+			@TopAds()
 			<!-- Content -->
 			<div
 				id="chapter-content"
@@ -30,7 +30,7 @@ templ ChapterReader(ch *chaptersdtostructs.ChapterPage, isRedirect bool) {
 				@templ.Raw(ch.ChapterContent)
 			</div>
 			<!-- Ads -->
-			<!-- @BottomAds() -->
+			@BottomAds()
 			<!-- Navigation (bottom) -->
 			@chapters.NavigationButtons(ch)
 			<!-- Separator with comments heading -->
