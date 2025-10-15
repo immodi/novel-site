@@ -8,7 +8,7 @@ import (
 )
 
 var jwtSecret = []byte(config.JWTSecret)
-var DefaultJwtDuration = 24 * time.Hour
+var DefaultJwtDuration = 24 * time.Hour * 15 // 15 days
 
 func GenerateToken(userID int64, role string, duration time.Duration) (string, error) {
 	claims := jwt.MapClaims{
