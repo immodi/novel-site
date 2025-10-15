@@ -96,14 +96,12 @@ func (router *Router) RegisterRoutes() {
 			r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
 		})
 
+		r.Get("/ws/updater", router.handlers.Updater.Updater)
 		router.r.Route("/admin", func(r chi.Router) {
-			// Apply CORS for all /admin routes
 			r.Use(middlewares.CORSMiddleware([]string{config.AdminSiteURL}))
 
-			// Public login route
 			r.Post("/login", router.handlers.Admin.AdminLogin)
 
-			// Protected routes
 			r.Group(func(r chi.Router) {
 				r.Use(middlewares.ApiAdminRoleMiddleware())
 

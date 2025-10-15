@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package updater;
+option go_package = ".";
 
 service UpdaterService {
   // Old single-run version (keep for compatibility if you want)
