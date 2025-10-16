@@ -3,10 +3,13 @@ declare global {
         __ENV__?: {
             VITE_API_URL?: string;
             VITE_WS_URL?: string;
+            VITE_DOMAIN?: string;
         };
     }
 }
 
+export const DOMAIN: string =
+    window.__ENV__?.VITE_DOMAIN ?? import.meta.env.VITE_DOMAIN;
 export const API_URL: string =
     window.__ENV__?.VITE_API_URL ?? import.meta.env.VITE_API_URL;
 export const WS_URL: string =
