@@ -61,6 +61,6 @@ func RegisterHandlers(svcs *Services) *Handlers {
 			svcs.ChapterService,
 		),
 		Feedback: feedback.NewFeedbackHandler(),
-		Updater:  updater.NewUpdaterHandler(config.GrpcURL),
+		Updater:  updater.NewUpdaterHandler(config.GrpcURL, svcs.ProfileService),
 	}
 }

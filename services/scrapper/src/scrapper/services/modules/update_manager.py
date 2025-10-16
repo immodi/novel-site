@@ -32,7 +32,7 @@ class UpdateManager:
     def subscribe(self):
         q = queue.Queue()
         q.put(
-            updater_pb2.UpdateResponse(
+            updater_pb2.UpdateResponse(  # type: ignore
                 message=f"🚀 UPDATER SERVICE started with an interval of {self.interval_hours} hour(s)"
             )
         )

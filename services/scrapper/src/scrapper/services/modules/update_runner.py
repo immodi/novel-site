@@ -53,17 +53,13 @@ def run_update(broadcast):
             chapter.novel_name, novel_url, chapter.last_chapter_url
         )
 
-        try:
-            for msg in chapter_gen:
+        while True:
+            try:
+                msg = next(chapter_gen)
                 broadcast(msg)
-        except Exception as e:
-            broadcast(f"Error during update: {e}")
-            continue
-
-        try:
-            result = chapter_gen.send(None)
-        except StopIteration as stop:
-            result = stop.value
+            except StopIteration as stop:
+                result = stop.value
+                break
 
         if not result:
             continue

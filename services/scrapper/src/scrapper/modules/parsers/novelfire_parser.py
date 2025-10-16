@@ -318,7 +318,7 @@ class NovelFireParser(Parser):
             saver.save_item(chapter, save_dir)
             self.cache.save_last_chapter(novel_url, current_url, chapter.title)
             msg = f"""--> Fetched {chapter_data.title} of length \n 
-            {utils.bold_green(len(chapter_data.content))} from url {current_url}."""
+            {len(chapter_data.content)} from url {current_url}."""
             yield msg
 
         return save_dir, chapters

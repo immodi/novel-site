@@ -96,11 +96,11 @@ func (router *Router) RegisterRoutes() {
 			r.Post("/chapter-comments/reaction", router.handlers.ChapterComment.PostReact)
 		})
 
-		r.Get("/ws/updater", router.handlers.Updater.Updater)
 		router.r.Route("/admin", func(r chi.Router) {
 			r.Use(middlewares.CORSMiddleware([]string{config.AdminSiteURL}))
 
 			r.Post("/login", router.handlers.Admin.AdminLogin)
+			r.Get("/ws/updater", router.handlers.Updater.Updater)
 
 			r.Group(func(r chi.Router) {
 				r.Use(middlewares.ApiAdminRoleMiddleware())
