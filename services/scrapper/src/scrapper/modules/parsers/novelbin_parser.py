@@ -170,11 +170,18 @@ class NovelBinParser(Parser):
     def parse_chapters_with_notify(
         self, url: str, novel_name: str, save_per_chapter: bool
     ) -> Generator[str, None, List[ChapterData]]:
+        yield ""
         return []
 
     def update_novel(
         self, novel_name: str, novel_url: str, last_chapter_url: str
     ) -> Tuple[str, List[ChapterData]]:
+        return "", []
+
+    def update_novel_with_notify(
+        self, novel_name: str, novel_url: str, last_chapter_url: str
+    ) -> Generator[str, None, Tuple[str, List[ChapterData]]]:
+        yield ""
         return "", []
 
 

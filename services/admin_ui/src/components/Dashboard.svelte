@@ -3,10 +3,12 @@
     import UsersTab from "./dashboard/UsersTab.svelte";
     import NovelsTab from "./dashboard/NovelsTab.svelte";
     import ChaptersTab from "./dashboard/ChaptersTab.svelte";
+    import UpdaterTab from "./dashboard/UpdaterTab.svelte";
     import logoutIcon from "../assets/logout_icon.svg";
     import { clearUserToken } from "../lib/states/auth_state.svelte";
     import { adminDataState } from "../lib/states/admin_data_state.svelte";
-    type Tab = "users" | "novels" | "chapters";
+
+    type Tab = "users" | "novels" | "chapters" | "updater";
 
     const data = $derived(adminDataState);
     const username = $derived(data.data?.username);
@@ -120,7 +122,7 @@
     <main class="max-w-7xl mx-auto">
         <!-- Tab Navigation -->
         <div class="bg-[#E7F2EF] rounded-t-xl p-4">
-            <div class="flex space-x-4">
+            <div class="flex overflow-auto space-x-4">
                 <button
                     class={`cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 ${activeTab === "users" ? "bg-[#19183B] text-white border-[#19183B]" : "text-[#19183B] bg-white border-[#A1C2BD] hover:bg-[#A1C2BD]"}`}
                     onclick={() => handleTabChange("users")}
@@ -138,6 +140,12 @@
                     onclick={() => handleTabChange("chapters")}
                 >
                     Chapters
+                </button>
+                <button
+                    class={`cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 ${activeTab === "updater" ? "bg-[#19183B] text-white border-[#19183B]" : "text-[#19183B] bg-white border-[#A1C2BD] hover:bg-[#A1C2BD]"}`}
+                    onclick={() => handleTabChange("updater")}
+                >
+                    Updater
                 </button>
             </div>
         </div>
@@ -172,6 +180,8 @@
                 <NovelsTab onNovelSelect={handleNovelSelect} />
             {:else if activeTab === "chapters"}
                 <ChaptersTab {selectedNovel} />
+            {:else if activeTab === "updater"}
+                <UpdaterTab />
             {/if}
         </div>
     </main>

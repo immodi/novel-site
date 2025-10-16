@@ -15,6 +15,7 @@ var (
 	GoogleClientID     = mustGetEnv("GOOGLE_CLIENT_ID")
 	GoogleClientSecret = mustGetEnv("GOOGLE_CLIENT_SECRET")
 	GoogleFormURL      = mustGetEnv("GOOGLE_FORM_URL")
+	GrpcURL            = mustGetEnv("GRPC_URL")
 )
 
 func mustGetEnv(key string) string {

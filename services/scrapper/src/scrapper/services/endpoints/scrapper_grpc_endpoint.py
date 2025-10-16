@@ -1,11 +1,12 @@
 from scrapper.grpc import scrapper_pb2, scrapper_pb2_grpc
-from concurrent import futures
-import logging
 import grpc
 from typing import List
 from scrapper import config
 from urllib.parse import urlparse
 from scrapper.helpers import utils
+from scrapper.modules.factories.factory import get_parser, SkipDuplicate
+from scrapper.cache.db_cache import NovelDataCache
+from scrapper import config
 from scrapper.modules.factories.factory import get_parser, SkipDuplicate
 from scrapper.cache.db_cache import NovelDataCache
 
@@ -36,7 +37,7 @@ class ScrapperService(scrapper_pb2_grpc.ScrapperServiceServicer):
                 request.url,
                 cache,
                 SkipDuplicate.NOVEL,
-                notify_buffer=notify_buffer,
+                notify_buffer=notify_buffer,  # type: ignore
                 max_chapters_number=request.max_novel_chapters_num,
             )
             novels = parser.parse_list_of_novels(list_tree)
@@ -66,18 +67,3 @@ class ScrapperService(scrapper_pb2_grpc.ScrapperServiceServicer):
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.INTERNAL)
             return
-
-
-def serve():
-    port = "50051"
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    scrapper_pb2_grpc.add_ScrapperServiceServicer_to_server(ScrapperService(), server)
-    server.add_insecure_port("[::]:" + port)
-    server.start()
-    print("Server started, listening on " + port)
-    server.wait_for_termination()
-
-
-if __name__ == "__main__":
-    logging.basicConfig()
-    serve()

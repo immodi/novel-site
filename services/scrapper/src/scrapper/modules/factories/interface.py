@@ -56,6 +56,10 @@ class Parser(Protocol):
         self, novel_name: str, novel_url: str, last_chapter_url: str
     ) -> Tuple[str, List[ChapterData]]: ...
 
+    def update_novel_with_notify(
+        self, novel_name: str, novel_url: str, last_chapter_url: str
+    ) -> Generator[str, None, Tuple[str, List[ChapterData]]]: ...
+
     def novel_exists(self, title: str) -> bool:
         """Check if a novel JSON file already exists in DATA_DIR"""
         safe_title = utils.slugify(title)

@@ -251,7 +251,6 @@ class NovelFireParser(Parser):
                 )
 
             msg = f"--> Fetched {chapter.title} of length {utils.bold_green(len(chapter.content))} from url {chapter_link}."
-            print(msg)
             yield msg
 
         if not save_per_chapter:
@@ -261,6 +260,68 @@ class NovelFireParser(Parser):
                 )
 
         return chapters
+
+    def update_novel_with_notify(
+        self, novel_name: str, novel_url: str, last_chapter_url: str
+    ) -> Generator[str, None, Tuple[str, List[ChapterData]]]:
+        chapters: List[ChapterData] = []
+        if not last_chapter_url:
+            yield f"No last chapter found for novel {novel_name}"
+
+        current_url = last_chapter_url
+        yield f"Updating {novel_name} from {current_url}"
+        save_dir = f"{config.OUTPUT_DIR}/chapters/{utils.slugify(novel_name)}/updates"
+
+        while True:
+            # 1. request the page
+            tree: html.HtmlElement = utils.fetch_page(current_url)  # type: ignore
+
+            # 2. get the "nextchap" element
+            next_el = tree.cssselect(".nextchap")
+            if not next_el:
+                yield f"No .nextchap element found at {current_url}"
+                break
+
+            next_btn = next_el[0]
+
+            # 3. if it has 'isDisabled' class, stop
+            classes = next_btn.get("class", "")
+            if "isDisabled" in classes.split():
+                print("Reached the final chapter.")
+                break
+
+            # 4. follow the next link
+            next_href = next_btn.get("href")
+            if not next_href:
+                yield f"No href found for next chapter at {current_url}"
+                break
+
+            # Make sure the href is absolute if needed
+            if next_href.startswith("/"):
+                # adjust base if needed; assuming same site as current_url
+                base = current_url.split("/chapter-")[0]
+                next_href = base.rstrip("/") + next_href
+
+            current_url = next_href
+
+            # 5. scrape chapter content
+            chapter_data = scrape_chapter_with_request(current_url)  # type: ignore
+
+            chapter = ChapterData(
+                title=chapter_data.title,
+                content=chapter_data.content,
+                url=current_url,
+            )
+            chapters.append(chapter)
+
+            # save each chapter immediately
+            saver.save_item(chapter, save_dir)
+            self.cache.save_last_chapter(novel_url, current_url, chapter.title)
+            msg = f"""--> Fetched {chapter_data.title} of length \n 
+            {len(chapter_data.content)} from url {current_url}."""
+            yield msg
+
+        return save_dir, chapters
 
     def update_novel(
         self, novel_name: str, novel_url: str, last_chapter_url: str

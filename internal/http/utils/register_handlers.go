@@ -16,6 +16,8 @@ import (
 	"immodi/novel-site/internal/app/handlers/search"
 	"immodi/novel-site/internal/app/handlers/sitemap"
 	"immodi/novel-site/internal/app/handlers/terms"
+	"immodi/novel-site/internal/app/handlers/updater"
+	"immodi/novel-site/internal/config"
 )
 
 type Handlers struct {
@@ -34,6 +36,7 @@ type Handlers struct {
 	Filter         *filter.FilterHandler
 	Admin          *admin.AdminHandler
 	Feedback       *feedback.FeedbackHandler
+	Updater        *updater.UpdaterHandler
 }
 
 func RegisterHandlers(svcs *Services) *Handlers {
@@ -58,5 +61,6 @@ func RegisterHandlers(svcs *Services) *Handlers {
 			svcs.ChapterService,
 		),
 		Feedback: feedback.NewFeedbackHandler(),
+		Updater:  updater.NewUpdaterHandler(config.GrpcURL, svcs.ProfileService),
 	}
 }

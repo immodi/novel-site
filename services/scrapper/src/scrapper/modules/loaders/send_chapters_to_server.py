@@ -62,7 +62,7 @@ def append_chapters_to_server(
         data = {"metadata": json.dumps(metadata)}
 
         response = requests.post(url, files=files, data=data)
-        response.raise_for_status()
+        # response.raise_for_status()
         res_json = response.json()
 
         return LoadNovelResponse(
