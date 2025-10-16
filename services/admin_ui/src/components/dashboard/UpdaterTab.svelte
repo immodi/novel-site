@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
     import { getUserToken } from "../../lib/states/auth_state.svelte";
+    import { WS_URL } from "../../lib/constants";
 
     let logContainer: HTMLDivElement;
     let ws: WebSocket | null = $state(null);
@@ -38,7 +39,7 @@
         }
 
         try {
-            ws = new WebSocket(`ws://localhost:3000/admin/ws/updater`);
+            ws = new WebSocket(`${WS_URL}/admin/ws/updater`);
 
             ws.onopen = () => {
                 connectionStatus = "connected";
