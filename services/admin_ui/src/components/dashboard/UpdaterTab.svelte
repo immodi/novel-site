@@ -9,6 +9,7 @@
     let connectionStatus = $state<
         "disconnected" | "connecting" | "connected" | "error"
     >("disconnected");
+    let showStopConfirmation = $state(false);
 
     function log(message: string) {
         logMessages = [
@@ -81,6 +82,15 @@
         } else {
             log("WebSocket not connected.");
         }
+        showStopConfirmation = false;
+    }
+
+    function requestStop() {
+        showStopConfirmation = true;
+    }
+
+    function cancelStop() {
+        showStopConfirmation = false;
     }
 
     function disconnect() {
@@ -104,6 +114,56 @@
 </script>
 
 <div class="p-4 sm:p-6">
+    <!-- Stop Confirmation Modal -->
+    {#if showStopConfirmation}
+        <div
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        >
+            <div class="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="flex-shrink-0">
+                        <svg
+                            class="w-6 h-6 text-red-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-[#19183B]">
+                        Confirm Stop
+                    </h3>
+                </div>
+
+                <p class="text-gray-600 mb-6">
+                    Are you sure you want to stop the updater? This will halt
+                    any ongoing update processes.
+                </p>
+
+                <div class="flex gap-3 justify-end">
+                    <button
+                        class="cursor-pointer px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        onclick={cancelStop}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        class="cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        onclick={stopUpdater}
+                    >
+                        Stop Updater
+                    </button>
+                </div>
+            </div>
+        </div>
+    {/if}
+
     <!-- Header -->
     <div
         class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6"
@@ -188,7 +248,7 @@
 
             <button
                 class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                onclick={stopUpdater}
+                onclick={requestStop}
                 disabled={connectionStatus !== "connected"}
             >
                 <svg
