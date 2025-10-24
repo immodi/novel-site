@@ -151,12 +151,6 @@ func (router *Router) RegisterMiddlewares() {
 	router.r.Use(middleware.Logger)
 }
 
-func (router *Router) redirectToHome() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	}
-}
-
 func (router *Router) serveStatic(dir string) http.HandlerFunc {
 	absDir, err := filepath.Abs(dir)
 	if err != nil {

@@ -244,90 +244,121 @@ func PaginationURL(currentURL string, currentPage int, totalPages int) templ.Com
 		}
 		for _, p := range pkg.MakePagesCompact(currentPage, totalPages) {
 			if p == "…" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<span class=\"px-4 py-2\">…</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<!-- Ellipsis as interactive button --> <button type=\"button\" class=\"px-4 cursor-pointer py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 \n\t\t\t\t\t\t       dark:text-gray-800 font-medium border border-[#353535] dark:border-gray-300 \n\t\t\t\t\t\t       hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors relative group\">…<!-- Popup input on hover/focus --><div class=\"absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#1a1a1a] dark:bg-gray-100 \n\t\t\t\t\t\t\t       border border-[#353535] dark:border-gray-300 rounded-lg shadow-lg p-2 hidden group-focus-within:block group-hover:block\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else if p == fmt.Sprintf("%d", currentPage) {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<span class=\"px-4 py-2 rounded-lg bg-blue-600 text-white font-medium border border-blue-600\">")
+				println(currentURL)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<form hx-disable method=\"get\" action=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 string
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(p)
+				var templ_7745c5c3_Var11 templ.SafeURL
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/%s", currentURL))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 131, Col: 9}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 142, Col: 76}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"><input type=\"number\" name=\"page\" min=\"1\" max=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<a href=\"")
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", totalPages))
 				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var12 templ.SafeURL
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(pkg.UpdatePageQuery(currentURL, pkg.Atoi(p)))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 135, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 147, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 \n\t\t\t\t\t\t       dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 \n\t\t\t\t\t\t       transition-colors border border-[#353535] dark:border-gray-300\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" placeholder=\"Page\" class=\"w-20 px-2 py-1 rounded-lg text-center \n\t\t\t\t\t\t\t\t\t       bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 \n\t\t\t\t\t\t\t\t\t       border border-[#353535] dark:border-gray-300 focus:outline-none \n\t\t\t\t\t\t\t\t\t       focus:ring-2 focus:ring-blue-600\n\t\t\t\t\t\t\t\t\t       [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none\"></form></div></button>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else if p == fmt.Sprintf("%d", currentPage) {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<span class=\"px-4 py-2 rounded-lg bg-blue-600 text-white font-medium border border-blue-600\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 140, Col: 9}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 160, Col: 9}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<a href=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var14 templ.SafeURL
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(pkg.UpdatePageQuery(currentURL, pkg.Atoi(p)))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 164, Col: 57}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 \n\t\t\t\t\t\t       dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 \n\t\t\t\t\t\t       transition-colors border border-[#353535] dark:border-gray-300\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(p)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 169, Col: 9}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<!-- Next -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<!-- Next -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if isNextPage {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 templ.SafeURL
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(pkg.UpdatePageQuery(currentURL, currentPage+1))
+			var templ_7745c5c3_Var16 templ.SafeURL
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(pkg.UpdatePageQuery(currentURL, currentPage+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 147, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 176, Col: 58}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 \n\t\t\t\t\t       dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 \n\t\t\t\t\t       transition-colors border border-[#353535] dark:border-gray-300\">&gt;</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 \n\t\t\t\t\t       dark:text-gray-800 font-medium hover:bg-[#353535] dark:hover:bg-gray-300 \n\t\t\t\t\t       transition-colors border border-[#353535] dark:border-gray-300\">&gt;</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<span class=\"px-4 py-2 rounded-lg bg-[#1a1a1a] dark:bg-gray-100 text-gray-500 \n\t\t\t\t              dark:text-gray-400 border border-[#353535] dark:border-gray-300 cursor-not-allowed\">&gt;</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span class=\"px-4 py-2 rounded-lg bg-[#1a1a1a] dark:bg-gray-100 text-gray-500 \n\t\t\t\t              dark:text-gray-400 border border-[#353535] dark:border-gray-300 cursor-not-allowed\">&gt;</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

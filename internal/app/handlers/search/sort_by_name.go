@@ -41,7 +41,7 @@ func (h *SearchHandler) SortNovelsByNames(w http.ResponseWriter, r *http.Request
 		totalResults,
 		"All Novels",
 		"",
-		"",
+		"novels",
 		results,
 		currentPage,
 		w,

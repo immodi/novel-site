@@ -125,7 +125,36 @@ templ PaginationURL(currentURL string, currentPage int, totalPages int) {
 			<!-- Page Numbers -->
 			for _, p := range pkg.MakePagesCompact(currentPage, totalPages) {
 				if p == "…" {
-					<span class="px-4 py-2">…</span>
+					<!-- Ellipsis as interactive button -->
+					<button
+						type="button"
+						class="px-4 cursor-pointer py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 
+						       dark:text-gray-800 font-medium border border-[#353535] dark:border-gray-300 
+						       hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors relative group"
+					>
+						…
+						<!-- Popup input on hover/focus -->
+						<div
+							class="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#1a1a1a] dark:bg-gray-100 
+							       border border-[#353535] dark:border-gray-300 rounded-lg shadow-lg p-2 hidden group-focus-within:block group-hover:block"
+						>
+							{{ println(currentURL) }}
+							<form hx-disable method="get" action={ fmt.Sprintf("/%s", currentURL) }>
+								<input
+									type="number"
+									name="page"
+									min="1"
+									max={ fmt.Sprintf("%d", totalPages) }
+									placeholder="Page"
+									class="w-20 px-2 py-1 rounded-lg text-center 
+									       bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 
+									       border border-[#353535] dark:border-gray-300 focus:outline-none 
+									       focus:ring-2 focus:ring-blue-600
+									       [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+								/>
+							</form>
+						</div>
+					</button>
 				} else if p == fmt.Sprintf("%d", currentPage) {
 					<span class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium border border-blue-600">
 						{ p }
