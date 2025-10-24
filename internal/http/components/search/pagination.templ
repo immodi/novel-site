@@ -125,34 +125,32 @@ templ PaginationURL(currentURL string, currentPage int, totalPages int) {
 			<!-- Page Numbers -->
 			for _, p := range pkg.MakePagesCompact(currentPage, totalPages) {
 				if p == "…" {
-					<!-- Ellipsis as interactive button -->
 					<button
-						type="button"
-						class="px-4 cursor-pointer py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 
-						       dark:text-gray-800 font-medium border border-[#353535] dark:border-gray-300 
-						       hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors relative group"
+						class="px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 
+                           dark:text-gray-800 font-medium border border-[#353535] dark:border-gray-300 
+                           hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors relative group select-none"
 					>
 						…
 						<!-- Popup input on hover/focus -->
 						<div
 							class="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#1a1a1a] dark:bg-gray-100 
-							       border border-[#353535] dark:border-gray-300 rounded-lg shadow-lg p-2 hidden group-focus-within:block group-hover:block"
+                               border border-[#353535] dark:border-gray-300 rounded-lg shadow-lg p-2 hidden 
+                               group-hover:block group-focus-within:block"
 						>
-							{{ println(currentURL) }}
-							<form hx-disable method="get" action={ fmt.Sprintf("/%s", currentURL) }>
-								<input
-									type="number"
-									name="page"
-									min="1"
-									max={ fmt.Sprintf("%d", totalPages) }
-									placeholder="Page"
-									class="w-20 px-2 py-1 rounded-lg text-center 
-									       bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 
-									       border border-[#353535] dark:border-gray-300 focus:outline-none 
-									       focus:ring-2 focus:ring-blue-600
-									       [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-								/>
-							</form>
+							<!-- Page input that updates the link dynamically -->
+							<input
+								type="number"
+								id="pageInput"
+								min="1"
+								max={ fmt.Sprintf("%d", totalPages) }
+								placeholder="Page"
+								class="w-20 px-2 py-1 rounded-lg text-center 
+                                   bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 
+                                   border border-[#353535] dark:border-gray-300 focus:outline-none 
+                                   focus:ring-2 focus:ring-blue-600
+                                   [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+								onkeydown={ changePage(templ.JSExpression("event"), currentURL, totalPages) }
+							/>
 						</div>
 					</button>
 				} else if p == fmt.Sprintf("%d", currentPage) {
@@ -190,4 +188,19 @@ templ PaginationURL(currentURL string, currentPage int, totalPages int) {
 			}
 		</div>
 	</div>
+}
+
+script changePage(event templ.JSExpression, url string, maxPage int) {
+        if (event.key === 'Enter') {
+        let page = parseInt(event.target.value);
+
+        // Validate and clamp
+        if (isNaN(page) || page < 1) { page=1; } else if (page> maxPage) {
+            page = maxPage;
+            }
+
+            // Choose ? or & depending on URL
+            const separator = url.includes('?') ? '&' : '?';
+            window.location.href = url + separator + 'page=' + page;
+            }
 }

@@ -244,38 +244,37 @@ func PaginationURL(currentURL string, currentPage int, totalPages int) templ.Com
 		}
 		for _, p := range pkg.MakePagesCompact(currentPage, totalPages) {
 			if p == "…" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<!-- Ellipsis as interactive button --> <button type=\"button\" class=\"px-4 cursor-pointer py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 \n\t\t\t\t\t\t       dark:text-gray-800 font-medium border border-[#353535] dark:border-gray-300 \n\t\t\t\t\t\t       hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors relative group\">…<!-- Popup input on hover/focus --><div class=\"absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#1a1a1a] dark:bg-gray-100 \n\t\t\t\t\t\t\t       border border-[#353535] dark:border-gray-300 rounded-lg shadow-lg p-2 hidden group-focus-within:block group-hover:block\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<button class=\"px-4 py-2 rounded-lg bg-[#252525] dark:bg-gray-200 text-gray-100 \n                           dark:text-gray-800 font-medium border border-[#353535] dark:border-gray-300 \n                           hover:bg-[#353535] dark:hover:bg-gray-300 transition-colors relative group select-none\">…<!-- Popup input on hover/focus --><div class=\"absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#1a1a1a] dark:bg-gray-100 \n                               border border-[#353535] dark:border-gray-300 rounded-lg shadow-lg p-2 hidden \n                               group-hover:block group-focus-within:block\"><!-- Page input that updates the link dynamically -->")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				println(currentURL)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<form hx-disable method=\"get\" action=\"")
+				templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, changePage(templ.JSExpression("event"), currentURL, totalPages))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var11 templ.SafeURL
-				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/%s", currentURL))
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<input type=\"number\" id=\"pageInput\" min=\"1\" max=\"")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 142, Col: 76}
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", totalPages))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 145, Col: 43}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"><input type=\"number\" name=\"page\" min=\"1\" max=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\" placeholder=\"Page\" class=\"w-20 px-2 py-1 rounded-lg text-center \n                                   bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 \n                                   border border-[#353535] dark:border-gray-300 focus:outline-none \n                                   focus:ring-2 focus:ring-blue-600\n                                   [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none\" onkeydown=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var12 string
-				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", totalPages))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 147, Col: 44}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				var templ_7745c5c3_Var12 templ.ComponentScript = changePage(templ.JSExpression("event"), currentURL, totalPages)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var12.Call)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" placeholder=\"Page\" class=\"w-20 px-2 py-1 rounded-lg text-center \n\t\t\t\t\t\t\t\t\t       bg-[#1a1a1a] dark:bg-gray-100 text-gray-100 dark:text-gray-800 \n\t\t\t\t\t\t\t\t\t       border border-[#353535] dark:border-gray-300 focus:outline-none \n\t\t\t\t\t\t\t\t\t       focus:ring-2 focus:ring-blue-600\n\t\t\t\t\t\t\t\t\t       [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none\"></form></div></button>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\"></div></button>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -287,7 +286,7 @@ func PaginationURL(currentURL string, currentPage int, totalPages int) templ.Com
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 160, Col: 9}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 158, Col: 9}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -305,7 +304,7 @@ func PaginationURL(currentURL string, currentPage int, totalPages int) templ.Com
 				var templ_7745c5c3_Var14 templ.SafeURL
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(pkg.UpdatePageQuery(currentURL, pkg.Atoi(p)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 164, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 162, Col: 57}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -318,7 +317,7 @@ func PaginationURL(currentURL string, currentPage int, totalPages int) templ.Com
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(p)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 169, Col: 9}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 167, Col: 9}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -342,7 +341,7 @@ func PaginationURL(currentURL string, currentPage int, totalPages int) templ.Com
 			var templ_7745c5c3_Var16 templ.SafeURL
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinURLErrs(pkg.UpdatePageQuery(currentURL, currentPage+1))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 176, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/components/search/pagination.templ`, Line: 174, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -364,6 +363,27 @@ func PaginationURL(currentURL string, currentPage int, totalPages int) templ.Com
 		}
 		return nil
 	})
+}
+
+func changePage(event templ.JSExpression, url string, maxPage int) templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_changePage_c167`,
+		Function: `function __templ_changePage_c167(event, url, maxPage){if (event.key === 'Enter') {
+        let page = parseInt(event.target.value);
+
+        // Validate and clamp
+        if (isNaN(page) || page < 1) { page=1; } else if (page> maxPage) {
+            page = maxPage;
+            }
+
+            // Choose ? or & depending on URL
+            const separator = url.includes('?') ? '&' : '?';
+            window.location.href = url + separator + 'page=' + page;
+            }
+}`,
+		Call:       templ.SafeScript(`__templ_changePage_c167`, event, url, maxPage),
+		CallInline: templ.SafeScriptInline(`__templ_changePage_c167`, event, url, maxPage),
+	}
 }
 
 var _ = templruntime.GeneratedTemplate
