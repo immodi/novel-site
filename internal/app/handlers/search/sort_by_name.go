@@ -37,9 +37,9 @@ func (h *SearchHandler) SortNovelsByNames(w http.ResponseWriter, r *http.Request
 	results := DbNovelsToSearchDtosMapper(h.searchService, dbResults)
 
 	h.GenericSearch(
-		"name",
+		"",
 		totalResults,
-		"name",
+		"",
 		"All Novels",
 		"",
 		results,
