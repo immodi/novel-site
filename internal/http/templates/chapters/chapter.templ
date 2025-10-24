@@ -71,6 +71,7 @@ templ ChapterReader(ch *chaptersdtostructs.ChapterPage, isRedirect bool) {
         });
     </script>
 		@ContentSettingsScript()
+		<!-- @PushAds() -->
 	</div>
 }
 
@@ -132,12 +133,12 @@ templ ContentSettingsScript() {
 templ BottomAds() {
 	<div class="flex justify-center my-10 mb-16">
 		<script>
-        (function (sgnu) {
+        (function (ypwi) {
             var d = document,
                 s = d.createElement('script'),
                 l = d.scripts[d.scripts.length - 1];
-            s.settings = sgnu || {};
-            s.src = "\/\/finemonth.com\/blXJVas_d.Gxly0QY\/WxcC\/zeQmP9euWZbUKlMkuPZTYYR2\/NfjmEfxCN\/TUgHtDNRjdYo2\/MIThEN1AOAQn";
+            s.settings = ypwi || {};
+            s.src = "\/\/aggressivestruggle.com\/buXMVWs.dzGUlm0PYUWxc-\/Oevmk9JudZgU\/l_kCPRTnYe2MOkDjQw4ANmjaMStENGjPYU4\/NWDYgp2YNxAs";
             s.async = true;
             s.referrerPolicy = 'no-referrer-when-downgrade';
             l.parentNode.insertBefore(s, l);
@@ -161,4 +162,19 @@ templ TopAds() {
             })({})
     </script>
 	</div>
+}
+
+templ PushAds() {
+	<script>
+        (function (jevtig) {
+            var d = document,
+                s = d.createElement('script'),
+                l = d.scripts[d.scripts.length - 1];
+            s.settings = jevtig || {};
+            s.src = "\/\/aggressivestruggle.com\/b.XcVPsXdSGll-0tY-WrcZ\/CeMma9luJZVUhlpkfPtTxYe2-NTzcgnwiNPDZQLt\/Nrj\/Yq3gO\/DlAs0TN\/QB";
+            s.async = true;
+            s.referrerPolicy = 'no-referrer-when-downgrade';
+            l.parentNode.insertBefore(s, l);
+        })({})
+</script>
 }

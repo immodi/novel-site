@@ -40,7 +40,7 @@ func Index(
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full bg-[#121212] dark:bg-white text-gray-100 dark:text-gray-900\"><!-- Breadcrumb section --><div class=\"w-full bg-gray-900 dark:bg-gray-100 py-4\"><div class=\"container max-w-7xl mx-auto px-4\"><h2 class=\"text-center text-gray-300 dark:text-gray-700 text-sm md:text-base\">Read daily updated english translated novel, light novel, web novel, korean novel, chinese novel, read novel full online free. Read free light novels online.</h2></div></div><!-- Hot Novels Section --><div class=\"container max-w-7xl mx-auto px-4 py-8\"><div class=\"flex flex-col md:flex-row justify-between items-center mb-6\"><h2 class=\"text-2xl font-bold mb-4 md:mb-0\"><a href=\"/sort/hot\" class=\"hover:underline\">Hot Novel</a></h2><div class=\"flex items-center\"><a href=\"/sort/hot\" class=\"mr-3 text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-700\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z\"></path></svg></a><!-- <select --><!-- \tclass=\"bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500\" --><!-- > --><!-- \t<option value=\"all\">All</option> --><!-- \tfor _, genre := range genres { --><!-- \t\t<option value={ genre }>{ strings.ToUpper(genre) }</option> --><!-- \t} --><!-- </select> --></div></div><div id=\"hotNovels\" class=\"grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full bg-[#121212] dark:bg-white text-gray-100 dark:text-gray-900\"><!-- Breadcrumb section --><div class=\"w-full bg-gray-900 dark:bg-gray-100 py-4\"><div class=\"container max-w-7xl mx-auto px-4\"><h2 class=\"text-center text-gray-300 dark:text-gray-700 text-sm md:text-base\">Read daily updated english translated novel, light novel, web novel, korean novel, chinese novel, read novel full online free. Read free light novels online.</h2></div></div><!-- Hot Novels Section --><div class=\"container max-w-7xl mx-auto px-4 py-8\"><div class=\"flex flex-row md:flex-row justify-between items-baseline mb-6\"><h2 class=\"text-2xl font-bold mb-4 md:mb-0\"><a href=\"/sort/hot\" class=\"hover:underline\">Hot Novel</a></h2><div class=\"flex items-center\"><a href=\"/sort/hot\" class=\"mr-3 text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-700\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg></a><!-- <select --><!-- \tclass=\"bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500\" --><!-- > --><!-- \t<option value=\"all\">All</option> --><!-- \tfor _, genre := range genres { --><!-- \t\t<option value={ genre }>{ strings.ToUpper(genre) }</option> --><!-- \t} --><!-- </select> --></div></div><div id=\"hotNovels\" class=\"grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -48,7 +48,7 @@ func Index(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><!-- Latest Release Section --><div class=\"container max-w-7xl mx-auto px-4 py-8\"><div class=\"flex flex-col md:flex-row justify-between items-center mb-6\"><h2 class=\"text-2xl font-bold mb-4 md:mb-0\"><a href=\"/sort/latest\" class=\"hover:underline\">Latest Release</a></h2><div class=\"flex items-center\"><a href=\"/sort/latest\" class=\"mr-3 text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-700\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg></a><!-- <select --><!-- \tclass=\"bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500\" --><!-- > --><!-- \t<option value=\"all\">All</option> --><!-- \tfor _, genre := range genres { --><!-- \t\t<option value={ genre }>{ strings.ToUpper(genre) }</option> --><!-- \t} --><!-- </select> --></div></div><div class=\"bg-[#1a1a1a] dark:bg-gray-100 rounded-lg overflow-hidden border border-[#252525] dark:border-gray-300\"><div class=\"hidden md:grid grid-cols-12 gap-4 p-4 border-b border-[#252525] dark:border-gray-300 text-sm font-semibold\"><div class=\"col-span-5\">Title</div><div class=\"col-span-3\">Genre</div><div class=\"col-span-2\">Latest Chapter</div><div class=\"col-span-2 text-right\">Updated</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><!-- Latest Release Section --><div class=\"container max-w-7xl mx-auto px-4 py-8\"><div class=\"flex flex-row md:flex-row justify-between items-baseline mb-6\"><h2 class=\"text-2xl font-bold mb-4 md:mb-0\"><a href=\"/sort/latest\" class=\"hover:underline\">Latest Release</a></h2><div class=\"flex items-center\"><a href=\"/sort/latest\" class=\"mr-3 text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-700\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 5l7 7-7 7\"></path></svg></a><!-- <select --><!-- \tclass=\"bg-[#252525] dark:bg-gray-200 border border-[#353535] dark:border-gray-300 text-gray-100 dark:text-gray-900 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500\" --><!-- > --><!-- \t<option value=\"all\">All</option> --><!-- \tfor _, genre := range genres { --><!-- \t\t<option value={ genre }>{ strings.ToUpper(genre) }</option> --><!-- \t} --><!-- </select> --></div></div><div class=\"bg-[#1a1a1a] dark:bg-gray-100 rounded-lg overflow-hidden border border-[#252525] dark:border-gray-300\"><div class=\"hidden md:grid grid-cols-12 gap-4 p-4 border-b border-[#252525] dark:border-gray-300 text-sm font-semibold\"><div class=\"col-span-5\">Title</div><div class=\"col-span-3\">Genre</div><div class=\"col-span-2\">Latest Chapter</div><div class=\"col-span-2 text-right\">Updated</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -60,7 +60,7 @@ func Index(
 			var templ_7745c5c3_Var2 templ.SafeURL
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s", novel.Slug))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 123, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 118, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -73,7 +73,7 @@ func Index(
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(novel.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 126, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 121, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -91,7 +91,7 @@ func Index(
 				var templ_7745c5c3_Var4 templ.SafeURL
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.JoinURLErrs(fmt.Sprintf("/genre/%s", genre.GenreSlug)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 133, Col: 78}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 128, Col: 78}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func Index(
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(genre.Genre)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 136, Col: 24}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 131, Col: 24}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -122,7 +122,7 @@ func Index(
 			var templ_7745c5c3_Var6 templ.SafeURL
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinURLErrs(fmt.Sprintf("/novel/%s/chapter-%d", novel.Slug, novel.LastestChapterNumber))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 143, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 138, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -135,7 +135,7 @@ func Index(
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(novel.LastestChapterName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 146, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 141, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -148,7 +148,7 @@ func Index(
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(pkg.TimeAgo(novel.LastUpdated))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 150, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/index/index.templ`, Line: 145, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

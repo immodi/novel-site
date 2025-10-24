@@ -30,6 +30,7 @@ func GenericHandler(
 	// headers := []string{"Filter", authHeaderEntry}
 
 	Render(data, &indexdtostructs.LayoutData{Headers: []indexdtostructs.HeaderItem{
+		{NavigationLink: components.NoFollowNavigationLink("All Novels", components.AllNovelsIcon(), "novels")},
 		{NavigationLink: components.NoFollowNavigationLink(authHeaderEntry, components.ProfileIcon(), authHeaderEntry)},
 		{NavigationLink: components.NoFollowNavigationLink("Filter", components.FilterIcon(), "filter")},
 		{NavigationLink: components.NoFollowNavigationLink("Feedback", components.FeedbackIcon(), "feedback")},

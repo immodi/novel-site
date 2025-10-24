@@ -48,6 +48,7 @@ func (router *Router) RegisterRoutes() {
 		r.Get("/comments", router.handlers.Comment.Comments)
 		r.Get("/chapter-comments", router.handlers.ChapterComment.Comments)
 
+		r.Get("/novels", router.handlers.Search.SortNovelsByNames)
 		r.Get("/search/{novelName}", router.handlers.Search.SearchNovel)
 		r.Get("/sort/{collection}", router.handlers.Search.SortNovelsByCollection)
 		r.Get("/genre/{genre}", router.handlers.Search.SortNovelsByGenres)
@@ -122,7 +123,6 @@ func (router *Router) RegisterRoutes() {
 		r.Get("/sitemaps/genres.xml", router.handlers.Sitemap.GenresSiteMap)
 		r.Get("/sitemaps/tags.xml", router.handlers.Sitemap.TagsSiteMap)
 
-		r.Get("/novels", router.redirectToHome())
 		r.NotFound(handlers.NotFoundHandler)
 
 	})

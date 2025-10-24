@@ -182,3 +182,18 @@ func (s *searchService) FilterNovels(args repositories.FilterNovelsParams) (*rep
 		return q.FilterNovels(ctx, args)
 	})
 }
+
+func (s *searchService) CountAllNovels() (int64, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) (int64, error) {
+		return q.CountNovels(ctx)
+	})
+}
+
+func (s *searchService) ListNovelsByName(offset int, limit int) ([]repositories.Novel, error) {
+	return db.ExecuteWithResult(s.db, func(ctx context.Context, q *repositories.Queries) ([]repositories.Novel, error) {
+		return q.ListNovelsByNamePaginated(ctx, repositories.ListNovelsByNamePaginatedParams{
+			Offset: int64(offset),
+			Limit:  int64(limit),
+		})
+	})
+}

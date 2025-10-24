@@ -660,6 +660,54 @@ func (q *Queries) ListNovelsByAuthorPaginated(ctx context.Context, arg ListNovel
 	return items, nil
 }
 
+const listNovelsByNamePaginated = `-- name: ListNovelsByNamePaginated :many
+SELECT n.id, n.title, n.slug, n.description, n.cover_image, n.author, n.author_slug, n.publisher, n.release_year, n.is_completed, n.update_time, n.view_count
+FROM novels n
+ORDER BY n.title ASC
+LIMIT ? OFFSET ?
+`
+
+type ListNovelsByNamePaginatedParams struct {
+	Limit  int64
+	Offset int64
+}
+
+func (q *Queries) ListNovelsByNamePaginated(ctx context.Context, arg ListNovelsByNamePaginatedParams) ([]Novel, error) {
+	rows, err := q.db.QueryContext(ctx, listNovelsByNamePaginated, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Novel
+	for rows.Next() {
+		var i Novel
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Slug,
+			&i.Description,
+			&i.CoverImage,
+			&i.Author,
+			&i.AuthorSlug,
+			&i.Publisher,
+			&i.ReleaseYear,
+			&i.IsCompleted,
+			&i.UpdateTime,
+			&i.ViewCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listOnGoingNovelsPaginated = `-- name: ListOnGoingNovelsPaginated :many
 SELECT id, title, slug, description, cover_image, author, author_slug, publisher, release_year, is_completed, update_time, view_count
 FROM novels

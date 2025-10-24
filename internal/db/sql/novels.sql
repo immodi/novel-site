@@ -161,3 +161,9 @@ LIMIT sqlc.arg(limit) OFFSET sqlc.arg(offset);
 SELECT COUNT(*) AS total
 FROM novels
 WHERE LOWER(title) LIKE '%' || LOWER(sqlc.arg(search)) || '%';
+
+-- name: ListNovelsByNamePaginated :many
+SELECT n.*
+FROM novels n
+ORDER BY n.title ASC
+LIMIT ? OFFSET ?;

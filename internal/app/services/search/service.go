@@ -28,4 +28,7 @@ type SearchService interface {
 	ListNovelsByAuthor(author string, offset, limit int) (string, []repositories.Novel, error)
 
 	FilterNovels(args repositories.FilterNovelsParams) (*repositories.FilterNovelsResult, error)
+
+	CountAllNovels() (int64, error)
+	ListNovelsByName(offset, limit int) ([]repositories.Novel, error)
 }
