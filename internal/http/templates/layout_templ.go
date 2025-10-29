@@ -46,14 +46,14 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- Hillitope --><meta name=\"f68dbe1e9e4850b7e2fe549ca969faaac860a23f\" content=\"f68dbe1e9e4850b7e2fe549ca969faaac860a23f\"><!-- <link rel=\"stylesheet\" href=\"/static/styles/output.css\"/> --><link rel=\"stylesheet\" href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- AD MAven --><meta name=\"admaven-placement\" content=\"Bqja5qdC5\"><!-- Hillitope --><meta name=\"f68dbe1e9e4850b7e2fe549ca969faaac860a23f\" content=\"f68dbe1e9e4850b7e2fe549ca969faaac860a23f\"><!-- <link rel=\"stylesheet\" href=\"/static/styles/output.css\"/> --><link rel=\"stylesheet\" href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 templ.SafeURL
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs("/static/styles/output.css?v=" + pkg.HashCSS())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 22, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 24, Col: 79}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -66,7 +66,7 @@ func Layout(metaData *indexdtostructs.MetaDataStruct, data *indexdtostructs.Layo
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(metaData.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 26, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/http/templates/layout.templ`, Line: 28, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
