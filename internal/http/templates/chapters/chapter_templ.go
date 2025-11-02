@@ -130,7 +130,15 @@ func ChapterReader(ch *chaptersdtostructs.ChapterPage, isRedirect bool) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<!-- @PushAds() --></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<!-- @PushAds() -->")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = MiddleChapterAds().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -159,7 +167,7 @@ func ContentSettingsScript() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<script>\n    document.addEventListener(\"DOMContentLoaded\", () => {\n        const content = document.querySelector(\"#chapter-content\");\n\n        // Font size\n        document.querySelectorAll(\".font-size\").forEach(btn => {\n            btn.addEventListener(\"change\", (e) => {\n                content.classList.remove(\"text-base\", \"text-lg\", \"text-xl\");\n                content.classList.add(e.target.value);\n                localStorage.setItem(\"font-size\", e.target.value);\n                reload()\n            });\n        })\n\n        // Line height slider\n        const lineHeightSlider = document.querySelectorAll(\".line-height\");\n        const lineHeightValue = document.querySelectorAll(\".line-height-value\");\n\n\n        for (let i = 0; i < lineHeightSlider.length; i++) {\n            lineHeightSlider[i].addEventListener(\"input\", (e) => {\n                const value = e.target.value;\n                lineHeightValue[i].textContent = value + \"%\";\n                content.style.lineHeight = value + \"%\";\n                localStorage.setItem(\"line-height\", value);\n                reload()\n            });\n        }\n\n        // Load settings from localStorage\n        const savedFont = localStorage.getItem(\"font-size\");\n        const savedLineHeight = localStorage.getItem(\"line-height\");\n        if (savedFont) {\n            content.classList.remove(\"text-base\", \"text-lg\", \"text-xl\");\n            content.classList.add(savedFont);\n            document.querySelectorAll(\".font-size\").forEach(d => d.value = savedFont);\n        }\n        if (savedLineHeight) {\n            content.style.lineHeight = savedLineHeight + \"%\";\n            lineHeightSlider.forEach(d => d.value = savedLineHeight);\n            lineHeightValue.forEach(d => d.textContent = savedLineHeight + \"%\");\n        }\n\n        function reload() {\n            let font = localStorage.getItem(\"font-size\");\n            let lineHeight = localStorage.getItem(\"line-height\");\n            document.querySelectorAll(\".font-size\").forEach(d => d.value = font);\n            lineHeightSlider.forEach(d => d.value = lineHeight);\n            lineHeightValue.forEach(d => d.textContent = lineHeight + \"%\");\n        }\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<script>\n    document.addEventListener(\"DOMContentLoaded\", () => {\n        const content = document.querySelector(\"#chapter-content\");\n\n        // Font size\n        document.querySelectorAll(\".font-size\").forEach(btn => {\n            btn.addEventListener(\"change\", (e) => {\n                content.classList.remove(\"text-base\", \"text-lg\", \"text-xl\");\n                content.classList.add(e.target.value);\n                localStorage.setItem(\"font-size\", e.target.value);\n                reload()\n            });\n        })\n\n        // Line height slider\n        const lineHeightSlider = document.querySelectorAll(\".line-height\");\n        const lineHeightValue = document.querySelectorAll(\".line-height-value\");\n\n\n        for (let i = 0; i < lineHeightSlider.length; i++) {\n            lineHeightSlider[i].addEventListener(\"input\", (e) => {\n                const value = e.target.value;\n                lineHeightValue[i].textContent = value + \"%\";\n                content.style.lineHeight = value + \"%\";\n                localStorage.setItem(\"line-height\", value);\n                reload()\n            });\n        }\n\n        // Load settings from localStorage\n        const savedFont = localStorage.getItem(\"font-size\");\n        const savedLineHeight = localStorage.getItem(\"line-height\");\n        if (savedFont) {\n            content.classList.remove(\"text-base\", \"text-lg\", \"text-xl\");\n            content.classList.add(savedFont);\n            document.querySelectorAll(\".font-size\").forEach(d => d.value = savedFont);\n        }\n        if (savedLineHeight) {\n            content.style.lineHeight = savedLineHeight + \"%\";\n            lineHeightSlider.forEach(d => d.value = savedLineHeight);\n            lineHeightValue.forEach(d => d.textContent = savedLineHeight + \"%\");\n        }\n\n        function reload() {\n            let font = localStorage.getItem(\"font-size\");\n            let lineHeight = localStorage.getItem(\"line-height\");\n            document.querySelectorAll(\".font-size\").forEach(d => d.value = font);\n            lineHeightSlider.forEach(d => d.value = lineHeight);\n            lineHeightValue.forEach(d => d.textContent = lineHeight + \"%\");\n        }\n    });\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -188,7 +196,7 @@ func BottomAds() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"flex justify-center my-10 mb-16\"><script>\n        (function (ypwi) {\n            var d = document,\n                s = d.createElement('script'),\n                l = d.scripts[d.scripts.length - 1];\n            s.settings = ypwi || {};\n            s.src = \"\\/\\/aggressivestruggle.com\\/buXMVWs.dzGUlm0PYUWxc-\\/Oevmk9JudZgU\\/l_kCPRTnYe2MOkDjQw4ANmjaMStENGjPYU4\\/NWDYgp2YNxAs\";\n            s.async = true;\n            s.referrerPolicy = 'no-referrer-when-downgrade';\n            l.parentNode.insertBefore(s, l);\n        })({})\n    </script></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex justify-center my-10 mb-16\"><script>\n        (function (ypwi) {\n            var d = document,\n                s = d.createElement('script'),\n                l = d.scripts[d.scripts.length - 1];\n            s.settings = ypwi || {};\n            s.src = \"\\/\\/aggressivestruggle.com\\/buXMVWs.dzGUlm0PYUWxc-\\/Oevmk9JudZgU\\/l_kCPRTnYe2MOkDjQw4ANmjaMStENGjPYU4\\/NWDYgp2YNxAs\";\n            s.async = true;\n            s.referrerPolicy = 'no-referrer-when-downgrade';\n            l.parentNode.insertBefore(s, l);\n        })({})\n    </script></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -217,7 +225,7 @@ func TopAds() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"flex justify-center mt-8 mb-4 sm:mt-8 sm:mb-0\"><script>\n            (function (izysrd) {\n                var d = document,\n                    s = d.createElement('script'),\n                    l = d.scripts[d.scripts.length - 1];\n                s.settings = izysrd || {};\n                s.src = \"\\/\\/finemonth.com\\/beX.VIsvdYG\\/lM0PY\\/WQcp\\/OetmB9KuVZRUsllkHPtTXYz2FN-jIEGycMKTEAWtjNujwY\\/2-MfT\\/IRxEMvQm\";\n                s.async = true;\n                s.referrerPolicy = 'no-referrer-when-downgrade';\n                l.parentNode.insertBefore(s, l);\n            })({})\n    </script></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex justify-center mt-8 mb-4 sm:mt-8 sm:mb-0\"><script>\n            (function (izysrd) {\n                var d = document,\n                    s = d.createElement('script'),\n                    l = d.scripts[d.scripts.length - 1];\n                s.settings = izysrd || {};\n                s.src = \"\\/\\/finemonth.com\\/beX.VIsvdYG\\/lM0PY\\/WQcp\\/OetmB9KuVZRUsllkHPtTXYz2FN-jIEGycMKTEAWtjNujwY\\/2-MfT\\/IRxEMvQm\";\n                s.async = true;\n                s.referrerPolicy = 'no-referrer-when-downgrade';\n                l.parentNode.insertBefore(s, l);\n            })({})\n    </script></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -246,7 +254,36 @@ func PushAds() templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<script>\n        (function (jevtig) {\n            var d = document,\n                s = d.createElement('script'),\n                l = d.scripts[d.scripts.length - 1];\n            s.settings = jevtig || {};\n            s.src = \"\\/\\/aggressivestruggle.com\\/b.XcVPsXdSGll-0tY-WrcZ\\/CeMma9luJZVUhlpkfPtTxYe2-NTzcgnwiNPDZQLt\\/Nrj\\/Yq3gO\\/DlAs0TN\\/QB\";\n            s.async = true;\n            s.referrerPolicy = 'no-referrer-when-downgrade';\n            l.parentNode.insertBefore(s, l);\n        })({})\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<script>\n        (function (jevtig) {\n            var d = document,\n                s = d.createElement('script'),\n                l = d.scripts[d.scripts.length - 1];\n            s.settings = jevtig || {};\n            s.src = \"\\/\\/aggressivestruggle.com\\/b.XcVPsXdSGll-0tY-WrcZ\\/CeMma9luJZVUhlpkfPtTxYe2-NTzcgnwiNPDZQLt\\/Nrj\\/Yq3gO\\/DlAs0TN\\/QB\";\n            s.async = true;\n            s.referrerPolicy = 'no-referrer-when-downgrade';\n            l.parentNode.insertBefore(s, l);\n        })({})\n</script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func MiddleChapterAds() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<script>\n    const chapterParagraphs = document.querySelector(\"#chapter-content\");\n    if (chapterParagraphs) {\n        const paragraphs = chapterParagraphs.querySelectorAll(\"p\");\n\n        // Loop through all <p> tags and insert ad every 20 paragraphs\n        for (let i = 20; i < paragraphs.length; i += 20) {\n            const adDiv = document.createElement(\"div\");\n            adDiv.innerHTML = `\n        <div id=\"frame\" style=\"width: 100%;margin-top: -5rem;margin-bottom: -5rem;position: relative; z-index: 99998;\">\n          <iframe data-aa='2415871' src='//acceptable.a-ads.com/2415871/?size=Adaptive'\n                  style='border:0; padding:0; width:70%; height:auto; overflow:hidden;display: block;margin: auto'></iframe>\n        </div>\n      `;\n            paragraphs[i].insertAdjacentElement(\"beforebegin\", adDiv);\n        }\n    }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
