@@ -1,7 +1,7 @@
 import threading
 import queue
 import time
-from scrapper.grpc import updater_pb2
+from scrapper.grpc_services import updater_pb2
 
 
 class UpdateManager:

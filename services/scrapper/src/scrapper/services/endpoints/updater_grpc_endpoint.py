@@ -1,8 +1,7 @@
 from scrapper.services.modules.update_manager import UpdateManager
 from scrapper.services.modules.update_runner import run_update
-from scrapper.grpc import updater_pb2, updater_pb2_grpc
+from scrapper.grpc_services import updater_pb2, updater_pb2_grpc
 import queue
-
 
 update_manager = UpdateManager()
 

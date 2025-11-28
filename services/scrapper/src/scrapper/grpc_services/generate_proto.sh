@@ -7,7 +7,7 @@ set -e
 # Paths
 PROTO_SRC_DIR="proto"
 PROTO_OUT_DIR="../../"
-PROTO_MAPPING="scrapper/grpc=proto"
+PROTO_MAPPING="scrapper/grpc_services=proto"
 
 echo "🔹 Generating gRPC code from all .proto files in ${PROTO_SRC_DIR}..."
 

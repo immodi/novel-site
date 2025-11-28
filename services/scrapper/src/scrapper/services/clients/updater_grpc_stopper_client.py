@@ -1,5 +1,5 @@
 import grpc
-from scrapper.grpc import updater_pb2, updater_pb2_grpc
+from scrapper.grpc_services import updater_pb2, updater_pb2_grpc
 
 
 def stop_updater():

@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from scrapper.grpc import updater_pb2 as scrapper_dot_grpc_dot_updater__pb2
+from scrapper.grpc_services import updater_pb2 as scrapper_dot_grpc__services_dot_updater__pb2
 
 GRPC_GENERATED_VERSION = '1.75.0'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in scrapper/grpc/updater_pb2_grpc.py depends on'
+        + f' but the generated code in scrapper/grpc_services/updater_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -38,18 +38,18 @@ class UpdaterServiceStub(object):
         """
         self.StartUpdate = channel.unary_unary(
                 '/updater.UpdaterService/StartUpdate',
-                request_serializer=scrapper_dot_grpc_dot_updater__pb2.UpdateRequest.SerializeToString,
-                response_deserializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+                request_serializer=scrapper_dot_grpc__services_dot_updater__pb2.UpdateRequest.SerializeToString,
+                response_deserializer=scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.FromString,
                 _registered_method=True)
         self.StopUpdate = channel.unary_unary(
                 '/updater.UpdaterService/StopUpdate',
-                request_serializer=scrapper_dot_grpc_dot_updater__pb2.Empty.SerializeToString,
-                response_deserializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+                request_serializer=scrapper_dot_grpc__services_dot_updater__pb2.Empty.SerializeToString,
+                response_deserializer=scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.FromString,
                 _registered_method=True)
         self.StreamUpdates = channel.unary_stream(
                 '/updater.UpdaterService/StreamUpdates',
-                request_serializer=scrapper_dot_grpc_dot_updater__pb2.Empty.SerializeToString,
-                response_deserializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+                request_serializer=scrapper_dot_grpc__services_dot_updater__pb2.Empty.SerializeToString,
+                response_deserializer=scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.FromString,
                 _registered_method=True)
 
 
@@ -84,18 +84,18 @@ def add_UpdaterServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'StartUpdate': grpc.unary_unary_rpc_method_handler(
                     servicer.StartUpdate,
-                    request_deserializer=scrapper_dot_grpc_dot_updater__pb2.UpdateRequest.FromString,
-                    response_serializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.SerializeToString,
+                    request_deserializer=scrapper_dot_grpc__services_dot_updater__pb2.UpdateRequest.FromString,
+                    response_serializer=scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.SerializeToString,
             ),
             'StopUpdate': grpc.unary_unary_rpc_method_handler(
                     servicer.StopUpdate,
-                    request_deserializer=scrapper_dot_grpc_dot_updater__pb2.Empty.FromString,
-                    response_serializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.SerializeToString,
+                    request_deserializer=scrapper_dot_grpc__services_dot_updater__pb2.Empty.FromString,
+                    response_serializer=scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.SerializeToString,
             ),
             'StreamUpdates': grpc.unary_stream_rpc_method_handler(
                     servicer.StreamUpdates,
-                    request_deserializer=scrapper_dot_grpc_dot_updater__pb2.Empty.FromString,
-                    response_serializer=scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.SerializeToString,
+                    request_deserializer=scrapper_dot_grpc__services_dot_updater__pb2.Empty.FromString,
+                    response_serializer=scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -125,8 +125,8 @@ class UpdaterService(object):
             request,
             target,
             '/updater.UpdaterService/StartUpdate',
-            scrapper_dot_grpc_dot_updater__pb2.UpdateRequest.SerializeToString,
-            scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+            scrapper_dot_grpc__services_dot_updater__pb2.UpdateRequest.SerializeToString,
+            scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -152,8 +152,8 @@ class UpdaterService(object):
             request,
             target,
             '/updater.UpdaterService/StopUpdate',
-            scrapper_dot_grpc_dot_updater__pb2.Empty.SerializeToString,
-            scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+            scrapper_dot_grpc__services_dot_updater__pb2.Empty.SerializeToString,
+            scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -179,8 +179,8 @@ class UpdaterService(object):
             request,
             target,
             '/updater.UpdaterService/StreamUpdates',
-            scrapper_dot_grpc_dot_updater__pb2.Empty.SerializeToString,
-            scrapper_dot_grpc_dot_updater__pb2.UpdateResponse.FromString,
+            scrapper_dot_grpc__services_dot_updater__pb2.Empty.SerializeToString,
+            scrapper_dot_grpc__services_dot_updater__pb2.UpdateResponse.FromString,
             options,
             channel_credentials,
             insecure,

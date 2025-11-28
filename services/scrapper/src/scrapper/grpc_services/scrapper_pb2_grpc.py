@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from scrapper.grpc import scrapper_pb2 as scrapper_dot_grpc_dot_scrapper__pb2
+from scrapper.grpc_services import scrapper_pb2 as scrapper_dot_grpc__services_dot_scrapper__pb2
 
 GRPC_GENERATED_VERSION = '1.75.0'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in scrapper/grpc/scrapper_pb2_grpc.py depends on'
+        + f' but the generated code in scrapper/grpc_services/scrapper_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -36,8 +36,8 @@ class ScrapperServiceStub(object):
         """
         self.ScrapeNovels = channel.unary_stream(
                 '/scrapper.ScrapperService/ScrapeNovels',
-                request_serializer=scrapper_dot_grpc_dot_scrapper__pb2.ScrapeRequest.SerializeToString,
-                response_deserializer=scrapper_dot_grpc_dot_scrapper__pb2.ScrapeResponse.FromString,
+                request_serializer=scrapper_dot_grpc__services_dot_scrapper__pb2.ScrapeRequest.SerializeToString,
+                response_deserializer=scrapper_dot_grpc__services_dot_scrapper__pb2.ScrapeResponse.FromString,
                 _registered_method=True)
 
 
@@ -55,8 +55,8 @@ def add_ScrapperServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ScrapeNovels': grpc.unary_stream_rpc_method_handler(
                     servicer.ScrapeNovels,
-                    request_deserializer=scrapper_dot_grpc_dot_scrapper__pb2.ScrapeRequest.FromString,
-                    response_serializer=scrapper_dot_grpc_dot_scrapper__pb2.ScrapeResponse.SerializeToString,
+                    request_deserializer=scrapper_dot_grpc__services_dot_scrapper__pb2.ScrapeRequest.FromString,
+                    response_serializer=scrapper_dot_grpc__services_dot_scrapper__pb2.ScrapeResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -84,8 +84,8 @@ class ScrapperService(object):
             request,
             target,
             '/scrapper.ScrapperService/ScrapeNovels',
-            scrapper_dot_grpc_dot_scrapper__pb2.ScrapeRequest.SerializeToString,
-            scrapper_dot_grpc_dot_scrapper__pb2.ScrapeResponse.FromString,
+            scrapper_dot_grpc__services_dot_scrapper__pb2.ScrapeRequest.SerializeToString,
+            scrapper_dot_grpc__services_dot_scrapper__pb2.ScrapeResponse.FromString,
             options,
             channel_credentials,
             insecure,

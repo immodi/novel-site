@@ -33,6 +33,15 @@ class NovelDataCache:
                 """
             )
 
+            self.conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS last_update (
+                    id INTEGER PRIMARY KEY CHECK (id = 1),
+                    minutes INTEGER
+                )
+                """
+            )
+
     def get_all_novels(self) -> list[NovelData]:
         """Return all novels in the database as NovelData objects."""
         cursor = self.conn.cursor()
@@ -167,6 +176,25 @@ class NovelDataCache:
             if last_chapter is not None:
                 last_chapters.append(last_chapter)
         return last_chapters
+
+    def set_last_update(self, minutes: int):
+        """Store a single integer (minutes) representing last update time."""
+        with self.conn:
+            self.conn.execute(
+                """
+                INSERT INTO last_update (id, minutes)
+                VALUES (1, ?)
+                ON CONFLICT(id) DO UPDATE SET minutes = excluded.minutes
+                """,
+                (minutes,),
+            )
+
+    def get_last_update(self) -> int | None:
+        """Return the stored minutes value, or None if not set."""
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT minutes FROM last_update WHERE id = 1")
+        row = cursor.fetchone()
+        return row[0] if row else None
 
     def close(self):
         self.conn.close()

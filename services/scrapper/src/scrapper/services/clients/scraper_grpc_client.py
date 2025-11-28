@@ -1,7 +1,7 @@
 from __future__ import print_function
 import logging
 import grpc
-from scrapper.grpc import scrapper_pb2, scrapper_pb2_grpc
+from scrapper.grpc_services import scrapper_pb2, scrapper_pb2_grpc
 
 
 def run():
