@@ -19,8 +19,8 @@ dependencies = [
 
 [project.scripts]
 scrapper = "scrapper.scrap:scrapper"
-single-scrapper = "single_scrapper.single_scrap:single_scrapper"
-updater-check = "scrapper.updater_check:update_check"
+single-scrapper = "scrapper.single_scrap:single_scrapper"
+updater-check = "scrapper.updater_check:run_update_monitor"
 loader = "scrapper.load:loader"
 updater = "scrapper.update:update"
 seeder = "scrapper.seed:seed"

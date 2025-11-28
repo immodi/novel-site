@@ -78,10 +78,17 @@ def update_check():
             pass
 
 
-if __name__ == "__main__":
+def run_update_monitor():
+    """
+    Runs update checks forever, sleeping 4 hours between checks.
+    """
     print("[UpdateCheck] Service started. Running every 4 hours...")
 
     while True:
         update_check()
         print("[UpdateCheck] Sleeping for 4 hours...\n")
         time.sleep(FOUR_HOURS_SECONDS)
+
+
+if __name__ == "__main__":
+    run_update_monitor()
