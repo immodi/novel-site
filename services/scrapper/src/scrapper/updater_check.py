@@ -1,12 +1,9 @@
 import time
 import grpc
+import argparse
 from scrapper import config
 from scrapper.cache.db_cache import NovelDataCache
 from scrapper.grpc_services import updater_pb2, updater_pb2_grpc
-
-
-FOUR_HOURS_MINUTES = 4 * 60
-FOUR_HOURS_SECONDS = 4 * 60 * 60
 
 
 def restart_update_service():
@@ -32,7 +29,7 @@ def restart_update_service():
         print(f"[UpdateCheck] ERROR restarting updater service: {e}")
 
 
-def update_check():
+def update_check(interval_hours_minutes: int):
     """
     Performs one check and restart if needed.
     """
@@ -54,7 +51,7 @@ def update_check():
         now_minutes = int(time.time() // 60)
 
         should_restart = (
-            last_update is None or (now_minutes - last_update) >= FOUR_HOURS_MINUTES
+            last_update is None or (now_minutes - last_update) >= interval_hours_minutes
         )
 
         if should_restart:
@@ -80,14 +77,26 @@ def update_check():
 
 def run_update_monitor():
     """
-    Runs update checks forever, sleeping 4 hours between checks.
+    Runs update checks forever
     """
-    print("[UpdateCheck] Service started. Running every 4 hours...")
+    parser = argparse.ArgumentParser(
+        prog="updater-check", description="Novel updater check CLI"
+    )
+    parser.add_argument(
+        "interval_hours",
+        type=int,
+        default=6,
+        help="Interval in hours between updates (default: 6)",
+    )
+    args = parser.parse_args()
+    interval_hours = args.interval_hours
+
+    print(f"Updater started. Interval hours: {interval_hours}")
 
     while True:
-        update_check()
-        print("[UpdateCheck] Sleeping for 4 hours...\n")
-        time.sleep(FOUR_HOURS_SECONDS)
+        update_check(interval_hours * 60)
+        print(f"[UpdateCheck] Sleeping for {interval_hours} hours...\n")
+        time.sleep(interval_hours * 60 * 60)
 
 
 if __name__ == "__main__":
