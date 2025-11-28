@@ -1,4 +1,4 @@
-from scrapper.grpc import scrapper_pb2, scrapper_pb2_grpc
+from scrapper.grpc_services import scrapper_pb2, scrapper_pb2_grpc
 import grpc
 from typing import List
 from scrapper import config

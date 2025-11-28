@@ -1,4 +1,4 @@
-from scrapper.grpc import scrapper_pb2_grpc, updater_pb2_grpc
+from scrapper.grpc_services import scrapper_pb2_grpc, updater_pb2_grpc
 from scrapper.services.endpoints.updater_grpc_endpoint import UpdaterService
 from scrapper.services.endpoints.scrapper_grpc_endpoint import ScrapperService
 from concurrent import futures
