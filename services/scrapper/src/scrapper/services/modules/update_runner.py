@@ -1,3 +1,4 @@
+import time
 from scrapper import config
 from scrapper.modules.factories.factory import get_parser, SkipDuplicate
 from scrapper.cache.db_cache import NovelDataCache
@@ -87,4 +88,6 @@ def run_update(broadcast):
         else:
             broadcast(f"Failed to update chapters for novel {chapter.novel_name}")
 
+    now_minutes = int(time.time() // 60)
+    cache.set_last_update(now_minutes)
     broadcast("Update complete.")
